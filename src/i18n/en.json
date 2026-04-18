@@ -1,0 +1,58 @@
+{
+  "app": { "title": "Team Identity" },
+  "intro": {
+    "headline": "Build Your Team Identity",
+    "body": "A team charter is a living artifact that captures who you are as a team. This workshop guides you through the Management 3.0 Identity Symbols process: name, symbol, values, and working agreements.",
+    "start": "Start Workshop",
+    "load": "Load Saved Charter",
+    "steps": ["Team Name", "Symbol", "Values", "Agreements", "Charter"]
+  },
+  "name": {
+    "title": "What is your team's name?",
+    "subtitle": "A good team name is memorable, meaningful, and reflects your shared identity.",
+    "placeholder": "Team name...",
+    "tip": "Tip: avoid generic names like 'Team A'. Choose something that represents your purpose or character."
+  },
+  "symbol": {
+    "title": "Choose your team symbol",
+    "subtitle": "Pick an animal or archetype that resonates with your team's character, or enter a custom one.",
+    "custom_label": "Or use a custom emoji / symbol",
+    "custom_placeholder": "🚀"
+  },
+  "values": {
+    "title": "Select your team values",
+    "subtitle": "Pick 3–5 values that matter most to your team. You can add custom ones too.",
+    "min_note": "Select 3–5 values",
+    "custom_label": "Add custom value",
+    "custom_placeholder": "Type and press Enter",
+    "selected": "selected"
+  },
+  "agreements": {
+    "title": "Working Agreements",
+    "subtitle": "Define how you work together. Choose from suggestions or write your own.",
+    "add_custom": "Add agreement",
+    "custom_placeholder": "How do we work together?",
+    "upvote": "👍",
+    "delete": "Remove",
+    "suggestions": "Suggestions"
+  },
+  "charter": {
+    "title": "Your Team Charter",
+    "save": "Save Charter",
+    "saved": "Saved!",
+    "print": "Print",
+    "restart": "Start Over",
+    "team_name": "Team",
+    "values_title": "Our Values",
+    "agreements_title": "Working Agreements",
+    "symbol_title": "Our Symbol",
+    "created": "Created"
+  },
+  "learn": {
+    "title": "About Team Identity",
+    "why_title": "Why Team Identity?",
+    "why_body": "Teams with a shared identity have higher cohesion, clearer decisions, and better onboarding. Management 3.0's Identity Symbols practice helps teams articulate who they are, not just what they do.",
+    "expo_title": "What is a Work Expo?",
+    "expo_body": "A Work Expo is a team showcase event where teams present their charter, projects, and working culture to the rest of the organization. It builds cross-team understanding and pride."
+  }
+}
