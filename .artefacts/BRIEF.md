@@ -1,30 +1,25 @@
-# BRIEF
+# Team Identity — Brief
 
-Derived per [`agent-state.NO-BRIEF.md`](https://github.com/agile-toolkit/.github/blob/main/agent-state.NO-BRIEF.md). There was **no prior** `BRIEF.md`. Sources: `README.md`, `src/i18n/en.json` / `ru.json`, `src/`. Generated **2026-04-19**.
+## Overview
 
-## Product scope (from `README.md`)
+Workshop flow for team name, symbol, values, and working agreements (Identity Symbols / Work Expo). React 18, Vite, Tailwind, react-i18next; README mentions Firebase for future sync. Deploy: GitHub Pages.
 
-- **Team identity workshop:** name, symbol, values, working agreements (Identity Symbols / Work Expo style).
-- Stack includes **Firebase** (README).
+## Features
 
-## Build
+- [x] Multi-step workshop — intro, name, symbol, values, agreements, charter preview (`App.tsx`)
+- [x] EN + RU strings for main steps
+- [ ] Charter preview headings — `charter.team_name`, `charter.symbol_title` unused; preview uses hardcoded `Our Team`
+- [ ] Agreement remove control — uses `✕` instead of `t('agreements.delete')`
 
-- `npm run build` — **passes** (verified **2026-04-19**).
+## Backlog
 
-## TODO / FIXME in `src/`
+## Tech notes
 
-- None.
+- Firebase mentioned in `README.md` for collaboration; verify env when enabling.
 
-## i18n — orphaned keys
+## Agent Log
 
-- **`charter.team_name`**, **`charter.symbol_title`** — not used; `App.tsx` uses other `charter.*` keys and raw fallbacks like **`Our Team`** for preview heading (~line 317). Either wire these keys in the preview / PDF block **or** remove from locales.
-- **`agreements.delete`** — remove-control uses hardcoded **`✕`** (`App.tsx` ~267) instead of `t('agreements.delete')`.
+### 2026-04-19 — docs: BRIEF template (AGENT_AUTONOMOUS)
 
-## Hardcoded user-visible strings
-
-- **`Our Team`** fallback string in `App.tsx` charter preview — should be i18n.
-
-## Classification (NO-BRIEF)
-
-- **Status:** `in-progress`
-- **First next task:** Replace the agreements remove control’s **`✕`** in `App.tsx` with **`{t('agreements.delete')}`** (add tooltip/aria if needed); replace **`Our Team`** with a `charter.preview_fallback` key in `en.json` / `ru.json`.
+- Done: Template migration; noted i18n gaps.
+- Next task: Replace `✕` with `t('agreements.delete')` in `App.tsx`; add `charter.preview_fallback` (or wire `charter.team_name` / `symbol_title`) and remove `Our Team` literal.
