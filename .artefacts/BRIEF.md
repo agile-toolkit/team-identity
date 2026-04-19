@@ -1,40 +1,30 @@
-# BRIEF — Team Identity
+# BRIEF
 
-## What this app does
-A team identity workshop tool based on Management 3.0's "Identity Symbols" and "Work Expo" practices. Teams collaboratively define their shared identity — choosing symbols, values, working agreements, and team name — and create a living "team charter" artifact they can display and update.
+Derived per [`agent-state.NO-BRIEF.md`](https://github.com/agile-toolkit/.github/blob/main/agent-state.NO-BRIEF.md). There was **no prior** `BRIEF.md`. Sources: `README.md`, `src/i18n/en.json` / `ru.json`, `src/`. Generated **2026-04-19**.
 
-## Target users
-Newly formed teams, teams going through restructuring, Agile coaches running team-building workshops.
+## Product scope (from `README.md`)
 
-## Core features (MVP)
-- Guided workshop flow: Name → Symbol → Values → Working Agreements → Expo
-- Symbol picker (from M3.0 identity symbols set + custom upload)
-- Value cards: choose from a curated set or write custom values
-- Working agreements builder (editable list with vote/rank)
-- Team charter output: beautiful printable/shareable summary card
-- Team session mode: real-time collaboration via Firebase (or link-based share)
+- **Team identity workshop:** name, symbol, values, working agreements (Identity Symbols / Work Expo style).
+- Stack includes **Firebase** (README).
 
-## Educational layer
-- "Why team identity?" intro panel with M3.0 context
-- Each workshop step has a facilitator guide tooltip
-- Work Expo explanation: when and how to run it
-- Reference to source materials
+## Build
 
-## Tech stack
-React 18 + TypeScript + Vite + Tailwind CSS. Firebase Realtime Database for team sessions. GitHub Pages deployment.
+- `npm run build` — **passes** (verified **2026-04-19**).
 
-## Source materials in `.artefacts/`
-- `identity symbols.pdf` — M3.0 identity symbols catalog and workshop instructions
-- `work expo.pdf` — Work Expo practice guide
+## TODO / FIXME in `src/`
 
-## i18n
-English + Russian (react-i18next).
+- None.
 
-## Agentic pipeline roles
-- `/vadavik` — spec & requirements validation
-- `/lojma` — UX/UI design (workshop flow, charter output card)
-- `/laznik` — architecture (workshop state machine, Firebase real-time sync)
-- `@cmok` — implementation
-- `@bahnik` — QA (multi-user session sync, symbol picker accessibility)
-- `@piarun` — documentation
-- `@zlydni` — git commits & GitHub Pages deploy
+## i18n — orphaned keys
+
+- **`charter.team_name`**, **`charter.symbol_title`** — not used; `App.tsx` uses other `charter.*` keys and raw fallbacks like **`Our Team`** for preview heading (~line 317). Either wire these keys in the preview / PDF block **or** remove from locales.
+- **`agreements.delete`** — remove-control uses hardcoded **`✕`** (`App.tsx` ~267) instead of `t('agreements.delete')`.
+
+## Hardcoded user-visible strings
+
+- **`Our Team`** fallback string in `App.tsx` charter preview — should be i18n.
+
+## Classification (NO-BRIEF)
+
+- **Status:** `in-progress`
+- **First next task:** Replace the agreements remove control’s **`✕`** in `App.tsx` with **`{t('agreements.delete')}`** (add tooltip/aria if needed); replace **`Our Team`** with a `charter.preview_fallback` key in `en.json` / `ru.json`.
