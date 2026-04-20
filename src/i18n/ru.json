@@ -43,10 +43,15 @@
     "print": "Печать",
     "restart": "Начать заново",
     "team_name": "Команда",
+    "team_name_fallback": "Наша команда",
     "values_title": "Наши ценности",
     "agreements_title": "Рабочие соглашения",
     "symbol_title": "Наш символ",
     "created": "Создано"
+  },
+  "common": {
+    "back": "Назад",
+    "next": "Далее"
   },
   "learn": {
     "title": "Об идентичности команды",

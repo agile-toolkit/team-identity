@@ -161,8 +161,8 @@ export default function App() {
             />
             <p className="text-xs text-brand-600 bg-brand-50 rounded-xl px-4 py-2 mb-6">{t('name.tip')}</p>
             <div className="flex justify-between">
-              <button onClick={back} className="btn-secondary">{i18n.language.startsWith('ru') ? 'Назад' : 'Back'}</button>
-              <button onClick={next} disabled={!canNext} className="btn-primary">{i18n.language.startsWith('ru') ? 'Далее' : 'Next'} →</button>
+              <button onClick={back} className="btn-secondary">{t('common.back')}</button>
+              <button onClick={next} disabled={!canNext} className="btn-primary">{t('common.next')} →</button>
             </div>
           </div>
         )}
@@ -203,8 +203,8 @@ export default function App() {
               />
             </div>
             <div className="flex justify-between">
-              <button onClick={back} className="btn-secondary">{i18n.language.startsWith('ru') ? 'Назад' : 'Back'}</button>
-              <button onClick={next} disabled={!canNext} className="btn-primary">{i18n.language.startsWith('ru') ? 'Далее' : 'Next'} →</button>
+              <button onClick={back} className="btn-secondary">{t('common.back')}</button>
+              <button onClick={next} disabled={!canNext} className="btn-primary">{t('common.next')} →</button>
             </div>
           </div>
         )}
@@ -244,8 +244,8 @@ export default function App() {
               </button>
             </div>
             <div className="flex justify-between">
-              <button onClick={back} className="btn-secondary">{i18n.language.startsWith('ru') ? 'Назад' : 'Back'}</button>
-              <button onClick={next} disabled={!canNext} className="btn-primary">{i18n.language.startsWith('ru') ? 'Далее' : 'Next'} →</button>
+              <button onClick={back} className="btn-secondary">{t('common.back')}</button>
+              <button onClick={next} disabled={!canNext} className="btn-primary">{t('common.next')} →</button>
             </div>
           </div>
         )}
@@ -264,7 +264,7 @@ export default function App() {
                     <button onClick={() => patch({ agreements: charter.agreements.map(a => a.id === ag.id ? { ...a, votes: a.votes + 1 } : a) })}
                       className="text-sm">{t('agreements.upvote')} {ag.votes > 0 && <span className="text-xs text-gray-500">{ag.votes}</span>}</button>
                     <span className="flex-1 text-sm text-gray-800">{ag.text}</span>
-                    <button onClick={() => patch({ agreements: charter.agreements.filter(a => a.id !== ag.id) })} className="text-gray-200 hover:text-red-400 text-xs">✕</button>
+                    <button onClick={() => patch({ agreements: charter.agreements.filter(a => a.id !== ag.id) })} className="text-gray-200 hover:text-red-400 text-xs">{t('agreements.delete')}</button>
                   </div>
                 ))}
               </div>
@@ -292,8 +292,8 @@ export default function App() {
             </div>
 
             <div className="flex justify-between">
-              <button onClick={back} className="btn-secondary">{i18n.language.startsWith('ru') ? 'Назад' : 'Back'}</button>
-              <button onClick={next} className="btn-primary">{i18n.language.startsWith('ru') ? 'Далее' : 'Next'} →</button>
+              <button onClick={back} className="btn-secondary">{t('common.back')}</button>
+              <button onClick={next} className="btn-primary">{t('common.next')} →</button>
             </div>
           </div>
         )}
@@ -314,7 +314,7 @@ export default function App() {
             <div className="bg-gradient-to-br from-brand-600 to-brand-800 rounded-3xl p-8 text-white shadow-2xl mb-6" id="charter-card">
               <div className="text-center mb-6">
                 <div className="text-7xl mb-3">{displaySymbol}</div>
-                <h2 className="text-3xl font-bold">{charter.teamName || 'Our Team'}</h2>
+                <h2 className="text-3xl font-bold">{charter.teamName || t('charter.team_name_fallback')}</h2>
                 <p className="text-brand-200 text-sm mt-1">{t('charter.created')}: {new Date().toLocaleDateString()}</p>
               </div>
 
@@ -342,7 +342,7 @@ export default function App() {
             </div>
 
             <div className="flex justify-start">
-              <button onClick={back} className="btn-ghost">{i18n.language.startsWith('ru') ? '← Назад' : '← Back'}</button>
+              <button onClick={back} className="btn-ghost">← {t('common.back')}</button>
             </div>
           </div>
         )}
