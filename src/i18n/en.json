@@ -43,10 +43,15 @@
     "print": "Print",
     "restart": "Start Over",
     "team_name": "Team",
+    "team_name_fallback": "Our Team",
     "values_title": "Our Values",
     "agreements_title": "Working Agreements",
     "symbol_title": "Our Symbol",
     "created": "Created"
+  },
+  "common": {
+    "back": "Back",
+    "next": "Next"
   },
   "learn": {
     "title": "About Team Identity",
