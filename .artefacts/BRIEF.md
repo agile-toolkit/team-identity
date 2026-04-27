@@ -18,12 +18,20 @@ Workshop flow for team name, symbol, values, and working agreements (Identity Sy
 - [ ] [#3] Feature: ES + BE locale support (suite standard)
 - [ ] [#4] Feature: Charter image export (html2canvas)
 - [ ] [#5] Integration: Moving Motivators → Team Identity (import motivators as values)
+- [ ] [#6] Integration: Work Profiles → Team Identity (participant import via localStorage)
+- [ ] [#7] Feature: Charter deep-link sharing via URL hash (base64, clipboard copy, QR optional)
+- [ ] [#8] Integration: Team Identity → Scrum Facilitator (team context banner via localStorage)
 
 ## Tech notes
 
 - Firebase mentioned in `README.md` for collaboration; verify env when enabling.
 
 ## Agent Log
+
+### 2026-04-27 — research: integration + UX opportunities
+- Done: created issue #6 (Work Profiles → Team Identity participant import via localStorage), #7 (charter URL deep-link sharing via base64 URL hash + clipboard), #8 (Team Identity → Scrum Facilitator team context banner — implementation lives in scrum-facilitator repo)
+- Issues #3–#5 remain in needs-review; no human feedback yet
+- Next task: check needs-review issues for human feedback (#3 ES+BE locales, #4 charter image export, #5 Moving Motivators integration, #6 Work Profiles participant import, #7 URL sharing, #8 Scrum Facilitator banner)
 
 ### 2026-04-25 — research: market + integration opportunities
 - Done: created issue #3 (ES+BE locales — suite standard gap), #4 (charter image export via html2canvas; charter card already has `id="charter-card"`), #5 (Moving Motivators → Team Identity motivator import at values step)
