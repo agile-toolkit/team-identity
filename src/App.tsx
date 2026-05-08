@@ -87,6 +87,19 @@ export default function App() {
                               <rect x="9" y="9" width="6" height="6" rx="1"/>
                             </svg>
                           </a>
+            <div className="flex items-center gap-2">
+              <a
+                            href="https://agile-toolkit.github.io/"
+                            title="Agile Toolkit"
+                            className="text-gray-400 hover:text-gray-600 transition-colors flex-shrink-0"
+                          >
+                            <svg className="w-4 h-4" viewBox="0 0 16 16" fill="currentColor">
+                              <rect x="1" y="1" width="6" height="6" rx="1"/>
+                              <rect x="9" y="1" width="6" height="6" rx="1"/>
+                              <rect x="1" y="9" width="6" height="6" rx="1"/>
+                              <rect x="9" y="9" width="6" height="6" rx="1"/>
+                            </svg>
+                          </a>
             <button onClick={() => setShowLearn(false)} className="font-semibold text-brand-600">{t('app.title')}</button>
             <select
               value={i18n.language.split('-')[0]}
@@ -120,6 +133,7 @@ export default function App() {
       <header className="bg-white border-b border-gray-200 sticky top-0 z-10">
         <div className="max-w-3xl mx-auto px-4 h-14 flex items-center justify-between">
           <button onClick={() => setStep('intro')} className="font-semibold text-brand-600">{t('app.title')}</button>
+            </div>
             </div>
           <div className="flex items-center gap-1">
             <button onClick={() => setShowLearn(true)} className="btn-ghost">{t('learn.title')}</button>
