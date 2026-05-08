@@ -1,0 +1,63 @@
+{
+  "app": { "title": "Identidad del Equipo" },
+  "intro": {
+    "headline": "Construye la Identidad de tu Equipo",
+    "body": "Un acta de equipo es un artefacto vivo que captura quiénes sois como equipo. Este taller te guía a través del proceso de Símbolos de Identidad de Management 3.0: nombre, símbolo, valores y acuerdos de trabajo.",
+    "start": "Iniciar Taller",
+    "load": "Cargar Acta Guardada",
+    "steps": ["Nombre del Equipo", "Símbolo", "Valores", "Acuerdos", "Acta"]
+  },
+  "name": {
+    "title": "¿Cuál es el nombre de tu equipo?",
+    "subtitle": "Un buen nombre de equipo es memorable, significativo y refleja vuestra identidad compartida.",
+    "placeholder": "Nombre del equipo...",
+    "tip": "Consejo: evita nombres genéricos como 'Equipo A'. Elige algo que represente vuestro propósito o carácter."
+  },
+  "symbol": {
+    "title": "Elige el símbolo del equipo",
+    "subtitle": "Selecciona un animal o arquetipo que resuene con el carácter de tu equipo, o introduce uno personalizado.",
+    "custom_label": "O usa un emoji / símbolo personalizado",
+    "custom_placeholder": "🚀"
+  },
+  "values": {
+    "title": "Selecciona los valores del equipo",
+    "subtitle": "Elige 3–5 valores que más importen a tu equipo. También puedes añadir los tuyos propios.",
+    "min_note": "Selecciona 3–5 valores",
+    "custom_label": "Añadir valor personalizado",
+    "custom_placeholder": "Escribe y pulsa Enter",
+    "selected": "seleccionados"
+  },
+  "agreements": {
+    "title": "Acuerdos de Trabajo",
+    "subtitle": "Define cómo trabajáis juntos. Elige entre las sugerencias o escribe las tuyas.",
+    "add_custom": "Añadir acuerdo",
+    "custom_placeholder": "¿Cómo trabajamos juntos?",
+    "upvote": "👍",
+    "delete": "Eliminar",
+    "suggestions": "Sugerencias"
+  },
+  "charter": {
+    "title": "Acta del Equipo",
+    "save": "Guardar Acta",
+    "saved": "¡Guardado!",
+    "print": "Imprimir",
+    "restart": "Empezar de Nuevo",
+    "team_name": "Equipo",
+    "team_name_fallback": "Nuestro Equipo",
+    "values_title": "Nuestros Valores",
+    "agreements_title": "Acuerdos de Trabajo",
+    "symbol_title": "Nuestro Símbolo",
+    "created": "Creado"
+  },
+  "common": {
+    "back": "Atrás",
+    "next": "Siguiente"
+  },
+  "learn": {
+    "title": "Acerca de la Identidad del Equipo",
+    "why_title": "¿Por qué la Identidad del Equipo?",
+    "why_body": "Los equipos con una identidad compartida tienen mayor cohesión, decisiones más claras y mejor incorporación. La práctica de Símbolos de Identidad de Management 3.0 ayuda a los equipos a articular quiénes son, no solo qué hacen.",
+    "expo_title": "¿Qué es un Work Expo?",
+    "expo_body": "Un Work Expo es un evento de presentación del equipo donde los equipos presentan su acta, proyectos y cultura de trabajo al resto de la organización. Fomenta la comprensión entre equipos y el orgullo."
+  }
+}
