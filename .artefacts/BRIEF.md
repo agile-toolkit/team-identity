@@ -11,11 +11,12 @@ Workshop flow for team name, symbol, values, and working agreements (Identity Sy
 - [x] Charter preview headings — `charter.team_name_fallback` i18n key added; `'Our Team'` literal removed
 - [x] Agreement remove control — uses `t('agreements.delete')` instead of hardcoded `✕`
 - [x] Back/Next navigation — replaced inline language checks with `t('common.back')` / `t('common.next')`
+- [x] ES + BE locale support — `es.json` and `be.json` added; `i18n/index.ts` registers all 4 locales; header language switcher upgraded from binary EN/RU toggle to 4-way `<select>` (EN / ES / BE / RU)
 
 ## Backlog
 
 <!-- Issues awaiting human review; agent appends here during research runs -->
-- [ ] [#3] Feature: ES + BE locale support (suite standard)
+- [x] [#3] Feature: ES + BE locale support (suite standard) — implemented
 - [ ] [#4] Feature: Charter image export (html2canvas)
 - [ ] [#5] Integration: Moving Motivators → Team Identity (import motivators as values)
 - [ ] [#6] Integration: Work Profiles → Team Identity (participant import via localStorage)
@@ -27,6 +28,12 @@ Workshop flow for team name, symbol, values, and working agreements (Identity Sy
 - Firebase mentioned in `README.md` for collaboration; verify env when enabling.
 
 ## Agent Log
+
+### 2026-05-08 — feat: ES + BE locale support (issue #3)
+- Done: created `src/i18n/es.json` (Spanish) and `src/i18n/be.json` (Belarusian) with full translations of all keys; registered both in `src/i18n/index.ts`; replaced binary EN/RU toggle in both header instances with a 4-way `<select>` dropdown (EN / ES / BE / RU)
+- Issue #3 fully implemented; set to In Review
+- Issue #8 (Scrum Facilitator banner) is approved but scoped to scrum-facilitator repo — to be picked up in that repo's next run
+- Next task: implement #4 (charter image export via html2canvas; `id="charter-card"` already present) if approved; else check issues for human feedback
 
 ### 2026-04-27 — research: integration + UX opportunities
 - Done: created issue #6 (Work Profiles → Team Identity participant import via localStorage), #7 (charter URL deep-link sharing via base64 URL hash + clipboard), #8 (Team Identity → Scrum Facilitator team context banner — implementation lives in scrum-facilitator repo)

@@ -75,9 +75,16 @@ export default function App() {
         <header className="bg-white border-b border-gray-200 sticky top-0 z-10">
           <div className="max-w-3xl mx-auto px-4 h-14 flex items-center justify-between">
             <button onClick={() => setShowLearn(false)} className="font-semibold text-brand-600">{t('app.title')}</button>
-            <button onClick={() => i18n.changeLanguage(i18n.language.startsWith('ru') ? 'en' : 'ru')} className="text-sm text-gray-500 px-2 py-1 rounded hover:bg-gray-100">
-              {i18n.language.startsWith('ru') ? 'EN' : 'RU'}
-            </button>
+            <select
+              value={i18n.language.split('-')[0]}
+              onChange={e => i18n.changeLanguage(e.target.value)}
+              className="text-sm text-gray-500 px-2 py-1 rounded hover:bg-gray-100 bg-transparent border-none cursor-pointer"
+            >
+              <option value="en">EN</option>
+              <option value="es">ES</option>
+              <option value="be">BE</option>
+              <option value="ru">RU</option>
+            </select>
           </div>
         </header>
         <main className="flex-1 max-w-2xl mx-auto w-full px-4 py-8 space-y-6">
@@ -102,9 +109,16 @@ export default function App() {
           <button onClick={() => setStep('intro')} className="font-semibold text-brand-600">{t('app.title')}</button>
           <div className="flex items-center gap-1">
             <button onClick={() => setShowLearn(true)} className="btn-ghost">{t('learn.title')}</button>
-            <button onClick={() => i18n.changeLanguage(i18n.language.startsWith('ru') ? 'en' : 'ru')} className="ml-1 text-sm text-gray-500 px-2 py-1 rounded hover:bg-gray-100">
-              {i18n.language.startsWith('ru') ? 'EN' : 'RU'}
-            </button>
+            <select
+              value={i18n.language.split('-')[0]}
+              onChange={e => i18n.changeLanguage(e.target.value)}
+              className="ml-1 text-sm text-gray-500 px-2 py-1 rounded hover:bg-gray-100 bg-transparent border-none cursor-pointer"
+            >
+              <option value="en">EN</option>
+              <option value="es">ES</option>
+              <option value="be">BE</option>
+              <option value="ru">RU</option>
+            </select>
           </div>
         </div>
       </header>
