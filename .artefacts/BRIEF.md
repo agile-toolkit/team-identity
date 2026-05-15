@@ -32,6 +32,9 @@ Workshop flow for team name, symbol, values, and working agreements (Identity Sy
 - [ ] [#10] Feature: Dashboard card integration (write `team-identity:lastSession` on save; update dashboard reader)
 - [ ] [#11] Feature: Print-optimized charter layout (`@media print` CSS, hide nav, white background)
 - [ ] [#12] Feature: Keyboard accessibility for symbol grid and values selection (arrow-key nav, ARIA roles)
+- [ ] [#14] Research: Charter history and version comparison (store array of versioned charters, diff view)
+- [ ] [#15] Research: Scrum values alignment layer in the values step (map values to Scrum/Agile principles)
+- [ ] [#16] Integration: Team Identity → Planning Poker + Sprint Metrics (team context banner, scoped to those repos)
 
 ## Tech notes
 
@@ -39,6 +42,14 @@ Workshop flow for team name, symbol, values, and working agreements (Identity Sy
 - GitHub Project #13 created for this repo (project ID: `PVT_kwDOEGuPAc4BXTDB`).
 
 ## Agent Log
+
+### 2026-05-15 — research: charter history, Scrum values alignment, suite-wide team context
+- Done: checked open issues — #3 already implemented, #8 (approved) scoped to scrum-facilitator — no actionable approved items for team-identity; no changes-requested or research-more issues pending
+- Created issue #14 (charter history/versioning — store array of versioned charters, diff view)
+- Created issue #15 (Scrum values alignment layer — map selected values to Scrum/Agile principles as optional badges on charter)
+- Created issue #16 (Team Identity → Planning Poker + Sprint Metrics team context banner — implementation scoped to those repos)
+- All three issues set to Backlog in GitHub Project #13
+- Next task: check issues for human feedback; implement first approved item among #10 (team-identity:lastSession Dashboard key), #11 (print-optimized @media print CSS), #12 (keyboard a11y for symbol/values grids)
 
 ### 2026-05-10 — research: dashboard integration, print UX, accessibility
 - Done: created GitHub Project #13 for team-identity; added all open issues (#3–#8) to project; created issues #10 (dashboard localStorage key), #11 (print-optimized CSS), #12 (keyboard accessibility); all three set to Backlog in project
