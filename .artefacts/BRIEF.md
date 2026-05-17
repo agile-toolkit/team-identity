@@ -35,6 +35,9 @@ Workshop flow for team name, symbol, values, and working agreements (Identity Sy
 - [ ] [#14] Research: Charter history and version comparison (store array of versioned charters, diff view)
 - [ ] [#15] Research: Scrum values alignment layer in the values step (map values to Scrum/Agile principles)
 - [ ] [#16] Integration: Team Identity → Planning Poker + Sprint Metrics (team context banner, scoped to those repos)
+- [ ] [#17] Feature: Draft auto-save between workshop steps (write team-identity:draft on step transitions; resume banner on mount)
+- [ ] [#18] Integration: Change Planner — read team-identity-charter to pre-fill team context in change scenarios (scoped to change-planner repo)
+- [ ] [#19] UX: Facilitator/projector display mode — CSS class toggle for larger text and cards on projected displays
 
 ## Tech notes
 
@@ -42,6 +45,14 @@ Workshop flow for team name, symbol, values, and working agreements (Identity Sy
 - GitHub Project #13 created for this repo (project ID: `PVT_kwDOEGuPAc4BXTDB`).
 
 ## Agent Log
+
+### 2026-05-17 — research: draft auto-save, Change Planner integration, facilitator mode
+- Done: checked open issues — all open issues have needs-review label; #3 implemented, #8 scoped to scrum-facilitator; no actionable approved/incomplete/changes-requested/research-more items
+- Created issue #17 (draft auto-save: write team-identity:draft on step transitions; resume banner on mount; prevent data loss in in-person workshops)
+- Created issue #18 (Change Planner integration: read team-identity-charter to pre-fill team context; implementation scoped to change-planner repo)
+- Created issue #19 (facilitator/projector display mode: CSS class toggle for larger text/cards on projected displays; sessionStorage persistence)
+- All three issues set to Backlog in GitHub Project #13
+- Next task: check issues for human feedback; implement first approved item among #10 (team-identity:lastSession Dashboard key), #11 (print-optimized @media print CSS), #12 (keyboard a11y for symbol/values grids)
 
 ### 2026-05-15 — research: charter history, Scrum values alignment, suite-wide team context
 - Done: checked open issues — #3 already implemented, #8 (approved) scoped to scrum-facilitator — no actionable approved items for team-identity; no changes-requested or research-more issues pending
