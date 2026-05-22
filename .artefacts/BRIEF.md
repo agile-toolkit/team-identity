@@ -46,6 +46,11 @@ Workshop flow for team name, symbol, values, and working agreements (Identity Sy
 
 ## Agent Log
 
+### 2026-05-22 — fix: repair broken JSX header structure in App.tsx (CI blocker)
+- Done: fixed duplicate `<a>` logo link and unclosed `<div>` tags in `showLearn` header; fixed premature `</div></div>` closing tags in main header (lines 133–152); build now passes
+- Status restored to stable; blockers cleared
+- Next task: check issues for human feedback; implement #10 (write `team-identity:lastSession` in `App.tsx` `saveCharter()`) if approved; implement #11 (print @media CSS) if approved; implement #12 (keyboard a11y) if approved
+
 ### 2026-05-17 — research: draft auto-save, Change Planner integration, facilitator mode
 - Done: checked open issues — all open issues have needs-review label; #3 implemented, #8 scoped to scrum-facilitator; no actionable approved/incomplete/changes-requested/research-more items
 - Created issue #17 (draft auto-save: write team-identity:draft on step transitions; resume banner on mount; prevent data loss in in-person workshops)
