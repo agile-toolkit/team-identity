@@ -62,6 +62,13 @@ export default function App() {
   const saveCharter = () => {
     const toSave = { ...charter, savedAt: Date.now() }
     localStorage.setItem(STORAGE_KEY, JSON.stringify(toSave))
+    localStorage.setItem('team-identity:lastSession', JSON.stringify({
+      teamName: charter.teamName,
+      symbol: charter.customSymbol || charter.symbol,
+      valuesCount: charter.values.length,
+      agreementsCount: charter.agreements.length,
+      savedAt: Date.now(),
+    }))
     setSaved(true)
     setTimeout(() => setSaved(false), 2000)
   }
