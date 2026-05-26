@@ -12,13 +12,14 @@ Workshop flow for team name, symbol, values, and working agreements (Identity Sy
 - [x] Agreement remove control — uses `t('agreements.delete')` instead of hardcoded `✕`
 - [x] Back/Next navigation — replaced inline language checks with `t('common.back')` / `t('common.next')`
 - [x] ES + BE locale support — `es.json` and `be.json` added; `i18n/index.ts` registers all 4 locales; header language switcher upgraded from binary EN/RU toggle to 4-way `<select>` (EN / ES / BE / RU)
+- [x] Dashboard localStorage key — `saveCharter()` writes `team-identity:lastSession` with `{teamName, symbol, valuesCount, agreementsCount, savedAt}` for Dashboard card integration (#10)
 
 ## localStorage keys
 
 | Key | Written by | Content |
 |-----|-----------|---------|
 | `team-identity-charter` | `App.tsx` `saveCharter()` | Full `TeamCharter` object + `savedAt` timestamp |
-| `team-identity:lastSession` | _planned_ (issue #10) | Dashboard summary: `{teamName, symbol, valuesCount, agreementsCount, savedAt}` |
+| `team-identity:lastSession` | `App.tsx` `saveCharter()` | Dashboard summary: `{teamName, symbol, valuesCount, agreementsCount, savedAt}` |
 
 ## Backlog
 
@@ -29,7 +30,7 @@ Workshop flow for team name, symbol, values, and working agreements (Identity Sy
 - [ ] [#6] Integration: Work Profiles → Team Identity (participant import via localStorage)
 - [ ] [#7] Feature: Charter deep-link sharing via URL hash (base64, clipboard copy, QR optional)
 - [ ] [#8] Integration: Team Identity → Scrum Facilitator (team context banner — implementation in scrum-facilitator repo)
-- [ ] [#10] Feature: Dashboard card integration (write `team-identity:lastSession` on save; update dashboard reader)
+- [x] [#10] Feature: Dashboard card integration (write `team-identity:lastSession` on save; update dashboard reader)
 - [ ] [#11] Feature: Print-optimized charter layout (`@media print` CSS, hide nav, white background)
 - [ ] [#12] Feature: Keyboard accessibility for symbol grid and values selection (arrow-key nav, ARIA roles)
 - [ ] [#14] Research: Charter history and version comparison (store array of versioned charters, diff view)
@@ -45,6 +46,11 @@ Workshop flow for team name, symbol, values, and working agreements (Identity Sy
 - GitHub Project #13 created for this repo (project ID: `PVT_kwDOEGuPAc4BXTDB`).
 
 ## Agent Log
+
+### 2026-05-26 — feat: Dashboard localStorage key (issue #10)
+- Done: `saveCharter()` in `App.tsx` now writes `team-identity:lastSession` with `{teamName, symbol, valuesCount, agreementsCount, savedAt}` immediately after the existing `team-identity-charter` write
+- Issue #10 team-identity side fully implemented; Dashboard reader update scoped to agile-toolkit.github.io repo
+- Next task: in agile-toolkit.github.io, add `readTeamIdentity()` reader function parsing `team-identity:lastSession` and display team name/symbol/counts on the Team Identity dashboard card
 
 ### 2026-05-26 — research: checked feedback, transitioning to implement #10
 - Done: scanned all open issues; found multiple approved issues (#4, #5, #6, #7, #10, #12, #14, #15, #17, #19)
