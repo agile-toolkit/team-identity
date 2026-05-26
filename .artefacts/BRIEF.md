@@ -46,6 +46,11 @@ Workshop flow for team name, symbol, values, and working agreements (Identity Sy
 
 ## Agent Log
 
+### 2026-05-26 — research: checked feedback, transitioning to implement #10
+- Done: scanned all open issues; found multiple approved issues (#4, #5, #6, #7, #10, #12, #14, #15, #17, #19)
+- Picked #10 (Dashboard card integration: write `team-identity:lastSession` after `saveCharter()`) as the next implementation target; set project status to In Progress
+- Next task: in `App.tsx` `saveCharter()`, add `localStorage.setItem('team-identity:lastSession', JSON.stringify({teamName, symbol, valuesCount, agreementsCount, savedAt: Date.now()}))` after the existing `team-identity-charter` write; also update `agile-toolkit.github.io` to add a reader function and card for this key
+
 ### 2026-05-22 — fix: repair broken JSX header structure in App.tsx (CI blocker)
 - Done: fixed duplicate `<a>` logo link and unclosed `<div>` tags in `showLearn` header; fixed premature `</div></div>` closing tags in main header (lines 133–152); build now passes
 - Status restored to stable; blockers cleared
