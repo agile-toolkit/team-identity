@@ -13,6 +13,7 @@ Workshop flow for team name, symbol, values, and working agreements (Identity Sy
 - [x] Back/Next navigation — replaced inline language checks with `t('common.back')` / `t('common.next')`
 - [x] ES + BE locale support — `es.json` and `be.json` added; `i18n/index.ts` registers all 4 locales; header language switcher upgraded from binary EN/RU toggle to 4-way `<select>` (EN / ES / BE / RU)
 - [x] Dashboard localStorage key — `saveCharter()` writes `team-identity:lastSession` with `{teamName, symbol, valuesCount, agreementsCount, savedAt}` for Dashboard card integration (#10)
+- [x] Charter image export (#4) — "Copy Image" button on charter step using html2canvas; clipboard write with download fallback; `charter.share` i18n key in all 4 locales — `saveCharter()` writes `team-identity:lastSession` with `{teamName, symbol, valuesCount, agreementsCount, savedAt}` for Dashboard card integration (#10)
 
 ## localStorage keys
 
@@ -25,7 +26,7 @@ Workshop flow for team name, symbol, values, and working agreements (Identity Sy
 
 <!-- Issues awaiting human review; agent appends here during research runs -->
 - [x] [#3] Feature: ES + BE locale support (suite standard) — implemented
-- [ ] [#4] Feature: Charter image export (html2canvas)
+- [x] [#4] Feature: Charter image export (html2canvas) — implemented
 - [ ] [#5] Integration: Moving Motivators → Team Identity (import motivators as values)
 - [ ] [#6] Integration: Work Profiles → Team Identity (participant import via localStorage)
 - [ ] [#7] Feature: Charter deep-link sharing via URL hash (base64, clipboard copy, QR optional)
@@ -46,6 +47,11 @@ Workshop flow for team name, symbol, values, and working agreements (Identity Sy
 - GitHub Project #13 created for this repo (project ID: `PVT_kwDOEGuPAc4BXTDB`).
 
 ## Agent Log
+
+### 2026-05-29 — feat: charter image export (issue #4)
+- Done: installed `html2canvas`; added `copyImage()` async handler in `App.tsx` (canvas capture → clipboard write → download fallback); added "Copy Image" button beside Print on charter step; added `charter.share` i18n key in EN/ES/BE/RU locale files
+- Issue #4 fully implemented; setting to In Review
+- Next task: implement #5 (Moving Motivators → Team Identity: import motivators as values; read `moving-motivators:lastSession` from localStorage and offer ranked motivators as selectable values on the values step)
 
 ### 2026-05-26 — feat: Dashboard localStorage key (issue #10)
 - Done: `saveCharter()` in `App.tsx` now writes `team-identity:lastSession` with `{teamName, symbol, valuesCount, agreementsCount, savedAt}` immediately after the existing `team-identity-charter` write

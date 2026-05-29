@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
+import html2canvas from 'html2canvas'
 import type { WorkshopStep, WorkingAgreement, TeamCharter } from './types'
 import { SYMBOLS, VALUE_CARDS, AGREEMENT_PROMPTS } from './data/symbols'
 
@@ -25,6 +26,7 @@ export default function App() {
   const [customValue, setCustomValue] = useState('')
   const [newAgreement, setNewAgreement] = useState('')
   const [saved, setSaved] = useState(false)
+  const [copying, setCopying] = useState(false)
   const [showLearn, setShowLearn] = useState(false)
 
   const patch = (partial: Partial<TeamCharter>) => setCharter(c => ({ ...c, ...partial }))
@@ -71,6 +73,28 @@ export default function App() {
     }))
     setSaved(true)
     setTimeout(() => setSaved(false), 2000)
+  }
+
+  const copyImage = async () => {
+    const el = document.getElementById('charter-card')
+    if (!el) return
+    setCopying(true)
+    try {
+      const canvas = await html2canvas(el, { useCORS: true, backgroundColor: null })
+      const blob = await new Promise<Blob | null>(resolve => canvas.toBlob(resolve, 'image/png'))
+      if (blob && navigator.clipboard?.write) {
+        await navigator.clipboard.write([new ClipboardItem({ 'image/png': blob })])
+      } else if (blob) {
+        const url = URL.createObjectURL(blob)
+        const a = document.createElement('a')
+        a.href = url
+        a.download = `${charter.teamName || 'team-charter'}.png`
+        a.click()
+        URL.revokeObjectURL(url)
+      }
+    } finally {
+      setCopying(false)
+    }
   }
 
   const steps = t('intro.steps', { returnObjects: true }) as string[]
@@ -340,6 +364,7 @@ export default function App() {
               <h1 className="text-2xl font-bold">{t('charter.title')}</h1>
               <div className="flex gap-2">
                 <button onClick={saveCharter} className="btn-primary">{saved ? t('charter.saved') : t('charter.save')}</button>
+                <button onClick={copyImage} disabled={copying} className="btn-secondary">{copying ? '…' : t('charter.share')}</button>
                 <button onClick={() => window.print()} className="btn-secondary">{t('charter.print')}</button>
                 <button onClick={() => { setCharter(defaultCharter()); setStep('intro') }} className="btn-ghost">{t('charter.restart')}</button>
               </div>
