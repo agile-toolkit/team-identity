@@ -25,7 +25,11 @@
     "min_note": "Выберыце 3–5 каштоўнасцей",
     "custom_label": "Дадаць уласную каштоўнасць",
     "custom_placeholder": "Увядзіце і націсніце Enter",
-    "selected": "выбрана"
+    "selected": "выбрана",
+    "import_mm_banner": "Знойдзена сесія Moving Motivators — імпартаваць топ-матыватары як прапанаваныя каштоўнасці?",
+    "import_mm_import": "Імпартаваць",
+    "import_mm_dismiss": "Адхіліць",
+    "from_mm": "MM"
   },
   "agreements": {
     "title": "Рабочыя пагадненні",

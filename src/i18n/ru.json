@@ -25,7 +25,11 @@
     "min_note": "Выберите 3–5 ценностей",
     "custom_label": "Добавить свою ценность",
     "custom_placeholder": "Введите и нажмите Enter",
-    "selected": "выбрано"
+    "selected": "выбрано",
+    "import_mm_banner": "Найдена сессия Moving Motivators — импортировать топ-мотиваторы как предложенные ценности?",
+    "import_mm_import": "Импортировать",
+    "import_mm_dismiss": "Отклонить",
+    "from_mm": "MM"
   },
   "agreements": {
     "title": "Рабочие соглашения",

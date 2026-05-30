@@ -25,7 +25,11 @@
     "min_note": "Selecciona 3–5 valores",
     "custom_label": "Añadir valor personalizado",
     "custom_placeholder": "Escribe y pulsa Enter",
-    "selected": "seleccionados"
+    "selected": "seleccionados",
+    "import_mm_banner": "Se encontró una sesión de Moving Motivators — ¿importar los motivadores principales como valores sugeridos?",
+    "import_mm_import": "Importar",
+    "import_mm_dismiss": "Ignorar",
+    "from_mm": "MM"
   },
   "agreements": {
     "title": "Acuerdos de Trabajo",

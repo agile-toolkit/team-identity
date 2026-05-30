@@ -25,7 +25,11 @@
     "min_note": "Select 3–5 values",
     "custom_label": "Add custom value",
     "custom_placeholder": "Type and press Enter",
-    "selected": "selected"
+    "selected": "selected",
+    "import_mm_banner": "Moving Motivators session found — import top motivators as suggested values?",
+    "import_mm_import": "Import",
+    "import_mm_dismiss": "Dismiss",
+    "from_mm": "MM"
   },
   "agreements": {
     "title": "Working Agreements",
