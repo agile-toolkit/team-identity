@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
 import html2canvas from 'html2canvas'
 import type { WorkshopStep, WorkingAgreement, TeamCharter } from './types'
@@ -6,6 +6,18 @@ import { SYMBOLS, VALUE_CARDS, AGREEMENT_PROMPTS } from './data/symbols'
 
 const STORAGE_KEY = 'team-identity-charter'
 const STEPS: WorkshopStep[] = ['intro', 'name', 'symbol', 'values', 'agreements', 'charter']
+
+function readMmTopMotivators(): string[] | null {
+  try {
+    const raw = localStorage.getItem('moving-motivators:lastSession')
+    if (!raw) return null
+    const session = JSON.parse(raw) as { ranked?: string[] }
+    if (!Array.isArray(session.ranked) || session.ranked.length === 0) return null
+    return session.ranked.slice(0, 3).map(id => id.charAt(0).toUpperCase() + id.slice(1))
+  } catch {
+    return null
+  }
+}
 
 function loadCharter(): TeamCharter | null {
   try { return JSON.parse(localStorage.getItem(STORAGE_KEY) ?? 'null') } catch { return null }
@@ -28,6 +40,15 @@ export default function App() {
   const [saved, setSaved] = useState(false)
   const [copying, setCopying] = useState(false)
   const [showLearn, setShowLearn] = useState(false)
+  const [mmMotivators, setMmMotivators] = useState<string[] | null>(null)
+  const [mmDismissed, setMmDismissed] = useState(false)
+  const [mmImported, setMmImported] = useState<string[]>([])
+
+  useEffect(() => {
+    if (step === 'values' && !mmDismissed && mmMotivators === null) {
+      setMmMotivators(readMmTopMotivators())
+    }
+  }, [step])
 
   const patch = (partial: Partial<TeamCharter>) => setCharter(c => ({ ...c, ...partial }))
 
@@ -54,6 +75,16 @@ export default function App() {
         ? charter.values.filter(x => x !== v)
         : [...charter.values, v],
     })
+  }
+
+  const importMmMotivators = () => {
+    if (!mmMotivators) return
+    const toAdd = mmMotivators.filter(v => !charter.values.includes(v))
+    if (toAdd.length > 0) {
+      patch({ values: [...charter.values, ...toAdd] })
+      setMmImported(prev => [...new Set([...prev, ...toAdd])])
+    }
+    setMmDismissed(true)
   }
 
   const addAgreement = (text: string) => {
@@ -274,6 +305,22 @@ export default function App() {
             <h2 className="text-2xl font-bold mb-2">{t('values.title')}</h2>
             <p className="text-gray-500 text-sm mb-1">{t('values.subtitle')}</p>
             <p className="text-xs text-brand-600 mb-4">{charter.values.length} {t('values.selected')} — {t('values.min_note')}</p>
+
+            {/* MM import banner */}
+            {mmMotivators && !mmDismissed && (
+              <div className="flex items-center justify-between bg-amber-50 border border-amber-200 rounded-xl px-4 py-3 mb-4 gap-3">
+                <p className="text-sm text-amber-800 flex-1">{t('values.import_mm_banner')}</p>
+                <div className="flex gap-2 shrink-0">
+                  <button onClick={importMmMotivators} className="text-sm font-medium text-amber-900 bg-amber-200 hover:bg-amber-300 px-3 py-1 rounded-lg transition-colors">
+                    {t('values.import_mm_import')}
+                  </button>
+                  <button onClick={() => setMmDismissed(true)} className="text-sm text-amber-600 hover:text-amber-800 px-2 py-1 rounded-lg transition-colors">
+                    {t('values.import_mm_dismiss')}
+                  </button>
+                </div>
+              </div>
+            )}
+
             <div className="flex flex-wrap gap-2 mb-6">
               {VALUE_CARDS.map(v => (
                 <button
@@ -286,12 +333,23 @@ export default function App() {
                   }`}
                 >
                   {v}
+                  {mmImported.includes(v) && (
+                    <span className="ml-1.5 text-[10px] bg-white/25 text-white px-1.5 py-0.5 rounded-full align-middle">
+                      {t('values.from_mm')}
+                    </span>
+                  )}
                 </button>
               ))}
               {charter.values.filter(v => !VALUE_CARDS.includes(v)).map(v => (
                 <button key={v} onClick={() => toggleValue(v)}
-                  className="px-4 py-2 rounded-xl border text-sm font-medium bg-brand-600 text-white border-brand-600">
-                  {v} ✕
+                  className="px-4 py-2 rounded-xl border text-sm font-medium bg-brand-600 text-white border-brand-600 flex items-center gap-1.5">
+                  {v}
+                  {mmImported.includes(v) && (
+                    <span className="text-[10px] bg-white/25 text-white px-1.5 py-0.5 rounded-full">
+                      {t('values.from_mm')}
+                    </span>
+                  )}
+                  <span>✕</span>
                 </button>
               ))}
             </div>
