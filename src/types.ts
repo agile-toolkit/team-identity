@@ -12,5 +12,6 @@ export interface TeamCharter {
   customSymbol: string
   values: string[]
   agreements: WorkingAgreement[]
+  members?: string[]
   savedAt?: number
 }
