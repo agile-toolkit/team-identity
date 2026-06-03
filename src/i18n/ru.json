@@ -52,7 +52,9 @@
     "values_title": "Наши ценности",
     "agreements_title": "Рабочие соглашения",
     "symbol_title": "Наш символ",
-    "created": "Создано"
+    "created": "Создано",
+    "members_title": "Участники",
+    "import_wp": "Импортировать участников"
   },
   "common": {
     "back": "Назад",

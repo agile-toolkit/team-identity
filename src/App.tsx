@@ -7,6 +7,21 @@ import { SYMBOLS, VALUE_CARDS, AGREEMENT_PROMPTS } from './data/symbols'
 const STORAGE_KEY = 'team-identity-charter'
 const STEPS: WorkshopStep[] = ['intro', 'name', 'symbol', 'values', 'agreements', 'charter']
 
+function readWpParticipants(): string[] | null {
+  try {
+    const raw = localStorage.getItem('work-profiles-data')
+    if (!raw) return null
+    const profiles = JSON.parse(raw) as Array<{ name?: string; archived?: boolean }>
+    if (!Array.isArray(profiles) || profiles.length === 0) return null
+    const names = profiles
+      .filter(p => !p.archived && p.name)
+      .map(p => p.name as string)
+    return names.length > 0 ? names : null
+  } catch {
+    return null
+  }
+}
+
 function readMmTopMotivators(): string[] | null {
   try {
     const raw = localStorage.getItem('moving-motivators:lastSession')
@@ -43,10 +58,14 @@ export default function App() {
   const [mmMotivators, setMmMotivators] = useState<string[] | null>(null)
   const [mmDismissed, setMmDismissed] = useState(false)
   const [mmImported, setMmImported] = useState<string[]>([])
+  const [wpParticipants, setWpParticipants] = useState<string[] | null>(null)
 
   useEffect(() => {
     if (step === 'values' && !mmDismissed && mmMotivators === null) {
       setMmMotivators(readMmTopMotivators())
+    }
+    if (step === 'charter' && wpParticipants === null) {
+      setWpParticipants(readWpParticipants())
     }
   }, [step])
 
@@ -100,6 +119,7 @@ export default function App() {
       symbol: charter.customSymbol || charter.symbol,
       valuesCount: charter.values.length,
       agreementsCount: charter.agreements.length,
+      membersCount: (charter.members ?? []).length,
       savedAt: Date.now(),
     }))
     setSaved(true)
@@ -421,6 +441,14 @@ export default function App() {
             <div className="flex items-center justify-between mb-6">
               <h1 className="text-2xl font-bold">{t('charter.title')}</h1>
               <div className="flex gap-2">
+                {wpParticipants && !charter.members && (
+                  <button
+                    onClick={() => patch({ members: wpParticipants })}
+                    className="btn-secondary text-sm"
+                  >
+                    {t('charter.import_wp')}
+                  </button>
+                )}
                 <button onClick={saveCharter} className="btn-primary">{saved ? t('charter.saved') : t('charter.save')}</button>
                 <button onClick={copyImage} disabled={copying} className="btn-secondary">{copying ? '…' : t('charter.share')}</button>
                 <button onClick={() => window.print()} className="btn-secondary">{t('charter.print')}</button>
@@ -435,6 +463,17 @@ export default function App() {
                 <h2 className="text-3xl font-bold">{charter.teamName || t('charter.team_name_fallback')}</h2>
                 <p className="text-brand-200 text-sm mt-1">{t('charter.created')}: {new Date().toLocaleDateString()}</p>
               </div>
+
+              {charter.members && charter.members.length > 0 && (
+                <div className="mb-5">
+                  <h3 className="font-semibold text-brand-100 text-xs uppercase tracking-wider mb-2">{t('charter.members_title')}</h3>
+                  <div className="flex flex-wrap gap-1.5">
+                    {charter.members.map(m => (
+                      <span key={m} className="px-3 py-1 bg-white/20 rounded-full text-xs font-medium">{m}</span>
+                    ))}
+                  </div>
+                </div>
+              )}
 
               <div className="grid grid-cols-2 gap-5">
                 <div>

@@ -52,7 +52,9 @@
     "values_title": "Нашы каштоўнасці",
     "agreements_title": "Рабочыя пагадненні",
     "symbol_title": "Наш сімвал",
-    "created": "Створана"
+    "created": "Створана",
+    "members_title": "Удзельнікі",
+    "import_wp": "Імпартаваць удзельнікаў"
   },
   "common": {
     "back": "Назад",

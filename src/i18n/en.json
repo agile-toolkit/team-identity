@@ -52,7 +52,9 @@
     "values_title": "Our Values",
     "agreements_title": "Working Agreements",
     "symbol_title": "Our Symbol",
-    "created": "Created"
+    "created": "Created",
+    "members_title": "Team Members",
+    "import_wp": "Import Participants"
   },
   "common": {
     "back": "Back",
