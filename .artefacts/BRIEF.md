@@ -16,6 +16,7 @@ Workshop flow for team name, symbol, values, and working agreements (Identity Sy
 - [x] Charter image export (#4) — "Copy Image" button on charter step using html2canvas; clipboard write with download fallback; `charter.share` i18n key in all 4 locales — `saveCharter()` writes `team-identity:lastSession` with `{teamName, symbol, valuesCount, agreementsCount, savedAt}` for Dashboard card integration (#10)
 - [x] Moving Motivators integration (#5) — on values step, reads `moving-motivators:lastSession` from localStorage; if present shows dismissible amber banner; "Import" adds top 3 ranked motivators as values with "MM" badge; i18n keys `values.import_mm_banner/import/dismiss/from_mm` in EN/ES/BE/RU
 - [x] Work Profiles participant import (#6) — on charter step, reads `work-profiles-data` from localStorage; "Import Participants" button appears when WP data present and no members imported yet; imported names shown as pill tags in "Team Members" section between symbol and values on charter card; `TeamCharter.members?: string[]` field added; `membersCount` included in `team-identity:lastSession` key; i18n keys `charter.members_title/import_wp` in EN/ES/BE/RU
+- [x] Draft auto-save (#17) — `writeDraft()` called on every `next()`/`back()` transition, saves `{charter, step, savedAt}` to `team-identity:draft`; on mount, banner shown if draft is newer than saved charter; "Resume" restores charter+step, "Discard" clears draft; `saveCharter()` and "Start Over" both clear the draft key; i18n keys `draft.resume_prompt/resume/discard` in EN/ES/BE/RU
 
 ## localStorage keys
 
@@ -23,6 +24,7 @@ Workshop flow for team name, symbol, values, and working agreements (Identity Sy
 |-----|-----------|---------|
 | `team-identity-charter` | `App.tsx` `saveCharter()` | Full `TeamCharter` object + `savedAt` timestamp |
 | `team-identity:lastSession` | `App.tsx` `saveCharter()` | Dashboard summary: `{teamName, symbol, valuesCount, agreementsCount, membersCount, savedAt}` |
+| `team-identity:draft` | `App.tsx` `writeDraft()` | In-progress session: `{charter, step, savedAt}`; cleared on save or discard |
 
 ## Backlog
 
@@ -39,7 +41,7 @@ Workshop flow for team name, symbol, values, and working agreements (Identity Sy
 - [ ] [#14] Research: Charter history and version comparison (store array of versioned charters, diff view)
 - [ ] [#15] Research: Scrum values alignment layer in the values step (map values to Scrum/Agile principles)
 - [ ] [#16] Integration: Team Identity → Planning Poker + Sprint Metrics (team context banner, scoped to those repos)
-- [ ] [#17] Feature: Draft auto-save between workshop steps (write team-identity:draft on step transitions; resume banner on mount)
+- [x] [#17] Feature: Draft auto-save between workshop steps (write team-identity:draft on step transitions; resume banner on mount)
 - [ ] [#18] Integration: Change Planner — read team-identity-charter to pre-fill team context in change scenarios (scoped to change-planner repo)
 - [ ] [#19] UX: Facilitator/projector display mode — CSS class toggle for larger text and cards on projected displays
 
@@ -49,6 +51,11 @@ Workshop flow for team name, symbol, values, and working agreements (Identity Sy
 - GitHub Project #13 created for this repo (project ID: `PVT_kwDOEGuPAc4BXTDB`).
 
 ## Agent Log
+
+### 2026-06-07 — feat: Draft auto-save between workshop steps (issue #17)
+- Done: added `DRAFT_KEY = 'team-identity:draft'` constant; `loadDraft()` helper; `writeDraft(charter, step)` called in `next()`/`back()` on every step transition; mount effect checks draft vs saved charter timestamp and sets `showDraftBanner`; dismissible blue banner on intro step with "Resume" (restores charter+step) and "Discard" (clears key) buttons; `saveCharter()` and "Start Over" both call `localStorage.removeItem(DRAFT_KEY)`; i18n keys `draft.resume_prompt`, `draft.resume`, `draft.discard` added in EN/ES/BE/RU
+- Issue #17 fully implemented; setting to In Review
+- Next task: check issues for human feedback; implement next approved item among #7 (URL hash sharing), #12 (keyboard accessibility), #19 (facilitator display mode), #26 (multi-team support)
 
 ### 2026-06-03 — feat: Work Profiles participant import (issue #6)
 - Done: `readWpParticipants()` reads `work-profiles-data` from localStorage (filters archived); "Import Participants" button on charter step visible only when WP data present and members not yet imported; imports all active participant names as `charter.members`; "Team Members" section added to charter card between symbol/name and values/agreements grid; `TeamCharter.members?: string[]` field added to types; `membersCount` added to `team-identity:lastSession`; i18n keys `charter.members_title` + `charter.import_wp` in EN/ES/BE/RU

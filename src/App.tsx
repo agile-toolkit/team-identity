@@ -5,6 +5,7 @@ import type { WorkshopStep, WorkingAgreement, TeamCharter } from './types'
 import { SYMBOLS, VALUE_CARDS, AGREEMENT_PROMPTS } from './data/symbols'
 
 const STORAGE_KEY = 'team-identity-charter'
+const DRAFT_KEY = 'team-identity:draft'
 const STEPS: WorkshopStep[] = ['intro', 'name', 'symbol', 'values', 'agreements', 'charter']
 
 function readWpParticipants(): string[] | null {
@@ -38,6 +39,10 @@ function loadCharter(): TeamCharter | null {
   try { return JSON.parse(localStorage.getItem(STORAGE_KEY) ?? 'null') } catch { return null }
 }
 
+function loadDraft(): { charter: TeamCharter; step: WorkshopStep; savedAt: number } | null {
+  try { return JSON.parse(localStorage.getItem(DRAFT_KEY) ?? 'null') } catch { return null }
+}
+
 const defaultCharter = (): TeamCharter => ({
   teamName: '',
   symbol: '',
@@ -59,6 +64,16 @@ export default function App() {
   const [mmDismissed, setMmDismissed] = useState(false)
   const [mmImported, setMmImported] = useState<string[]>([])
   const [wpParticipants, setWpParticipants] = useState<string[] | null>(null)
+  const [showDraftBanner, setShowDraftBanner] = useState(false)
+
+  useEffect(() => {
+    const draft = loadDraft()
+    if (!draft) return
+    const saved = loadCharter() as (TeamCharter & { savedAt?: number }) | null
+    if (!saved || !saved.savedAt || draft.savedAt > saved.savedAt) {
+      setShowDraftBanner(true)
+    }
+  }, [])
 
   useEffect(() => {
     if (step === 'values' && !mmDismissed && mmMotivators === null) {
@@ -71,6 +86,25 @@ export default function App() {
 
   const patch = (partial: Partial<TeamCharter>) => setCharter(c => ({ ...c, ...partial }))
 
+  const writeDraft = (c: TeamCharter, s: WorkshopStep) => {
+    try {
+      localStorage.setItem(DRAFT_KEY, JSON.stringify({ charter: c, step: s, savedAt: Date.now() }))
+    } catch { /* quota exceeded — skip silently */ }
+  }
+
+  const resumeDraft = () => {
+    const draft = loadDraft()
+    if (!draft) return
+    setCharter(draft.charter)
+    setStep(draft.step)
+    setShowDraftBanner(false)
+  }
+
+  const discardDraft = () => {
+    localStorage.removeItem(DRAFT_KEY)
+    setShowDraftBanner(false)
+  }
+
   const stepIndex = STEPS.indexOf(step)
   const canNext = (() => {
     if (step === 'name') return charter.teamName.trim().length > 0
@@ -81,11 +115,19 @@ export default function App() {
 
   const next = () => {
     const idx = STEPS.indexOf(step)
-    if (idx < STEPS.length - 1) setStep(STEPS[idx + 1])
+    if (idx < STEPS.length - 1) {
+      const nextStep = STEPS[idx + 1]
+      setStep(nextStep)
+      writeDraft(charter, nextStep)
+    }
   }
   const back = () => {
     const idx = STEPS.indexOf(step)
-    if (idx > 0) setStep(STEPS[idx - 1])
+    if (idx > 0) {
+      const prevStep = STEPS[idx - 1]
+      setStep(prevStep)
+      writeDraft(charter, prevStep)
+    }
   }
 
   const toggleValue = (v: string) => {
@@ -122,6 +164,7 @@ export default function App() {
       membersCount: (charter.members ?? []).length,
       savedAt: Date.now(),
     }))
+    localStorage.removeItem(DRAFT_KEY)
     setSaved(true)
     setTimeout(() => setSaved(false), 2000)
   }
@@ -246,6 +289,22 @@ export default function App() {
             <div className="text-6xl mb-4">🤝</div>
             <h1 className="text-3xl font-bold mb-3">{t('intro.headline')}</h1>
             <p className="text-gray-500 mb-8 leading-relaxed">{t('intro.body')}</p>
+
+            {/* Draft resume banner */}
+            {showDraftBanner && (
+              <div className="flex items-center justify-between bg-blue-50 border border-blue-200 rounded-xl px-4 py-3 mb-6 gap-3 text-left">
+                <p className="text-sm text-blue-800 flex-1">{t('draft.resume_prompt')}</p>
+                <div className="flex gap-2 shrink-0">
+                  <button onClick={resumeDraft} className="text-sm font-medium text-blue-900 bg-blue-200 hover:bg-blue-300 px-3 py-1 rounded-lg transition-colors">
+                    {t('draft.resume')}
+                  </button>
+                  <button onClick={discardDraft} className="text-sm text-blue-600 hover:text-blue-800 px-2 py-1 rounded-lg transition-colors">
+                    {t('draft.discard')}
+                  </button>
+                </div>
+              </div>
+            )}
+
             <div className="flex gap-3 justify-center">
               <button onClick={() => setStep('name')} className="btn-primary text-base px-8 py-3">{t('intro.start')}</button>
               {loadCharter() && (
@@ -452,7 +511,7 @@ export default function App() {
                 <button onClick={saveCharter} className="btn-primary">{saved ? t('charter.saved') : t('charter.save')}</button>
                 <button onClick={copyImage} disabled={copying} className="btn-secondary">{copying ? '…' : t('charter.share')}</button>
                 <button onClick={() => window.print()} className="btn-secondary">{t('charter.print')}</button>
-                <button onClick={() => { setCharter(defaultCharter()); setStep('intro') }} className="btn-ghost">{t('charter.restart')}</button>
+                <button onClick={() => { setCharter(defaultCharter()); setStep('intro'); localStorage.removeItem(DRAFT_KEY) }} className="btn-ghost">{t('charter.restart')}</button>
               </div>
             </div>
 
