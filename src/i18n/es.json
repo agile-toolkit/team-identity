@@ -54,7 +54,9 @@
     "symbol_title": "Nuestro Símbolo",
     "created": "Creado",
     "members_title": "Miembros del Equipo",
-    "import_wp": "Importar Participantes"
+    "import_wp": "Importar Participantes",
+    "share_url": "Compartir enlace",
+    "share_copied": "¡Enlace copiado!"
   },
   "draft": {
     "resume_prompt": "Tienes una sesión de taller sin terminar — ¿deseas retomarla?",

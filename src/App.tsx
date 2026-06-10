@@ -59,6 +59,7 @@ export default function App() {
   const [newAgreement, setNewAgreement] = useState('')
   const [saved, setSaved] = useState(false)
   const [copying, setCopying] = useState(false)
+  const [linkCopied, setLinkCopied] = useState(false)
   const [showLearn, setShowLearn] = useState(false)
   const [mmMotivators, setMmMotivators] = useState<string[] | null>(null)
   const [mmDismissed, setMmDismissed] = useState(false)
@@ -67,6 +68,21 @@ export default function App() {
   const [showDraftBanner, setShowDraftBanner] = useState(false)
 
   useEffect(() => {
+    const hash = window.location.hash
+    if (hash.startsWith('#charter=')) {
+      try {
+        const encoded = hash.slice('#charter='.length)
+        const json = atob(encoded)
+        const parsed = JSON.parse(json) as TeamCharter
+        if (parsed && typeof parsed === 'object' && parsed.teamName !== undefined) {
+          setCharter(parsed)
+          setStep('charter')
+          window.history.replaceState(null, '', window.location.pathname + window.location.search)
+          return
+        }
+      } catch { /* invalid hash — ignore */ }
+    }
+
     const draft = loadDraft()
     if (!draft) return
     const saved = loadCharter() as (TeamCharter & { savedAt?: number }) | null
@@ -189,6 +205,25 @@ export default function App() {
     } finally {
       setCopying(false)
     }
+  }
+
+  const shareLink = async () => {
+    const encoded = btoa(JSON.stringify(charter))
+    const url = `${window.location.origin}${window.location.pathname}#charter=${encoded}`
+    try {
+      await navigator.clipboard.writeText(url)
+    } catch {
+      const ta = document.createElement('textarea')
+      ta.value = url
+      ta.style.position = 'fixed'
+      ta.style.opacity = '0'
+      document.body.appendChild(ta)
+      ta.select()
+      document.execCommand('copy')
+      document.body.removeChild(ta)
+    }
+    setLinkCopied(true)
+    setTimeout(() => setLinkCopied(false), 2000)
   }
 
   const steps = t('intro.steps', { returnObjects: true }) as string[]
@@ -510,6 +545,7 @@ export default function App() {
                 )}
                 <button onClick={saveCharter} className="btn-primary">{saved ? t('charter.saved') : t('charter.save')}</button>
                 <button onClick={copyImage} disabled={copying} className="btn-secondary">{copying ? '…' : t('charter.share')}</button>
+                <button onClick={shareLink} className="btn-secondary">{linkCopied ? t('charter.share_copied') : t('charter.share_url')}</button>
                 <button onClick={() => window.print()} className="btn-secondary">{t('charter.print')}</button>
                 <button onClick={() => { setCharter(defaultCharter()); setStep('intro'); localStorage.removeItem(DRAFT_KEY) }} className="btn-ghost">{t('charter.restart')}</button>
               </div>
