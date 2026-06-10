@@ -17,6 +17,7 @@ Workshop flow for team name, symbol, values, and working agreements (Identity Sy
 - [x] Moving Motivators integration (#5) — on values step, reads `moving-motivators:lastSession` from localStorage; if present shows dismissible amber banner; "Import" adds top 3 ranked motivators as values with "MM" badge; i18n keys `values.import_mm_banner/import/dismiss/from_mm` in EN/ES/BE/RU
 - [x] Work Profiles participant import (#6) — on charter step, reads `work-profiles-data` from localStorage; "Import Participants" button appears when WP data present and no members imported yet; imported names shown as pill tags in "Team Members" section between symbol and values on charter card; `TeamCharter.members?: string[]` field added; `membersCount` included in `team-identity:lastSession` key; i18n keys `charter.members_title/import_wp` in EN/ES/BE/RU
 - [x] Draft auto-save (#17) — `writeDraft()` called on every `next()`/`back()` transition, saves `{charter, step, savedAt}` to `team-identity:draft`; on mount, banner shown if draft is newer than saved charter; "Resume" restores charter+step, "Discard" clears draft; `saveCharter()` and "Start Over" both clear the draft key; i18n keys `draft.resume_prompt/resume/discard` in EN/ES/BE/RU
+- [x] Charter URL deep-link sharing (#7) — "Share Link" button on charter step; `shareLink()` base64-encodes charter JSON to `location.hash` as `#charter=<base64>`; copies URL to clipboard (fallback: execCommand); shows "Link copied!" toast auto-dismissed after 2s; on app mount, hash decoded and charter hydrated, jumping directly to charter step in editable mode; hash cleared from URL after load; i18n keys `charter.share_url/share_copied` in EN/ES/BE/RU
 
 ## localStorage keys
 
@@ -33,7 +34,7 @@ Workshop flow for team name, symbol, values, and working agreements (Identity Sy
 - [x] [#4] Feature: Charter image export (html2canvas) — implemented
 - [x] [#5] Integration: Moving Motivators → Team Identity (import motivators as values) — implemented
 - [x] [#6] Integration: Work Profiles → Team Identity (participant import via localStorage)
-- [ ] [#7] Feature: Charter deep-link sharing via URL hash (base64, clipboard copy, QR optional)
+- [x] [#7] Feature: Charter deep-link sharing via URL hash (base64, clipboard copy, QR optional)
 - [ ] [#8] Integration: Team Identity → Scrum Facilitator (team context banner — implementation in scrum-facilitator repo)
 - [x] [#10] Feature: Dashboard card integration (write `team-identity:lastSession` on save; update dashboard reader)
 - [ ] [#11] Feature: Print-optimized charter layout (`@media print` CSS, hide nav, white background)
@@ -51,6 +52,11 @@ Workshop flow for team name, symbol, values, and working agreements (Identity Sy
 - GitHub Project #13 created for this repo (project ID: `PVT_kwDOEGuPAc4BXTDB`).
 
 ## Agent Log
+
+### 2026-06-10 — feat: Charter URL deep-link sharing (issue #7)
+- Done: `shareLink()` base64-encodes charter JSON → sets `location.hash` as `#charter=<base64>` → copies full URL to clipboard (with execCommand fallback) → shows "Link copied!" toast (auto-dismiss 2s); on mount, hash decoded and charter hydrated directly to charter step; hash cleared from URL after load; i18n keys `charter.share_url`/`charter.share_copied` in EN/ES/BE/RU
+- Issue #7 fully implemented; setting to In Review
+- Next task: check issues for human feedback; implement #11 (print-optimized @media print CSS) or #12 (keyboard accessibility) if approved
 
 ### 2026-06-10 — research: found approved #7 (URL hash sharing), transitioning to implement
 - Done: Checked open issues; found approved #7 (Charter deep-link sharing via URL hash); set project status to In Progress

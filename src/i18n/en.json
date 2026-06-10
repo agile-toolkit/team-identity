@@ -54,7 +54,9 @@
     "symbol_title": "Our Symbol",
     "created": "Created",
     "members_title": "Team Members",
-    "import_wp": "Import Participants"
+    "import_wp": "Import Participants",
+    "share_url": "Share Link",
+    "share_copied": "Link copied!"
   },
   "draft": {
     "resume_prompt": "You have an unfinished workshop session — would you like to resume?",
