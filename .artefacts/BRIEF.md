@@ -52,6 +52,11 @@ Workshop flow for team name, symbol, values, and working agreements (Identity Sy
 
 ## Agent Log
 
+### 2026-06-10 — research: found approved #7 (URL hash sharing), transitioning to implement
+- Done: Checked open issues; found approved #7 (Charter deep-link sharing via URL hash); set project status to In Progress
+- Remaining: #7 not yet implemented
+- Next task: Implement #7 — add Share button on charter step; base64-encode charter JSON to `location.hash`; copy URL to clipboard; show "Link copied!" toast; on app load decode hash and hydrate charter state, jumping to charter step if valid; open in editable mode (not read-only); URL-only sharing (no QR library); keep existing localStorage path unchanged
+
 ### 2026-06-07 — feat: Draft auto-save between workshop steps (issue #17)
 - Done: added `DRAFT_KEY = 'team-identity:draft'` constant; `loadDraft()` helper; `writeDraft(charter, step)` called in `next()`/`back()` on every step transition; mount effect checks draft vs saved charter timestamp and sets `showDraftBanner`; dismissible blue banner on intro step with "Resume" (restores charter+step) and "Discard" (clears key) buttons; `saveCharter()` and "Start Over" both call `localStorage.removeItem(DRAFT_KEY)`; i18n keys `draft.resume_prompt`, `draft.resume`, `draft.discard` added in EN/ES/BE/RU
 - Issue #17 fully implemented; setting to In Review
