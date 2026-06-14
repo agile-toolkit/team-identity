@@ -376,21 +376,51 @@ export default function App() {
           <div className="max-w-2xl mx-auto">
             <h2 className="text-2xl font-bold mb-2">{t('symbol.title')}</h2>
             <p className="text-gray-500 text-sm mb-6">{t('symbol.subtitle')}</p>
-            <div className="grid grid-cols-4 sm:grid-cols-8 gap-2 mb-6">
-              {SYMBOLS.map(s => (
-                <button
-                  key={s.emoji}
-                  onClick={() => patch({ symbol: s.emoji, customSymbol: '' })}
-                  title={`${s.name}: ${s.meaning}`}
-                  className={`p-2 rounded-2xl text-3xl transition-all hover:scale-110 ${
-                    charter.symbol === s.emoji && !charter.customSymbol
-                      ? 'bg-brand-100 ring-2 ring-brand-400 scale-110'
-                      : 'bg-white border border-gray-200 hover:border-brand-300'
-                  }`}
-                >
-                  {s.emoji}
-                </button>
-              ))}
+            <div
+              role="radiogroup"
+              aria-label={t('symbol.title')}
+              className="grid grid-cols-4 sm:grid-cols-8 gap-2 mb-6"
+              onKeyDown={e => {
+                const btns = Array.from(e.currentTarget.querySelectorAll<HTMLButtonElement>('[role="radio"]'))
+                const idx = btns.indexOf(e.target as HTMLButtonElement)
+                if (idx === -1) return
+                const firstTop = btns[0].getBoundingClientRect().top
+                const cols = btns.filter(b => Math.abs(b.getBoundingClientRect().top - firstTop) < 4).length || 8
+                let next = -1
+                if (e.key === 'ArrowRight') next = Math.min(idx + 1, btns.length - 1)
+                else if (e.key === 'ArrowLeft') next = Math.max(idx - 1, 0)
+                else if (e.key === 'ArrowDown') next = Math.min(idx + cols, btns.length - 1)
+                else if (e.key === 'ArrowUp') next = Math.max(idx - cols, 0)
+                else if (e.key === 'Home') next = 0
+                else if (e.key === 'End') next = btns.length - 1
+                else return
+                e.preventDefault()
+                btns[next].focus()
+                const sym = SYMBOLS[next]
+                if (sym) patch({ symbol: sym.emoji, customSymbol: '' })
+              }}
+            >
+              {SYMBOLS.map((s, i) => {
+                const isChecked = charter.symbol === s.emoji && !charter.customSymbol
+                const noneSelected = !charter.symbol && !charter.customSymbol
+                return (
+                  <button
+                    key={s.emoji}
+                    role="radio"
+                    aria-checked={isChecked}
+                    tabIndex={isChecked || (noneSelected && i === 0) ? 0 : -1}
+                    onClick={() => patch({ symbol: s.emoji, customSymbol: '' })}
+                    title={`${s.name}: ${s.meaning}`}
+                    className={`p-2 rounded-2xl text-3xl transition-all hover:scale-110 focus-visible:ring-2 focus-visible:ring-brand-400 focus-visible:outline-none ${
+                      isChecked
+                        ? 'bg-brand-100 ring-2 ring-brand-400 scale-110'
+                        : 'bg-white border border-gray-200 hover:border-brand-300'
+                    }`}
+                  >
+                    {s.emoji}
+                  </button>
+                )
+              })}
             </div>
             {charter.symbol && !charter.customSymbol && (
               <p className="text-sm text-brand-700 bg-brand-50 rounded-xl px-4 py-2 mb-4">
@@ -398,8 +428,9 @@ export default function App() {
               </p>
             )}
             <div className="mb-6">
-              <label className="label">{t('symbol.custom_label')}</label>
+              <label htmlFor="custom-symbol-input" className="label">{t('symbol.custom_label')}</label>
               <input
+                id="custom-symbol-input"
                 className="input max-w-xs text-2xl"
                 placeholder={t('symbol.custom_placeholder')}
                 value={charter.customSymbol}
@@ -435,12 +466,30 @@ export default function App() {
               </div>
             )}
 
-            <div className="flex flex-wrap gap-2 mb-6">
+            <div
+              role="group"
+              aria-label={t('values.title')}
+              className="flex flex-wrap gap-2 mb-6"
+              onKeyDown={e => {
+                const btns = Array.from(e.currentTarget.querySelectorAll<HTMLButtonElement>('button'))
+                const idx = btns.indexOf(e.target as HTMLButtonElement)
+                if (idx === -1) return
+                let next = -1
+                if (e.key === 'ArrowRight') next = Math.min(idx + 1, btns.length - 1)
+                else if (e.key === 'ArrowLeft') next = Math.max(idx - 1, 0)
+                else if (e.key === 'Home') next = 0
+                else if (e.key === 'End') next = btns.length - 1
+                else return
+                e.preventDefault()
+                btns[next].focus()
+              }}
+            >
               {VALUE_CARDS.map(v => (
                 <button
                   key={v}
+                  aria-pressed={charter.values.includes(v)}
                   onClick={() => toggleValue(v)}
-                  className={`px-4 py-2 rounded-xl border text-sm font-medium transition-all ${
+                  className={`px-4 py-2 rounded-xl border text-sm font-medium transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-400 ${
                     charter.values.includes(v)
                       ? 'bg-brand-600 text-white border-brand-600'
                       : 'bg-white border-gray-200 text-gray-700 hover:border-brand-400'
@@ -456,20 +505,28 @@ export default function App() {
               ))}
               {charter.values.filter(v => !VALUE_CARDS.includes(v)).map(v => (
                 <button key={v} onClick={() => toggleValue(v)}
-                  className="px-4 py-2 rounded-xl border text-sm font-medium bg-brand-600 text-white border-brand-600 flex items-center gap-1.5">
+                  aria-pressed={true}
+                  className="px-4 py-2 rounded-xl border text-sm font-medium bg-brand-600 text-white border-brand-600 flex items-center gap-1.5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-400">
                   {v}
                   {mmImported.includes(v) && (
                     <span className="text-[10px] bg-white/25 text-white px-1.5 py-0.5 rounded-full">
                       {t('values.from_mm')}
                     </span>
                   )}
-                  <span>✕</span>
+                  <span aria-hidden="true">✕</span>
                 </button>
               ))}
             </div>
             <div className="flex gap-2 mb-6">
-              <input className="input flex-1" placeholder={t('values.custom_placeholder')} value={customValue} onChange={e => setCustomValue(e.target.value)}
-                onKeyDown={e => { if (e.key === 'Enter' && customValue.trim()) { toggleValue(customValue.trim()); setCustomValue('') } }} />
+              <input
+                id="custom-value-input"
+                aria-label={t('values.custom_placeholder')}
+                className="input flex-1"
+                placeholder={t('values.custom_placeholder')}
+                value={customValue}
+                onChange={e => setCustomValue(e.target.value)}
+                onKeyDown={e => { if (e.key === 'Enter' && customValue.trim()) { toggleValue(customValue.trim()); setCustomValue('') } }}
+              />
               <button onClick={() => { if (customValue.trim()) { toggleValue(customValue.trim()); setCustomValue('') } }} className="btn-secondary">
                 {t('values.custom_label')}
               </button>
@@ -492,10 +549,17 @@ export default function App() {
               <div className="space-y-2 mb-5">
                 {charter.agreements.map(ag => (
                   <div key={ag.id} className="flex items-center gap-3 bg-white border border-gray-200 rounded-xl px-4 py-2.5">
-                    <button onClick={() => patch({ agreements: charter.agreements.map(a => a.id === ag.id ? { ...a, votes: a.votes + 1 } : a) })}
-                      className="text-sm">{t('agreements.upvote')} {ag.votes > 0 && <span className="text-xs text-gray-500">{ag.votes}</span>}</button>
+                    <button
+                      onClick={() => patch({ agreements: charter.agreements.map(a => a.id === ag.id ? { ...a, votes: a.votes + 1 } : a) })}
+                      aria-label={`${t('agreements.upvote')} — ${ag.text}`}
+                      className="text-sm"
+                    >{t('agreements.upvote')} {ag.votes > 0 && <span className="text-xs text-gray-500">{ag.votes}</span>}</button>
                     <span className="flex-1 text-sm text-gray-800">{ag.text}</span>
-                    <button onClick={() => patch({ agreements: charter.agreements.filter(a => a.id !== ag.id) })} className="text-gray-200 hover:text-red-400 text-xs">{t('agreements.delete')}</button>
+                    <button
+                      onClick={() => patch({ agreements: charter.agreements.filter(a => a.id !== ag.id) })}
+                      aria-label={`${t('agreements.delete')} — ${ag.text}`}
+                      className="text-gray-200 hover:text-red-400 text-xs"
+                    >{t('agreements.delete')}</button>
                   </div>
                 ))}
               </div>
@@ -552,7 +616,12 @@ export default function App() {
             </div>
 
             {/* Charter card */}
-            <div className="bg-gradient-to-br from-brand-600 to-brand-800 rounded-3xl p-8 text-white shadow-2xl mb-6" id="charter-card">
+            <div
+              className="bg-gradient-to-br from-brand-600 to-brand-800 rounded-3xl p-8 text-white shadow-2xl mb-6"
+              id="charter-card"
+              role="region"
+              aria-label={t('charter.title')}
+            >
               <div className="text-center mb-6">
                 <div className="text-7xl mb-3">{displaySymbol}</div>
                 <h2 className="text-3xl font-bold">{charter.teamName || t('charter.team_name_fallback')}</h2>
