@@ -38,7 +38,7 @@ Workshop flow for team name, symbol, values, and working agreements (Identity Sy
 - [ ] [#8] Integration: Team Identity → Scrum Facilitator (team context banner — implementation in scrum-facilitator repo)
 - [x] [#10] Feature: Dashboard card integration (write `team-identity:lastSession` on save; update dashboard reader)
 - [ ] [#11] Feature: Print-optimized charter layout (`@media print` CSS, hide nav, white background)
-- [ ] [#12] Feature: Keyboard accessibility for symbol grid and values selection (arrow-key nav, ARIA roles)
+- [x] [#12] Feature: Keyboard accessibility for symbol grid and values selection (arrow-key nav, ARIA roles)
 - [ ] [#14] Research: Charter history and version comparison (store array of versioned charters, diff view)
 - [ ] [#15] Research: Scrum values alignment layer in the values step (map values to Scrum/Agile principles)
 - [ ] [#16] Integration: Team Identity → Planning Poker + Sprint Metrics (team context banner, scoped to those repos)
@@ -52,6 +52,11 @@ Workshop flow for team name, symbol, values, and working agreements (Identity Sy
 - GitHub Project #13 created for this repo (project ID: `PVT_kwDOEGuPAc4BXTDB`).
 
 ## Agent Log
+
+### 2026-06-14 — feat: Keyboard accessibility for symbol grid and values (#12)
+- Done: Symbol grid → `role="radiogroup"` on container + `role="radio"` + `aria-checked` on each symbol button + roving tabindex (selected item gets `tabIndex=0`, others -1, first item focusable when none selected) + `onKeyDown` handler on container (ArrowLeft/Right/Up/Down/Home/End navigate and select); Values grid → `role="group"` + `aria-pressed` on each value toggle button + `onKeyDown` for Left/Right/Home/End focus nav without toggling; Custom symbol input → `id` + `htmlFor` label association; Custom value input → `aria-label`; Charter card → `role="region"` + `aria-label`; Agreement buttons → descriptive `aria-label` including agreement text; `focus-visible:ring-2 focus-visible:ring-brand-400` added to interactive symbol and value buttons
+- Issue #12 fully implemented; setting to In Review
+- Next task: check issues for human feedback; implement #19 (facilitator/projector display mode — CSS class toggle for larger text) or #26 (multi-team support — charter library in localStorage) if approved
 
 ### 2026-06-10 — feat: Charter URL deep-link sharing (issue #7)
 - Done: `shareLink()` base64-encodes charter JSON → sets `location.hash` as `#charter=<base64>` → copies full URL to clipboard (with execCommand fallback) → shows "Link copied!" toast (auto-dismiss 2s); on mount, hash decoded and charter hydrated directly to charter step; hash cleared from URL after load; i18n keys `charter.share_url`/`charter.share_copied` in EN/ES/BE/RU
