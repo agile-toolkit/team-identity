@@ -63,6 +63,10 @@
     "resume": "Retomar",
     "discard": "Descartar"
   },
+  "facilitator": {
+    "toggle_on": "Modo Facilitador",
+    "toggle_off": "Salir del Modo Facilitador"
+  },
   "common": {
     "back": "Atrás",
     "next": "Siguiente"

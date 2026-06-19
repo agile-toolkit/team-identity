@@ -6,6 +6,7 @@ import { SYMBOLS, VALUE_CARDS, AGREEMENT_PROMPTS } from './data/symbols'
 
 const STORAGE_KEY = 'team-identity-charter'
 const DRAFT_KEY = 'team-identity:draft'
+const FACILITATOR_KEY = 'team-identity:facilitatorMode'
 const STEPS: WorkshopStep[] = ['intro', 'name', 'symbol', 'values', 'agreements', 'charter']
 
 function readWpParticipants(): string[] | null {
@@ -51,6 +52,16 @@ const defaultCharter = (): TeamCharter => ({
   agreements: [],
 })
 
+function ProjectorIcon({ className }: { className?: string }) {
+  return (
+    <svg className={className} viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5" aria-hidden="true">
+      <rect x="1" y="3" width="14" height="9" rx="1"/>
+      <path d="M8 12v2M5 14h6"/>
+      <circle cx="8" cy="7.5" r="1.5" fill="currentColor" stroke="none"/>
+    </svg>
+  )
+}
+
 export default function App() {
   const { t, i18n } = useTranslation()
   const [step, setStep] = useState<WorkshopStep>('intro')
@@ -66,6 +77,11 @@ export default function App() {
   const [mmImported, setMmImported] = useState<string[]>([])
   const [wpParticipants, setWpParticipants] = useState<string[] | null>(null)
   const [showDraftBanner, setShowDraftBanner] = useState(false)
+  const [facilitatorMode, setFacilitatorMode] = useState(() => sessionStorage.getItem(FACILITATOR_KEY) === '1')
+
+  useEffect(() => {
+    document.documentElement.classList.toggle('facilitator-mode', facilitatorMode)
+  }, [facilitatorMode])
 
   useEffect(() => {
     const hash = window.location.hash
@@ -101,6 +117,14 @@ export default function App() {
   }, [step])
 
   const patch = (partial: Partial<TeamCharter>) => setCharter(c => ({ ...c, ...partial }))
+
+  const toggleFacilitator = () => {
+    setFacilitatorMode(m => {
+      const next = !m
+      sessionStorage.setItem(FACILITATOR_KEY, next ? '1' : '0')
+      return next
+    })
+  }
 
   const writeDraft = (c: TeamCharter, s: WorkshopStep) => {
     try {
@@ -229,6 +253,17 @@ export default function App() {
   const steps = t('intro.steps', { returnObjects: true }) as string[]
   const displaySymbol = charter.customSymbol || charter.symbol
 
+  const facilitatorBtn = (
+    <button
+      onClick={toggleFacilitator}
+      aria-pressed={facilitatorMode}
+      title={facilitatorMode ? t('facilitator.toggle_off') : t('facilitator.toggle_on')}
+      className={`btn-ghost ${facilitatorMode ? 'text-brand-600 bg-brand-50' : ''}`}
+    >
+      <ProjectorIcon className="w-4 h-4" />
+    </button>
+  )
+
   if (showLearn) {
     return (
       <div className="min-h-screen flex flex-col">
@@ -249,16 +284,21 @@ export default function App() {
               </a>
               <button onClick={() => setShowLearn(false)} className="font-semibold text-brand-600">{t('app.title')}</button>
             </div>
-            <select
-              value={i18n.language.split('-')[0]}
-              onChange={e => i18n.changeLanguage(e.target.value)}
-              className="text-sm text-gray-500 px-2 py-1 rounded hover:bg-gray-100 bg-transparent border-none cursor-pointer"
-            >
-              <option value="en">EN</option>
-              <option value="es">ES</option>
-              <option value="be">BE</option>
-              <option value="ru">RU</option>
-            </select>
+            <div className="flex items-center gap-1">
+              {facilitatorBtn}
+              {!facilitatorMode && (
+                <select
+                  value={i18n.language.split('-')[0]}
+                  onChange={e => i18n.changeLanguage(e.target.value)}
+                  className="text-sm text-gray-500 px-2 py-1 rounded hover:bg-gray-100 bg-transparent border-none cursor-pointer"
+                >
+                  <option value="en">EN</option>
+                  <option value="es">ES</option>
+                  <option value="be">BE</option>
+                  <option value="ru">RU</option>
+                </select>
+              )}
+            </div>
           </div>
         </header>
         <main className="flex-1 max-w-2xl mx-auto w-full px-4 py-8 space-y-6">
@@ -282,23 +322,28 @@ export default function App() {
         <div className="max-w-3xl mx-auto px-4 h-14 flex items-center justify-between">
           <button onClick={() => setStep('intro')} className="font-semibold text-brand-600">{t('app.title')}</button>
           <div className="flex items-center gap-1">
-            <button onClick={() => setShowLearn(true)} className="btn-ghost">{t('learn.title')}</button>
-            <select
-              value={i18n.language.split('-')[0]}
-              onChange={e => i18n.changeLanguage(e.target.value)}
-              className="ml-1 text-sm text-gray-500 px-2 py-1 rounded hover:bg-gray-100 bg-transparent border-none cursor-pointer"
-            >
-              <option value="en">EN</option>
-              <option value="es">ES</option>
-              <option value="be">BE</option>
-              <option value="ru">RU</option>
-            </select>
+            {!facilitatorMode && (
+              <button onClick={() => setShowLearn(true)} className="btn-ghost">{t('learn.title')}</button>
+            )}
+            {facilitatorBtn}
+            {!facilitatorMode && (
+              <select
+                value={i18n.language.split('-')[0]}
+                onChange={e => i18n.changeLanguage(e.target.value)}
+                className="ml-1 text-sm text-gray-500 px-2 py-1 rounded hover:bg-gray-100 bg-transparent border-none cursor-pointer"
+              >
+                <option value="en">EN</option>
+                <option value="es">ES</option>
+                <option value="be">BE</option>
+                <option value="ru">RU</option>
+              </select>
+            )}
           </div>
         </div>
       </header>
 
-      {/* Progress bar */}
-      {step !== 'intro' && (
+      {/* Progress bar — hidden in facilitator mode */}
+      {step !== 'intro' && !facilitatorMode && (
         <div className="bg-white border-b border-gray-100 px-4 py-2">
           <div className="max-w-3xl mx-auto flex gap-1.5 items-center">
             {steps.map((s, i) => (
@@ -411,9 +456,11 @@ export default function App() {
                     tabIndex={isChecked || (noneSelected && i === 0) ? 0 : -1}
                     onClick={() => patch({ symbol: s.emoji, customSymbol: '' })}
                     title={`${s.name}: ${s.meaning}`}
-                    className={`p-2 rounded-2xl text-3xl transition-all hover:scale-110 focus-visible:ring-2 focus-visible:ring-brand-400 focus-visible:outline-none ${
+                    className={`rounded-2xl transition-all hover:scale-110 focus-visible:ring-2 focus-visible:ring-brand-400 focus-visible:outline-none ${
+                      facilitatorMode ? 'p-4 text-5xl' : 'p-2 text-3xl'
+                    } ${
                       isChecked
-                        ? 'bg-brand-100 ring-2 ring-brand-400 scale-110'
+                        ? `bg-brand-100 scale-110 ${facilitatorMode ? 'ring-4 ring-brand-500' : 'ring-2 ring-brand-400'}`
                         : 'bg-white border border-gray-200 hover:border-brand-300'
                     }`}
                   >
@@ -489,9 +536,11 @@ export default function App() {
                   key={v}
                   aria-pressed={charter.values.includes(v)}
                   onClick={() => toggleValue(v)}
-                  className={`px-4 py-2 rounded-xl border text-sm font-medium transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-400 ${
+                  className={`rounded-xl border font-medium transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-400 ${
+                    facilitatorMode ? 'px-6 py-3 text-base' : 'px-4 py-2 text-sm'
+                  } ${
                     charter.values.includes(v)
-                      ? 'bg-brand-600 text-white border-brand-600'
+                      ? `bg-brand-600 text-white border-brand-600 ${facilitatorMode ? 'ring-2 ring-brand-300' : ''}`
                       : 'bg-white border-gray-200 text-gray-700 hover:border-brand-400'
                   }`}
                 >
@@ -506,7 +555,9 @@ export default function App() {
               {charter.values.filter(v => !VALUE_CARDS.includes(v)).map(v => (
                 <button key={v} onClick={() => toggleValue(v)}
                   aria-pressed={true}
-                  className="px-4 py-2 rounded-xl border text-sm font-medium bg-brand-600 text-white border-brand-600 flex items-center gap-1.5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-400">
+                  className={`rounded-xl border font-medium bg-brand-600 text-white border-brand-600 flex items-center gap-1.5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-400 ${
+                    facilitatorMode ? 'px-6 py-3 text-base ring-2 ring-brand-300' : 'px-4 py-2 text-sm'
+                  }`}>
                   {v}
                   {mmImported.includes(v) && (
                     <span className="text-[10px] bg-white/25 text-white px-1.5 py-0.5 rounded-full">
@@ -623,7 +674,7 @@ export default function App() {
               aria-label={t('charter.title')}
             >
               <div className="text-center mb-6">
-                <div className="text-7xl mb-3">{displaySymbol}</div>
+                <div className={`${facilitatorMode ? 'text-9xl' : 'text-7xl'} mb-3`}>{displaySymbol}</div>
                 <h2 className="text-3xl font-bold">{charter.teamName || t('charter.team_name_fallback')}</h2>
                 <p className="text-brand-200 text-sm mt-1">{t('charter.created')}: {new Date().toLocaleDateString()}</p>
               </div>
