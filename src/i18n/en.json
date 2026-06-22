@@ -67,6 +67,21 @@
     "toggle_on": "Facilitator Mode",
     "toggle_off": "Exit Facilitator Mode"
   },
+  "teams": {
+    "title": "My Teams",
+    "empty": "No teams saved yet.",
+    "save_to_library": "Save to My Teams",
+    "save_name_placeholder": "Library name...",
+    "save_confirm": "Save",
+    "cancel": "Cancel",
+    "saved_to_library": "Saved to library!",
+    "load": "Load",
+    "delete": "Delete",
+    "rename": "Rename",
+    "rename_confirm": "Rename",
+    "rename_placeholder": "New name...",
+    "cap_warning": "Library is full (20 teams). Delete one to add more."
+  },
   "common": {
     "back": "Back",
     "next": "Next"

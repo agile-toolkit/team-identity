@@ -19,6 +19,7 @@ Workshop flow for team name, symbol, values, and working agreements (Identity Sy
 - [x] Draft auto-save (#17) — `writeDraft()` called on every `next()`/`back()` transition, saves `{charter, step, savedAt}` to `team-identity:draft`; on mount, banner shown if draft is newer than saved charter; "Resume" restores charter+step, "Discard" clears draft; `saveCharter()` and "Start Over" both clear the draft key; i18n keys `draft.resume_prompt/resume/discard` in EN/ES/BE/RU
 - [x] Charter URL deep-link sharing (#7) — "Share Link" button on charter step; `shareLink()` base64-encodes charter JSON to `location.hash` as `#charter=<base64>`; copies URL to clipboard (fallback: execCommand); shows "Link copied!" toast auto-dismissed after 2s; on app mount, hash decoded and charter hydrated, jumping directly to charter step in editable mode; hash cleared from URL after load; i18n keys `charter.share_url/share_copied` in EN/ES/BE/RU
 - [x] Facilitator/projector display mode (#19) — projector icon toggle in header (both main and showLearn views); `sessionStorage` key `team-identity:facilitatorMode`; when active: `facilitator-mode` class on `<html>` scales base font to 1.25rem; symbol grid buttons grow from `text-3xl p-2` to `text-5xl p-4`; value cards grow from `text-sm px-4 py-2` to `text-base px-6 py-3`; charter symbol grows from `text-7xl` to `text-9xl`; high-contrast ring on selected symbol (ring-4) and selected values (ring-2); language switcher and progress bar hidden; i18n keys `facilitator.toggle_on/toggle_off` in EN/ES/BE/RU
+- [x] Multi-team support (#26) — `team-identity:charters` localStorage key stores `Array<SavedCharter>` (max 20); "Save to My Teams" inline form on charter step with custom library name; "My Teams" screen lists saved charters with Load/Rename/Delete actions; loading a charter restores full charter state and navigates to charter step; "My Teams (N)" button on intro screen when library non-empty; `teams.*` i18n keys in EN/ES/BE/RU; `SavedCharter` type in `types.ts`
 
 ## localStorage keys
 
@@ -27,6 +28,7 @@ Workshop flow for team name, symbol, values, and working agreements (Identity Sy
 | `team-identity-charter` | `App.tsx` `saveCharter()` | Full `TeamCharter` object + `savedAt` timestamp |
 | `team-identity:lastSession` | `App.tsx` `saveCharter()` | Dashboard summary: `{teamName, symbol, valuesCount, agreementsCount, membersCount, savedAt}` |
 | `team-identity:draft` | `App.tsx` `writeDraft()` | In-progress session: `{charter, step, savedAt}`; cleared on save or discard |
+| `team-identity:charters` | `App.tsx` `persistCharters()` | Charter library: `Array<SavedCharter>` (max 20, newest first) |
 
 ## Backlog
 
@@ -46,6 +48,7 @@ Workshop flow for team name, symbol, values, and working agreements (Identity Sy
 - [x] [#17] Feature: Draft auto-save between workshop steps (write team-identity:draft on step transitions; resume banner on mount)
 - [ ] [#18] Integration: Change Planner — read team-identity-charter to pre-fill team context in change scenarios (scoped to change-planner repo)
 - [x] [#19] UX: Facilitator/projector display mode — CSS class toggle for larger text and cards on projected displays
+- [x] [#26] Feature: Multi-team support — charter library in `team-identity:charters`, My Teams screen with Load/Rename/Delete actions per charter
 
 ## Tech notes
 
@@ -53,6 +56,11 @@ Workshop flow for team name, symbol, values, and working agreements (Identity Sy
 - GitHub Project #13 created for this repo (project ID: `PVT_kwDOEGuPAc4BXTDB`).
 
 ## Agent Log
+
+### 2026-06-22 — feat: Multi-team support (#26)
+- Done: `team-identity:charters` localStorage key (`Array<SavedCharter>`, cap 20); `SavedCharter` type in `types.ts`; `loadCharters()`/`persistCharters()` helpers; "Save to My Teams" inline form on charter step; "My Teams" screen with Load/Rename/Delete; "My Teams (N)" button on intro when library non-empty; `teams.*` i18n keys in EN/ES/BE/RU
+- Remaining: none — issue fully implemented
+- Next task: check issues for human feedback; research cycle for next improvements
 
 ### 2026-06-19 — feat: Facilitator/projector display mode (#19)
 - Done: `facilitatorMode` state from `sessionStorage('team-identity:facilitatorMode')`; `useEffect` toggles `facilitator-mode` class on `<html>`; `html.facilitator-mode { font-size: 1.25rem }` in `index.css`; projector SVG icon button in both main and showLearn headers; language switcher + progress bar hidden in facilitator mode; symbol buttons grow (`text-5xl p-4`, `ring-4`) in facilitator mode; value card buttons grow (`text-base px-6 py-3`, `ring-2`) in facilitator mode; charter symbol grows to `text-9xl`; i18n keys `facilitator.toggle_on/toggle_off` in EN/ES/BE/RU

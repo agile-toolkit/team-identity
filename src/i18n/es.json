@@ -67,6 +67,21 @@
     "toggle_on": "Modo Facilitador",
     "toggle_off": "Salir del Modo Facilitador"
   },
+  "teams": {
+    "title": "Mis Equipos",
+    "empty": "Aún no hay equipos guardados.",
+    "save_to_library": "Guardar en Mis Equipos",
+    "save_name_placeholder": "Nombre en la biblioteca...",
+    "save_confirm": "Guardar",
+    "cancel": "Cancelar",
+    "saved_to_library": "¡Guardado en la biblioteca!",
+    "load": "Cargar",
+    "delete": "Eliminar",
+    "rename": "Renombrar",
+    "rename_confirm": "Renombrar",
+    "rename_placeholder": "Nuevo nombre...",
+    "cap_warning": "La biblioteca está llena (20 equipos). Elimina uno para añadir más."
+  },
   "common": {
     "back": "Atrás",
     "next": "Siguiente"
