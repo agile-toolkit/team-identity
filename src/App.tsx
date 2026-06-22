@@ -1,12 +1,14 @@
 import { useState, useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
 import html2canvas from 'html2canvas'
-import type { WorkshopStep, WorkingAgreement, TeamCharter } from './types'
+import type { WorkshopStep, WorkingAgreement, TeamCharter, SavedCharter } from './types'
 import { SYMBOLS, VALUE_CARDS, AGREEMENT_PROMPTS } from './data/symbols'
 
 const STORAGE_KEY = 'team-identity-charter'
 const DRAFT_KEY = 'team-identity:draft'
 const FACILITATOR_KEY = 'team-identity:facilitatorMode'
+const CHARTERS_KEY = 'team-identity:charters'
+const LIBRARY_CAP = 20
 const STEPS: WorkshopStep[] = ['intro', 'name', 'symbol', 'values', 'agreements', 'charter']
 
 function readWpParticipants(): string[] | null {
@@ -44,6 +46,19 @@ function loadDraft(): { charter: TeamCharter; step: WorkshopStep; savedAt: numbe
   try { return JSON.parse(localStorage.getItem(DRAFT_KEY) ?? 'null') } catch { return null }
 }
 
+function loadCharters(): SavedCharter[] {
+  try {
+    const raw = localStorage.getItem(CHARTERS_KEY)
+    if (!raw) return []
+    const parsed = JSON.parse(raw)
+    return Array.isArray(parsed) ? parsed : []
+  } catch { return [] }
+}
+
+function persistCharters(charters: SavedCharter[]): void {
+  try { localStorage.setItem(CHARTERS_KEY, JSON.stringify(charters)) } catch { /* quota exceeded */ }
+}
+
 const defaultCharter = (): TeamCharter => ({
   teamName: '',
   symbol: '',
@@ -78,6 +93,13 @@ export default function App() {
   const [wpParticipants, setWpParticipants] = useState<string[] | null>(null)
   const [showDraftBanner, setShowDraftBanner] = useState(false)
   const [facilitatorMode, setFacilitatorMode] = useState(() => sessionStorage.getItem(FACILITATOR_KEY) === '1')
+  const [showMyTeams, setShowMyTeams] = useState(false)
+  const [library, setLibrary] = useState<SavedCharter[]>(loadCharters)
+  const [showSaveToLibrary, setShowSaveToLibrary] = useState(false)
+  const [libraryName, setLibraryName] = useState('')
+  const [librarySaved, setLibrarySaved] = useState(false)
+  const [renamingId, setRenamingId] = useState<string | null>(null)
+  const [renameValue, setRenameValue] = useState('')
 
   useEffect(() => {
     document.documentElement.classList.toggle('facilitator-mode', facilitatorMode)
@@ -143,6 +165,40 @@ export default function App() {
   const discardDraft = () => {
     localStorage.removeItem(DRAFT_KEY)
     setShowDraftBanner(false)
+  }
+
+  const saveToLibrary = (name: string) => {
+    const charters = loadCharters()
+    if (charters.length >= LIBRARY_CAP) return
+    const entry: SavedCharter = { ...charter, id: crypto.randomUUID(), libraryName: name.trim(), savedAt: Date.now() }
+    const updated = [entry, ...charters]
+    persistCharters(updated)
+    setLibrary(updated)
+    setLibraryName('')
+    setShowSaveToLibrary(false)
+    setLibrarySaved(true)
+    setTimeout(() => setLibrarySaved(false), 2000)
+  }
+
+  const loadFromLibrary = (saved: SavedCharter) => {
+    const { id: _id, libraryName: _name, ...charterData } = saved
+    setCharter(charterData)
+    setStep('charter')
+    setShowMyTeams(false)
+  }
+
+  const deleteFromLibrary = (id: string) => {
+    const updated = library.filter(c => c.id !== id)
+    persistCharters(updated)
+    setLibrary(updated)
+  }
+
+  const renameInLibrary = (id: string, newName: string) => {
+    const updated = library.map(c => c.id === id ? { ...c, libraryName: newName.trim() } : c)
+    persistCharters(updated)
+    setLibrary(updated)
+    setRenamingId(null)
+    setRenameValue('')
   }
 
   const stepIndex = STEPS.indexOf(step)
@@ -263,6 +319,85 @@ export default function App() {
       <ProjectorIcon className="w-4 h-4" />
     </button>
   )
+
+  if (showMyTeams) {
+    return (
+      <div className="min-h-screen flex flex-col">
+        <header className="bg-white border-b border-gray-200 sticky top-0 z-10">
+          <div className="max-w-3xl mx-auto px-4 h-14 flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              <a
+                href="https://agile-toolkit.github.io/"
+                title="Agile Toolkit"
+                className="text-gray-400 hover:text-gray-600 transition-colors flex-shrink-0"
+              >
+                <svg className="w-4 h-4" viewBox="0 0 16 16" fill="currentColor">
+                  <rect x="1" y="1" width="6" height="6" rx="1"/>
+                  <rect x="9" y="1" width="6" height="6" rx="1"/>
+                  <rect x="1" y="9" width="6" height="6" rx="1"/>
+                  <rect x="9" y="9" width="6" height="6" rx="1"/>
+                </svg>
+              </a>
+              <button onClick={() => setShowMyTeams(false)} className="font-semibold text-brand-600">{t('app.title')}</button>
+            </div>
+          </div>
+        </header>
+        <main className="flex-1 max-w-2xl mx-auto w-full px-4 py-8">
+          <div className="flex items-center justify-between mb-6">
+            <h1 className="text-2xl font-bold">{t('teams.title')}</h1>
+            <button onClick={() => setShowMyTeams(false)} className="btn-ghost">{t('common.back')}</button>
+          </div>
+          {library.length === 0 ? (
+            <p className="text-gray-400 text-center py-16">{t('teams.empty')}</p>
+          ) : (
+            <div className="space-y-3">
+              {library.map(saved => (
+                <div key={saved.id} className="bg-white border border-gray-200 rounded-2xl px-5 py-4 flex items-center gap-4">
+                  <span className="text-3xl">{saved.customSymbol || saved.symbol}</span>
+                  <div className="flex-1 min-w-0">
+                    {renamingId === saved.id ? (
+                      <div className="flex gap-2 items-center">
+                        <input
+                          autoFocus
+                          className="input flex-1 text-sm"
+                          value={renameValue}
+                          onChange={e => setRenameValue(e.target.value)}
+                          onKeyDown={e => { if (e.key === 'Enter' && renameValue.trim()) renameInLibrary(saved.id, renameValue) }}
+                        />
+                        <button onClick={() => renameInLibrary(saved.id, renameValue)} disabled={!renameValue.trim()} className="btn-primary text-xs">{t('teams.rename_confirm')}</button>
+                        <button onClick={() => setRenamingId(null)} className="btn-ghost text-xs">{t('teams.cancel')}</button>
+                      </div>
+                    ) : (
+                      <>
+                        <p className="font-semibold text-gray-900 truncate">{saved.libraryName}</p>
+                        <p className="text-xs text-gray-400">{saved.teamName} · {saved.values.length} {t('values.selected')} · {new Date(saved.savedAt ?? 0).toLocaleDateString()}</p>
+                      </>
+                    )}
+                  </div>
+                  {renamingId !== saved.id && (
+                    <div className="flex gap-1.5 shrink-0">
+                      <button
+                        onClick={() => loadFromLibrary(saved)}
+                        className="btn-primary text-sm"
+                      >{t('teams.load')}</button>
+                      <button
+                        onClick={() => { setRenamingId(saved.id); setRenameValue(saved.libraryName) }}
+                        className="btn-secondary text-sm"
+                      >{t('teams.rename')}</button>
+                      <button
+                        onClick={() => deleteFromLibrary(saved.id)}
+                        className="btn-ghost text-sm text-red-400 hover:text-red-600"
+                      >{t('teams.delete')}</button>
+                    </div>
+                  )}
+                </div>
+              ))}
+            </div>
+          )}
+        </main>
+      </div>
+    )
+  }
 
   if (showLearn) {
     return (
@@ -385,11 +520,16 @@ export default function App() {
               </div>
             )}
 
-            <div className="flex gap-3 justify-center">
+            <div className="flex gap-3 justify-center flex-wrap">
               <button onClick={() => setStep('name')} className="btn-primary text-base px-8 py-3">{t('intro.start')}</button>
               {loadCharter() && (
                 <button onClick={() => { const c = loadCharter(); if (c) { setCharter(c); setStep('charter') } }} className="btn-secondary">
                   {t('intro.load')}
+                </button>
+              )}
+              {library.length > 0 && (
+                <button onClick={() => setShowMyTeams(true)} className="btn-secondary">
+                  {t('teams.title')} ({library.length})
                 </button>
               )}
             </div>
@@ -647,9 +787,9 @@ export default function App() {
         {/* CHARTER */}
         {step === 'charter' && (
           <div className="max-w-2xl mx-auto">
-            <div className="flex items-center justify-between mb-6">
+            <div className="flex items-center justify-between mb-4 flex-wrap gap-2">
               <h1 className="text-2xl font-bold">{t('charter.title')}</h1>
-              <div className="flex gap-2">
+              <div className="flex gap-2 flex-wrap">
                 {wpParticipants && !charter.members && (
                   <button
                     onClick={() => patch({ members: wpParticipants })}
@@ -664,6 +804,41 @@ export default function App() {
                 <button onClick={() => window.print()} className="btn-secondary">{t('charter.print')}</button>
                 <button onClick={() => { setCharter(defaultCharter()); setStep('intro'); localStorage.removeItem(DRAFT_KEY) }} className="btn-ghost">{t('charter.restart')}</button>
               </div>
+            </div>
+
+            {/* Save to Library */}
+            <div className="mb-4">
+              {!showSaveToLibrary ? (
+                <div className="flex items-center gap-2">
+                  {librarySaved ? (
+                    <span className="text-sm text-green-600 font-medium">{t('teams.saved_to_library')}</span>
+                  ) : library.length >= LIBRARY_CAP ? (
+                    <span className="text-xs text-amber-600">{t('teams.cap_warning')}</span>
+                  ) : (
+                    <button onClick={() => { setLibraryName(charter.teamName || ''); setShowSaveToLibrary(true) }} className="btn-ghost text-sm">
+                      + {t('teams.save_to_library')}
+                    </button>
+                  )}
+                  {library.length > 0 && (
+                    <button onClick={() => setShowMyTeams(true)} className="btn-ghost text-sm">
+                      {t('teams.title')} ({library.length})
+                    </button>
+                  )}
+                </div>
+              ) : (
+                <div className="flex gap-2 items-center">
+                  <input
+                    autoFocus
+                    className="input flex-1 max-w-xs"
+                    placeholder={t('teams.save_name_placeholder')}
+                    value={libraryName}
+                    onChange={e => setLibraryName(e.target.value)}
+                    onKeyDown={e => { if (e.key === 'Enter' && libraryName.trim()) saveToLibrary(libraryName) }}
+                  />
+                  <button onClick={() => saveToLibrary(libraryName)} disabled={!libraryName.trim()} className="btn-primary text-sm">{t('teams.save_confirm')}</button>
+                  <button onClick={() => setShowSaveToLibrary(false)} className="btn-ghost text-sm">{t('teams.cancel')}</button>
+                </div>
+              )}
             </div>
 
             {/* Charter card */}

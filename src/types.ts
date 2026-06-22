@@ -15,3 +15,8 @@ export interface TeamCharter {
   members?: string[]
   savedAt?: number
 }
+
+export interface SavedCharter extends TeamCharter {
+  id: string
+  libraryName: string
+}
