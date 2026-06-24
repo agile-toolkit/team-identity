@@ -56,7 +56,10 @@
     "members_title": "Участники",
     "import_wp": "Импортировать участников",
     "share_url": "Поделиться ссылкой",
-    "share_copied": "Ссылка скопирована!"
+    "share_copied": "Ссылка скопирована!",
+    "scrum_toggle_show": "Ценности Scrum",
+    "scrum_toggle_hide": "Скрыть ценности Scrum",
+    "scrum_coverage": "Ценности Scrum: {{covered}}/5"
   },
   "draft": {
     "resume_prompt": "У вас есть незавершённая сессия воркшопа — хотите продолжить?",

@@ -20,6 +20,7 @@ Workshop flow for team name, symbol, values, and working agreements (Identity Sy
 - [x] Charter URL deep-link sharing (#7) — "Share Link" button on charter step; `shareLink()` base64-encodes charter JSON to `location.hash` as `#charter=<base64>`; copies URL to clipboard (fallback: execCommand); shows "Link copied!" toast auto-dismissed after 2s; on app mount, hash decoded and charter hydrated, jumping directly to charter step in editable mode; hash cleared from URL after load; i18n keys `charter.share_url/share_copied` in EN/ES/BE/RU
 - [x] Facilitator/projector display mode (#19) — projector icon toggle in header (both main and showLearn views); `sessionStorage` key `team-identity:facilitatorMode`; when active: `facilitator-mode` class on `<html>` scales base font to 1.25rem; symbol grid buttons grow from `text-3xl p-2` to `text-5xl p-4`; value cards grow from `text-sm px-4 py-2` to `text-base px-6 py-3`; charter symbol grows from `text-7xl` to `text-9xl`; high-contrast ring on selected symbol (ring-4) and selected values (ring-2); language switcher and progress bar hidden; i18n keys `facilitator.toggle_on/toggle_off` in EN/ES/BE/RU
 - [x] Multi-team support (#26) — `team-identity:charters` localStorage key stores `Array<SavedCharter>` (max 20); "Save to My Teams" inline form on charter step with custom library name; "My Teams" screen lists saved charters with Load/Rename/Delete actions; loading a charter restores full charter state and navigates to charter step; "My Teams (N)" button on intro screen when library non-empty; `teams.*` i18n keys in EN/ES/BE/RU; `SavedCharter` type in `types.ts`
+- [x] Scrum values alignment (#15) — static `src/data/scrum-values-map.ts` maps each value card to 0–2 Scrum values (Commitment/Courage/Focus/Openness/Respect); "Scrum Alignment" toggle button on charter step; when enabled, each selected value badge shows its Scrum tag(s) below it; coverage row at bottom of charter card shows 5 Scrum values with ✓/strikethrough per coverage; i18n keys `charter.scrum_toggle_show/hide/coverage` in EN/ES/BE/RU; no new dependencies
 
 ## localStorage keys
 
@@ -43,7 +44,7 @@ Workshop flow for team name, symbol, values, and working agreements (Identity Sy
 - [ ] [#11] Feature: Print-optimized charter layout (`@media print` CSS, hide nav, white background)
 - [x] [#12] Feature: Keyboard accessibility for symbol grid and values selection (arrow-key nav, ARIA roles)
 - [ ] [#14] Research: Charter history and version comparison (store array of versioned charters, diff view)
-- [ ] [#15] Research: Scrum values alignment layer in the values step (map values to Scrum/Agile principles)
+- [x] [#15] Research: Scrum values alignment layer (static map + toggleable tags on charter card)
 - [ ] [#16] Integration: Team Identity → Planning Poker + Sprint Metrics (team context banner, scoped to those repos)
 - [x] [#17] Feature: Draft auto-save between workshop steps (write team-identity:draft on step transitions; resume banner on mount)
 - [ ] [#18] Integration: Change Planner — read team-identity-charter to pre-fill team context in change scenarios (scoped to change-planner repo)
@@ -56,6 +57,11 @@ Workshop flow for team name, symbol, values, and working agreements (Identity Sy
 - GitHub Project #13 created for this repo (project ID: `PVT_kwDOEGuPAc4BXTDB`).
 
 ## Agent Log
+
+### 2026-06-24 — feat: Scrum values alignment (#15)
+- Done: `src/data/scrum-values-map.ts` with `SCRUM_VALUES` array and `SCRUM_VALUE_MAP` mapping all 20 VALUE_CARDS to 0–2 Scrum values; `showScrumAlignment` state (off by default); "Scrum Alignment" toggle button on charter step with active ring indicator; when enabled: each value badge in charter card shows its Scrum tag(s) in a sub-label; coverage row appended at bottom of charter card showing all 5 Scrum values with filled/strikethrough styles per coverage count; i18n keys `charter.scrum_toggle_show/scrum_toggle_hide/scrum_coverage` in EN/ES/BE/RU; no new dependencies
+- Remaining: none — issue fully implemented
+- Next task: check issues for human feedback; implement #14 (charter history — `team-identity:history` localStorage key, history panel on charter step, version compare) if approved; else auto-approve stale needs-review items #20 (header unification ≥35 days old) and #21 (light/dark theme ≥35 days old) then research cycle
 
 ### 2026-06-22 — feat: Multi-team support (#26)
 - Done: `team-identity:charters` localStorage key (`Array<SavedCharter>`, cap 20); `SavedCharter` type in `types.ts`; `loadCharters()`/`persistCharters()` helpers; "Save to My Teams" inline form on charter step; "My Teams" screen with Load/Rename/Delete; "My Teams (N)" button on intro when library non-empty; `teams.*` i18n keys in EN/ES/BE/RU

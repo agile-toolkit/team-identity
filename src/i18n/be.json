@@ -56,7 +56,10 @@
     "members_title": "Удзельнікі",
     "import_wp": "Імпартаваць удзельнікаў",
     "share_url": "Падзяліцца спасылкай",
-    "share_copied": "Спасылка скапіявана!"
+    "share_copied": "Спасылка скапіявана!",
+    "scrum_toggle_show": "Выраўноўванне Scrum",
+    "scrum_toggle_hide": "Схаваць выраўноўванне Scrum",
+    "scrum_coverage": "Каштоўнасці Scrum: {{covered}}/5"
   },
   "draft": {
     "resume_prompt": "У вас ёсць незавершаная сесія воркшопу — хочаце прадоўжыць?",

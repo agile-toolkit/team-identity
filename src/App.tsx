@@ -3,6 +3,7 @@ import { useTranslation } from 'react-i18next'
 import html2canvas from 'html2canvas'
 import type { WorkshopStep, WorkingAgreement, TeamCharter, SavedCharter } from './types'
 import { SYMBOLS, VALUE_CARDS, AGREEMENT_PROMPTS } from './data/symbols'
+import { SCRUM_VALUES, SCRUM_VALUE_MAP } from './data/scrum-values-map'
 
 const STORAGE_KEY = 'team-identity-charter'
 const DRAFT_KEY = 'team-identity:draft'
@@ -100,6 +101,7 @@ export default function App() {
   const [librarySaved, setLibrarySaved] = useState(false)
   const [renamingId, setRenamingId] = useState<string | null>(null)
   const [renameValue, setRenameValue] = useState('')
+  const [showScrumAlignment, setShowScrumAlignment] = useState(false)
 
   useEffect(() => {
     document.documentElement.classList.toggle('facilitator-mode', facilitatorMode)
@@ -802,6 +804,7 @@ export default function App() {
                 <button onClick={copyImage} disabled={copying} className="btn-secondary">{copying ? '…' : t('charter.share')}</button>
                 <button onClick={shareLink} className="btn-secondary">{linkCopied ? t('charter.share_copied') : t('charter.share_url')}</button>
                 <button onClick={() => window.print()} className="btn-secondary">{t('charter.print')}</button>
+                <button onClick={() => setShowScrumAlignment(v => !v)} className={`btn-secondary text-sm ${showScrumAlignment ? 'ring-2 ring-brand-400' : ''}`}>{showScrumAlignment ? t('charter.scrum_toggle_hide') : t('charter.scrum_toggle_show')}</button>
                 <button onClick={() => { setCharter(defaultCharter()); setStep('intro'); localStorage.removeItem(DRAFT_KEY) }} className="btn-ghost">{t('charter.restart')}</button>
               </div>
             </div>
@@ -869,9 +872,17 @@ export default function App() {
                 <div>
                   <h3 className="font-semibold text-brand-100 text-xs uppercase tracking-wider mb-2">{t('charter.values_title')}</h3>
                   <div className="flex flex-wrap gap-1.5">
-                    {charter.values.map(v => (
-                      <span key={v} className="px-3 py-1 bg-white/20 rounded-full text-xs font-medium">{v}</span>
-                    ))}
+                    {charter.values.map(v => {
+                      const tags = SCRUM_VALUE_MAP[v] ?? []
+                      return (
+                        <div key={v} className="flex flex-col items-start gap-0.5">
+                          <span className="px-3 py-1 bg-white/20 rounded-full text-xs font-medium">{v}</span>
+                          {showScrumAlignment && tags.length > 0 && (
+                            <span className="px-2 py-0.5 bg-white/10 rounded-full text-[10px] text-brand-200 ml-1">{tags.join(', ')}</span>
+                          )}
+                        </div>
+                      )
+                    })}
                   </div>
                 </div>
                 <div>
@@ -886,6 +897,19 @@ export default function App() {
                   </ul>
                 </div>
               </div>
+              {showScrumAlignment && (() => {
+                const covered = new Set(charter.values.flatMap(v => SCRUM_VALUE_MAP[v] ?? []))
+                return (
+                  <div className="mt-5 pt-4 border-t border-white/20">
+                    <p className="text-xs font-semibold text-brand-100 uppercase tracking-wider mb-2">{t('charter.scrum_coverage', { covered: covered.size })}</p>
+                    <div className="flex flex-wrap gap-1.5">
+                      {SCRUM_VALUES.map(sv => (
+                        <span key={sv} className={`px-2 py-0.5 rounded-full text-[10px] font-medium ${covered.has(sv) ? 'bg-white/25 text-white' : 'bg-white/10 text-brand-300 line-through'}`}>{sv}</span>
+                      ))}
+                    </div>
+                  </div>
+                )
+              })()}
             </div>
 
             <div className="flex justify-start">
