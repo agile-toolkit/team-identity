@@ -56,7 +56,10 @@
     "members_title": "Team Members",
     "import_wp": "Import Participants",
     "share_url": "Share Link",
-    "share_copied": "Link copied!"
+    "share_copied": "Link copied!",
+    "scrum_toggle_show": "Scrum Alignment",
+    "scrum_toggle_hide": "Hide Scrum Alignment",
+    "scrum_coverage": "Scrum values: {{covered}}/5"
   },
   "draft": {
     "resume_prompt": "You have an unfinished workshop session — would you like to resume?",
