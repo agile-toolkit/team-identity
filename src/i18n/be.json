@@ -85,6 +85,19 @@
     "rename_placeholder": "Новая назва...",
     "cap_warning": "Бібліятэка запоўнена (20 каманд). Выдаліце адну, каб дадаць яшчэ."
   },
+  "history": {
+    "title": "Гісторыя статута",
+    "compare_hint": "Выберыце версію для параўнання з бягучай",
+    "comparing": "Параўнанне з версіяй ад {{date}}",
+    "comparing_active": "Параўноўваецца",
+    "compare": "Параўнаць",
+    "close_compare": "Закрыць",
+    "restore": "Аднавіць",
+    "latest": "Апошняя",
+    "values_diff": "Каштоўнасці",
+    "agreements_diff": "Пагадненні",
+    "no_changes": "Без змен"
+  },
   "common": {
     "back": "Назад",
     "next": "Далей"

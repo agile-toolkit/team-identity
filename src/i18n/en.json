@@ -85,6 +85,19 @@
     "rename_placeholder": "New name...",
     "cap_warning": "Library is full (20 teams). Delete one to add more."
   },
+  "history": {
+    "title": "Charter History",
+    "compare_hint": "Select a version to compare with current",
+    "comparing": "Comparing with version from {{date}}",
+    "comparing_active": "Comparing",
+    "compare": "Compare",
+    "close_compare": "Close",
+    "restore": "Restore",
+    "latest": "Latest",
+    "values_diff": "Values",
+    "agreements_diff": "Agreements",
+    "no_changes": "No changes"
+  },
   "common": {
     "back": "Back",
     "next": "Next"

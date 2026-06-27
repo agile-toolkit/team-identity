@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
 import html2canvas from 'html2canvas'
-import type { WorkshopStep, WorkingAgreement, TeamCharter, SavedCharter } from './types'
+import type { WorkshopStep, WorkingAgreement, TeamCharter, SavedCharter, HistoryEntry } from './types'
 import { SYMBOLS, VALUE_CARDS, AGREEMENT_PROMPTS } from './data/symbols'
 import { SCRUM_VALUES, SCRUM_VALUE_MAP } from './data/scrum-values-map'
 
@@ -9,7 +9,9 @@ const STORAGE_KEY = 'team-identity-charter'
 const DRAFT_KEY = 'team-identity:draft'
 const FACILITATOR_KEY = 'team-identity:facilitatorMode'
 const CHARTERS_KEY = 'team-identity:charters'
+const HISTORY_KEY = 'team-identity:history'
 const LIBRARY_CAP = 20
+const HISTORY_CAP = 10
 const STEPS: WorkshopStep[] = ['intro', 'name', 'symbol', 'values', 'agreements', 'charter']
 
 function readWpParticipants(): string[] | null {
@@ -60,6 +62,19 @@ function persistCharters(charters: SavedCharter[]): void {
   try { localStorage.setItem(CHARTERS_KEY, JSON.stringify(charters)) } catch { /* quota exceeded */ }
 }
 
+function loadHistory(): HistoryEntry[] {
+  try {
+    const raw = localStorage.getItem(HISTORY_KEY)
+    if (!raw) return []
+    const parsed = JSON.parse(raw)
+    return Array.isArray(parsed) ? parsed : []
+  } catch { return [] }
+}
+
+function persistHistory(entries: HistoryEntry[]): void {
+  try { localStorage.setItem(HISTORY_KEY, JSON.stringify(entries)) } catch { /* quota exceeded */ }
+}
+
 const defaultCharter = (): TeamCharter => ({
   teamName: '',
   symbol: '',
@@ -102,6 +117,9 @@ export default function App() {
   const [renamingId, setRenamingId] = useState<string | null>(null)
   const [renameValue, setRenameValue] = useState('')
   const [showScrumAlignment, setShowScrumAlignment] = useState(false)
+  const [showHistory, setShowHistory] = useState(false)
+  const [history, setHistory] = useState<HistoryEntry[]>(loadHistory)
+  const [compareId, setCompareId] = useState<string | null>(null)
 
   useEffect(() => {
     document.documentElement.classList.toggle('facilitator-mode', facilitatorMode)
@@ -252,7 +270,8 @@ export default function App() {
   }
 
   const saveCharter = () => {
-    const toSave = { ...charter, savedAt: Date.now() }
+    const now = Date.now()
+    const toSave = { ...charter, savedAt: now }
     localStorage.setItem(STORAGE_KEY, JSON.stringify(toSave))
     localStorage.setItem('team-identity:lastSession', JSON.stringify({
       teamName: charter.teamName,
@@ -260,9 +279,23 @@ export default function App() {
       valuesCount: charter.values.length,
       agreementsCount: charter.agreements.length,
       membersCount: (charter.members ?? []).length,
-      savedAt: Date.now(),
+      savedAt: now,
     }))
     localStorage.removeItem(DRAFT_KEY)
+
+    const entry: HistoryEntry = {
+      id: crypto.randomUUID(),
+      savedAt: now,
+      teamName: charter.teamName,
+      symbol: charter.symbol,
+      customSymbol: charter.customSymbol,
+      values: [...charter.values],
+      agreements: [...charter.agreements],
+    }
+    const updated = [entry, ...history].slice(0, HISTORY_CAP)
+    persistHistory(updated)
+    setHistory(updated)
+
     setSaved(true)
     setTimeout(() => setSaved(false), 2000)
   }
@@ -805,6 +838,11 @@ export default function App() {
                 <button onClick={shareLink} className="btn-secondary">{linkCopied ? t('charter.share_copied') : t('charter.share_url')}</button>
                 <button onClick={() => window.print()} className="btn-secondary">{t('charter.print')}</button>
                 <button onClick={() => setShowScrumAlignment(v => !v)} className={`btn-secondary text-sm ${showScrumAlignment ? 'ring-2 ring-brand-400' : ''}`}>{showScrumAlignment ? t('charter.scrum_toggle_hide') : t('charter.scrum_toggle_show')}</button>
+                {history.length > 0 && (
+                  <button onClick={() => { setShowHistory(v => !v); setCompareId(null) }} className={`btn-secondary text-sm ${showHistory ? 'ring-2 ring-brand-400' : ''}`}>
+                    {t('history.title')} ({history.length})
+                  </button>
+                )}
                 <button onClick={() => { setCharter(defaultCharter()); setStep('intro'); localStorage.removeItem(DRAFT_KEY) }} className="btn-ghost">{t('charter.restart')}</button>
               </div>
             </div>
@@ -911,6 +949,111 @@ export default function App() {
                 )
               })()}
             </div>
+
+            {/* Charter History Panel */}
+            {showHistory && (
+              <div className="mb-6">
+                <div className="flex items-center justify-between mb-3">
+                  <h2 className="text-lg font-semibold">{t('history.title')}</h2>
+                  {history.length >= 2 && (
+                    <p className="text-xs text-gray-400">{t('history.compare_hint')}</p>
+                  )}
+                </div>
+
+                {compareId && (() => {
+                  const base = history.find(h => h.id === compareId)
+                  if (!base) return null
+                  const addedValues = charter.values.filter(v => !base.values.includes(v))
+                  const removedValues = base.values.filter(v => !charter.values.includes(v))
+                  const keptValues = charter.values.filter(v => base.values.includes(v))
+                  const addedAgreements = charter.agreements.filter(a => !base.agreements.find(b => b.text === a.text))
+                  const removedAgreements = base.agreements.filter(a => !charter.agreements.find(b => b.text === a.text))
+
+                  return (
+                    <div className="bg-gray-50 border border-gray-200 rounded-2xl p-4 mb-4">
+                      <div className="flex items-center justify-between mb-3">
+                        <p className="text-sm font-medium text-gray-700">
+                          {t('history.comparing', { date: new Date(base.savedAt).toLocaleDateString() })}
+                        </p>
+                        <button onClick={() => setCompareId(null)} className="text-xs text-gray-400 hover:text-gray-600">{t('history.close_compare')}</button>
+                      </div>
+                      <div className="grid grid-cols-2 gap-4">
+                        <div>
+                          <p className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">{t('history.values_diff')}</p>
+                          <div className="flex flex-wrap gap-1.5">
+                            {removedValues.map(v => (
+                              <span key={v} className="px-2 py-0.5 rounded-full text-xs bg-red-50 text-red-600 border border-red-200 line-through">{v}</span>
+                            ))}
+                            {keptValues.map(v => (
+                              <span key={v} className="px-2 py-0.5 rounded-full text-xs bg-gray-100 text-gray-500">{v}</span>
+                            ))}
+                            {addedValues.map(v => (
+                              <span key={v} className="px-2 py-0.5 rounded-full text-xs bg-green-50 text-green-700 border border-green-200">{v}</span>
+                            ))}
+                          </div>
+                          {addedValues.length === 0 && removedValues.length === 0 && (
+                            <p className="text-xs text-gray-400 italic">{t('history.no_changes')}</p>
+                          )}
+                        </div>
+                        <div>
+                          <p className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">{t('history.agreements_diff')}</p>
+                          <ul className="space-y-1">
+                            {removedAgreements.map(a => (
+                              <li key={a.id} className="text-xs text-red-500 line-through">{a.text}</li>
+                            ))}
+                            {charter.agreements.filter(a => !addedAgreements.find(b => b.id === a.id)).map(a => (
+                              <li key={a.id} className="text-xs text-gray-400">{a.text}</li>
+                            ))}
+                            {addedAgreements.map(a => (
+                              <li key={a.id} className="text-xs text-green-600">{a.text}</li>
+                            ))}
+                          </ul>
+                          {addedAgreements.length === 0 && removedAgreements.length === 0 && (
+                            <p className="text-xs text-gray-400 italic">{t('history.no_changes')}</p>
+                          )}
+                        </div>
+                      </div>
+                    </div>
+                  )
+                })()}
+
+                <div className="space-y-2">
+                  {history.map((entry, i) => (
+                    <div
+                      key={entry.id}
+                      className={`bg-white border rounded-xl px-4 py-3 flex items-center gap-3 ${compareId === entry.id ? 'border-brand-400 ring-1 ring-brand-300' : 'border-gray-200'}`}
+                    >
+                      <span className="text-2xl">{entry.customSymbol || entry.symbol}</span>
+                      <div className="flex-1 min-w-0">
+                        <p className="font-medium text-sm text-gray-900 truncate">{entry.teamName || t('charter.team_name_fallback')}</p>
+                        <p className="text-xs text-gray-400">
+                          {i === 0 ? t('history.latest') : new Date(entry.savedAt).toLocaleString()} · {entry.values.length} {t('values.selected')}
+                        </p>
+                      </div>
+                      <div className="flex gap-1.5 shrink-0">
+                        <button
+                          onClick={() => setCompareId(id => id === entry.id ? null : entry.id)}
+                          className={`btn-secondary text-xs ${compareId === entry.id ? 'bg-brand-50 text-brand-700' : ''}`}
+                        >
+                          {compareId === entry.id ? t('history.comparing_active') : t('history.compare')}
+                        </button>
+                        <button
+                          onClick={() => {
+                            const { id: _id, savedAt: _savedAt, ...charterFields } = entry
+                            setCharter(c => ({ ...c, ...charterFields }))
+                            setShowHistory(false)
+                            setCompareId(null)
+                          }}
+                          className="btn-ghost text-xs"
+                        >
+                          {t('history.restore')}
+                        </button>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
 
             <div className="flex justify-start">
               <button onClick={back} className="btn-ghost">← {t('common.back')}</button>

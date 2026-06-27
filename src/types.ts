@@ -20,3 +20,13 @@ export interface SavedCharter extends TeamCharter {
   id: string
   libraryName: string
 }
+
+export interface HistoryEntry {
+  id: string
+  savedAt: number
+  teamName: string
+  symbol: string
+  customSymbol: string
+  values: string[]
+  agreements: WorkingAgreement[]
+}
