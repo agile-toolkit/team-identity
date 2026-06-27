@@ -85,6 +85,19 @@
     "rename_placeholder": "Nuevo nombre...",
     "cap_warning": "La biblioteca está llena (20 equipos). Elimina uno para añadir más."
   },
+  "history": {
+    "title": "Historial del Acta",
+    "compare_hint": "Selecciona una versión para comparar con la actual",
+    "comparing": "Comparando con versión del {{date}}",
+    "comparing_active": "Comparando",
+    "compare": "Comparar",
+    "close_compare": "Cerrar",
+    "restore": "Restaurar",
+    "latest": "Más reciente",
+    "values_diff": "Valores",
+    "agreements_diff": "Acuerdos",
+    "no_changes": "Sin cambios"
+  },
   "common": {
     "back": "Atrás",
     "next": "Siguiente"

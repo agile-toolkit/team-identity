@@ -30,6 +30,7 @@ Workshop flow for team name, symbol, values, and working agreements (Identity Sy
 | `team-identity:lastSession` | `App.tsx` `saveCharter()` | Dashboard summary: `{teamName, symbol, valuesCount, agreementsCount, membersCount, savedAt}` |
 | `team-identity:draft` | `App.tsx` `writeDraft()` | In-progress session: `{charter, step, savedAt}`; cleared on save or discard |
 | `team-identity:charters` | `App.tsx` `persistCharters()` | Charter library: `Array<SavedCharter>` (max 20, newest first) |
+| `team-identity:history` | `App.tsx` `saveCharter()` | Charter version history: `Array<HistoryEntry>` (max 10, newest first); each entry has id, savedAt, teamName, symbol, customSymbol, values, agreements |
 
 ## Backlog
 
@@ -43,7 +44,7 @@ Workshop flow for team name, symbol, values, and working agreements (Identity Sy
 - [x] [#10] Feature: Dashboard card integration (write `team-identity:lastSession` on save; update dashboard reader)
 - [ ] [#11] Feature: Print-optimized charter layout (`@media print` CSS, hide nav, white background)
 - [x] [#12] Feature: Keyboard accessibility for symbol grid and values selection (arrow-key nav, ARIA roles)
-- [ ] [#14] Research: Charter history and version comparison (store array of versioned charters, diff view)
+- [x] [#14] Charter history and version comparison — `team-identity:history` localStorage key; "Charter History" panel on charter step; side-by-side diff (values added/removed in green/red, agreements added/removed) between any past version and current charter; "Restore" loads any past version; capped at 10 versions
 - [x] [#15] Research: Scrum values alignment layer (static map + toggleable tags on charter card)
 - [ ] [#16] Integration: Team Identity → Planning Poker + Sprint Metrics (team context banner, scoped to those repos)
 - [x] [#17] Feature: Draft auto-save between workshop steps (write team-identity:draft on step transitions; resume banner on mount)
@@ -57,6 +58,11 @@ Workshop flow for team name, symbol, values, and working agreements (Identity Sy
 - GitHub Project #13 created for this repo (project ID: `PVT_kwDOEGuPAc4BXTDB`).
 
 ## Agent Log
+
+### 2026-06-27 — feat: Charter history and version comparison (#14)
+- Done: `HistoryEntry` type in `types.ts`; `HISTORY_KEY = 'team-identity:history'`; `loadHistory()`/`persistHistory()` helpers; `saveCharter()` now prepends a snapshot to history (capped at 10); `showHistory` toggle button on charter step (shows count); history panel lists all past saves with symbol, team name, date, values count; "Compare" button highlights selected version and shows side-by-side diff (values: removed in red strikethrough, kept in gray, added in green; agreements: same pattern); "Restore" loads past version into current charter; "Close" dismisses comparison; i18n keys `history.*` in EN/ES/BE/RU; no new dependencies
+- Remaining: none — issue fully implemented
+- Next task: check issues for human feedback; auto-approve stale needs-review #11 (print CSS, 48 days), #20 (header unification, 37 days), #21 (light/dark theme, 38 days); implement first approved item; else research cycle
 
 ### 2026-06-24 — feat: Scrum values alignment (#15)
 - Done: `src/data/scrum-values-map.ts` with `SCRUM_VALUES` array and `SCRUM_VALUE_MAP` mapping all 20 VALUE_CARDS to 0–2 Scrum values; `showScrumAlignment` state (off by default); "Scrum Alignment" toggle button on charter step with active ring indicator; when enabled: each value badge in charter card shows its Scrum tag(s) in a sub-label; coverage row appended at bottom of charter card showing all 5 Scrum values with filled/strikethrough styles per coverage count; i18n keys `charter.scrum_toggle_show/scrum_toggle_hide/scrum_coverage` in EN/ES/BE/RU; no new dependencies
