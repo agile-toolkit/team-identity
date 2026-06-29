@@ -158,6 +158,17 @@ export default function App() {
     }
   }, [step])
 
+  useEffect(() => {
+    const defaultTitle = 'Team Identity'
+    if (step === 'charter') {
+      const name = charter.teamName.trim() || t('charter.team_name_fallback')
+      document.title = `${name} — Team Charter`
+    } else {
+      document.title = defaultTitle
+    }
+    return () => { document.title = defaultTitle }
+  }, [step, charter.teamName, t])
+
   const patch = (partial: Partial<TeamCharter>) => setCharter(c => ({ ...c, ...partial }))
 
   const toggleFacilitator = () => {
@@ -514,7 +525,7 @@ export default function App() {
 
       {/* Progress bar — hidden in facilitator mode */}
       {step !== 'intro' && !facilitatorMode && (
-        <div className="bg-white border-b border-gray-100 px-4 py-2">
+        <div className="no-print bg-white border-b border-gray-100 px-4 py-2">
           <div className="max-w-3xl mx-auto flex gap-1.5 items-center">
             {steps.map((s, i) => (
               <div key={s} className="flex items-center gap-1.5">
@@ -822,7 +833,7 @@ export default function App() {
         {/* CHARTER */}
         {step === 'charter' && (
           <div className="max-w-2xl mx-auto">
-            <div className="flex items-center justify-between mb-4 flex-wrap gap-2">
+            <div className="no-print flex items-center justify-between mb-4 flex-wrap gap-2">
               <h1 className="text-2xl font-bold">{t('charter.title')}</h1>
               <div className="flex gap-2 flex-wrap">
                 {wpParticipants && !charter.members && (
@@ -848,7 +859,7 @@ export default function App() {
             </div>
 
             {/* Save to Library */}
-            <div className="mb-4">
+            <div className="no-print mb-4">
               {!showSaveToLibrary ? (
                 <div className="flex items-center gap-2">
                   {librarySaved ? (
@@ -952,7 +963,7 @@ export default function App() {
 
             {/* Charter History Panel */}
             {showHistory && (
-              <div className="mb-6">
+              <div className="no-print mb-6">
                 <div className="flex items-center justify-between mb-3">
                   <h2 className="text-lg font-semibold">{t('history.title')}</h2>
                   {history.length >= 2 && (
@@ -1055,7 +1066,7 @@ export default function App() {
               </div>
             )}
 
-            <div className="flex justify-start">
+            <div className="no-print flex justify-start">
               <button onClick={back} className="btn-ghost">← {t('common.back')}</button>
             </div>
           </div>
