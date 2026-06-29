@@ -21,6 +21,7 @@ Workshop flow for team name, symbol, values, and working agreements (Identity Sy
 - [x] Facilitator/projector display mode (#19) — projector icon toggle in header (both main and showLearn views); `sessionStorage` key `team-identity:facilitatorMode`; when active: `facilitator-mode` class on `<html>` scales base font to 1.25rem; symbol grid buttons grow from `text-3xl p-2` to `text-5xl p-4`; value cards grow from `text-sm px-4 py-2` to `text-base px-6 py-3`; charter symbol grows from `text-7xl` to `text-9xl`; high-contrast ring on selected symbol (ring-4) and selected values (ring-2); language switcher and progress bar hidden; i18n keys `facilitator.toggle_on/toggle_off` in EN/ES/BE/RU
 - [x] Multi-team support (#26) — `team-identity:charters` localStorage key stores `Array<SavedCharter>` (max 20); "Save to My Teams" inline form on charter step with custom library name; "My Teams" screen lists saved charters with Load/Rename/Delete actions; loading a charter restores full charter state and navigates to charter step; "My Teams (N)" button on intro screen when library non-empty; `teams.*` i18n keys in EN/ES/BE/RU; `SavedCharter` type in `types.ts`
 - [x] Scrum values alignment (#15) — static `src/data/scrum-values-map.ts` maps each value card to 0–2 Scrum values (Commitment/Courage/Focus/Openness/Respect); "Scrum Alignment" toggle button on charter step; when enabled, each selected value badge shows its Scrum tag(s) below it; coverage row at bottom of charter card shows 5 Scrum values with ✓/strikethrough per coverage; i18n keys `charter.scrum_toggle_show/hide/coverage` in EN/ES/BE/RU; no new dependencies
+- [x] Print-optimized charter layout (#11) — `@media print` block in `src/index.css` hides `header` and `.no-print` elements (progress bar, charter action buttons, save-to-library section, history panel, back button); `#charter-card` gets white background, no gradient, no shadow, 0.5rem radius, and gray border for printing; `#charter-card *` text overrides to `#1f2937`; `document.title` dynamically set to `"[TeamName] — Team Charter"` on charter step via `useEffect`; no new dependencies
 
 ## localStorage keys
 
@@ -42,7 +43,7 @@ Workshop flow for team name, symbol, values, and working agreements (Identity Sy
 - [x] [#7] Feature: Charter deep-link sharing via URL hash (base64, clipboard copy, QR optional)
 - [ ] [#8] Integration: Team Identity → Scrum Facilitator (team context banner — implementation in scrum-facilitator repo)
 - [x] [#10] Feature: Dashboard card integration (write `team-identity:lastSession` on save; update dashboard reader)
-- [ ] [#11] Feature: Print-optimized charter layout (`@media print` CSS, hide nav, white background)
+- [x] [#11] Feature: Print-optimized charter layout (`@media print` CSS, hide nav, white background) — implemented
 - [x] [#12] Feature: Keyboard accessibility for symbol grid and values selection (arrow-key nav, ARIA roles)
 - [x] [#14] Charter history and version comparison — `team-identity:history` localStorage key; "Charter History" panel on charter step; side-by-side diff (values added/removed in green/red, agreements added/removed) between any past version and current charter; "Restore" loads any past version; capped at 10 versions
 - [x] [#15] Research: Scrum values alignment layer (static map + toggleable tags on charter card)
@@ -51,6 +52,8 @@ Workshop flow for team name, symbol, values, and working agreements (Identity Sy
 - [ ] [#18] Integration: Change Planner — read team-identity-charter to pre-fill team context in change scenarios (scoped to change-planner repo)
 - [x] [#19] UX: Facilitator/projector display mode — CSS class toggle for larger text and cards on projected displays
 - [x] [#26] Feature: Multi-team support — charter library in `team-identity:charters`, My Teams screen with Load/Rename/Delete actions per charter
+- [ ] [#20] UX: Unify header — copy `AppHeader.tsx` + `LanguagePicker.tsx` from design-system into `src/components/`, replace both header blocks (main app + showLearn) with unified component — auto-approved 2026-06-29
+- [ ] [#21] Feature: Light/dark theme — `darkMode: 'class'` in tailwind.config.js, anti-flash inline script in index.html, `ThemeToggle.tsx` from design-system, `dark:` Tailwind variants on all color classes — auto-approved 2026-06-29
 
 ## Tech notes
 
@@ -58,6 +61,11 @@ Workshop flow for team name, symbol, values, and working agreements (Identity Sy
 - GitHub Project #13 created for this repo (project ID: `PVT_kwDOEGuPAc4BXTDB`).
 
 ## Agent Log
+
+### 2026-06-29 — feat: Print-optimized charter layout (#11)
+- Done: `@media print` block in `src/index.css` — hides `header` and `.no-print` elements (progress bar, charter action buttons, save-to-library section, history panel, back button); `#charter-card` prints white background with gray border, no gradient/shadow/large radius; `#charter-card *` text overrides to `#1f2937` for readability; `document.title` set to `"[TeamName] — Team Charter"` on charter step via `useEffect` (resets on navigation); `no-print` class added to 5 DOM elements in `App.tsx`; no new dependencies; auto-approved #11 (50 days), #20 (40 days), #21 (40 days)
+- Remaining: none — #11 fully implemented
+- Next task: check issues for human feedback; implement #20 (header unification — copy AppHeader.tsx + LanguagePicker.tsx from design-system/components/ into src/components/, replace both header blocks); then #21 (light/dark theme)
 
 ### 2026-06-27 — feat: Charter history and version comparison (#14)
 - Done: `HistoryEntry` type in `types.ts`; `HISTORY_KEY = 'team-identity:history'`; `loadHistory()`/`persistHistory()` helpers; `saveCharter()` now prepends a snapshot to history (capped at 10); `showHistory` toggle button on charter step (shows count); history panel lists all past saves with symbol, team name, date, values count; "Compare" button highlights selected version and shows side-by-side diff (values: removed in red strikethrough, kept in gray, added in green; agreements: same pattern); "Restore" loads past version into current charter; "Close" dismisses comparison; i18n keys `history.*` in EN/ES/BE/RU; no new dependencies
