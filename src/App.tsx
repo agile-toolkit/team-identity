@@ -4,6 +4,7 @@ import html2canvas from 'html2canvas'
 import type { WorkshopStep, WorkingAgreement, TeamCharter, SavedCharter, HistoryEntry } from './types'
 import { SYMBOLS, VALUE_CARDS, AGREEMENT_PROMPTS } from './data/symbols'
 import { SCRUM_VALUES, SCRUM_VALUE_MAP } from './data/scrum-values-map'
+import AppHeader from './components/AppHeader'
 
 const STORAGE_KEY = 'team-identity-charter'
 const DRAFT_KEY = 'team-identity:draft'
@@ -94,7 +95,7 @@ function ProjectorIcon({ className }: { className?: string }) {
 }
 
 export default function App() {
-  const { t, i18n } = useTranslation()
+  const { t } = useTranslation()
   const [step, setStep] = useState<WorkshopStep>('intro')
   const [charter, setCharter] = useState<TeamCharter>(defaultCharter)
   const [customValue, setCustomValue] = useState('')
@@ -369,25 +370,7 @@ export default function App() {
   if (showMyTeams) {
     return (
       <div className="min-h-screen flex flex-col">
-        <header className="bg-white border-b border-gray-200 sticky top-0 z-10">
-          <div className="max-w-3xl mx-auto px-4 h-14 flex items-center justify-between">
-            <div className="flex items-center gap-2">
-              <a
-                href="https://agile-toolkit.github.io/"
-                title="Agile Toolkit"
-                className="text-gray-400 hover:text-gray-600 transition-colors flex-shrink-0"
-              >
-                <svg className="w-4 h-4" viewBox="0 0 16 16" fill="currentColor">
-                  <rect x="1" y="1" width="6" height="6" rx="1"/>
-                  <rect x="9" y="1" width="6" height="6" rx="1"/>
-                  <rect x="1" y="9" width="6" height="6" rx="1"/>
-                  <rect x="9" y="9" width="6" height="6" rx="1"/>
-                </svg>
-              </a>
-              <button onClick={() => setShowMyTeams(false)} className="font-semibold text-brand-600">{t('app.title')}</button>
-            </div>
-          </div>
-        </header>
+        <AppHeader title={t('app.title')} onTitleClick={() => setShowMyTeams(false)} />
         <main className="flex-1 max-w-2xl mx-auto w-full px-4 py-8">
           <div className="flex items-center justify-between mb-6">
             <h1 className="text-2xl font-bold">{t('teams.title')}</h1>
@@ -448,40 +431,9 @@ export default function App() {
   if (showLearn) {
     return (
       <div className="min-h-screen flex flex-col">
-        <header className="bg-white border-b border-gray-200 sticky top-0 z-10">
-          <div className="max-w-3xl mx-auto px-4 h-14 flex items-center justify-between">
-            <div className="flex items-center gap-2">
-              <a
-                href="https://agile-toolkit.github.io/"
-                title="Agile Toolkit"
-                className="text-gray-400 hover:text-gray-600 transition-colors flex-shrink-0"
-              >
-                <svg className="w-4 h-4" viewBox="0 0 16 16" fill="currentColor">
-                  <rect x="1" y="1" width="6" height="6" rx="1"/>
-                  <rect x="9" y="1" width="6" height="6" rx="1"/>
-                  <rect x="1" y="9" width="6" height="6" rx="1"/>
-                  <rect x="9" y="9" width="6" height="6" rx="1"/>
-                </svg>
-              </a>
-              <button onClick={() => setShowLearn(false)} className="font-semibold text-brand-600">{t('app.title')}</button>
-            </div>
-            <div className="flex items-center gap-1">
-              {facilitatorBtn}
-              {!facilitatorMode && (
-                <select
-                  value={i18n.language.split('-')[0]}
-                  onChange={e => i18n.changeLanguage(e.target.value)}
-                  className="text-sm text-gray-500 px-2 py-1 rounded hover:bg-gray-100 bg-transparent border-none cursor-pointer"
-                >
-                  <option value="en">EN</option>
-                  <option value="es">ES</option>
-                  <option value="be">BE</option>
-                  <option value="ru">RU</option>
-                </select>
-              )}
-            </div>
-          </div>
-        </header>
+        <AppHeader title={t('app.title')} onTitleClick={() => setShowLearn(false)} hideLanguagePicker={facilitatorMode}>
+          {facilitatorBtn}
+        </AppHeader>
         <main className="flex-1 max-w-2xl mx-auto w-full px-4 py-8 space-y-6">
           <h1 className="text-2xl font-bold">{t('learn.title')}</h1>
           <div className="card">
@@ -499,29 +451,12 @@ export default function App() {
 
   return (
     <div className="min-h-screen flex flex-col">
-      <header className="bg-white border-b border-gray-200 sticky top-0 z-10">
-        <div className="max-w-3xl mx-auto px-4 h-14 flex items-center justify-between">
-          <button onClick={() => setStep('intro')} className="font-semibold text-brand-600">{t('app.title')}</button>
-          <div className="flex items-center gap-1">
-            {!facilitatorMode && (
-              <button onClick={() => setShowLearn(true)} className="btn-ghost">{t('learn.title')}</button>
-            )}
-            {facilitatorBtn}
-            {!facilitatorMode && (
-              <select
-                value={i18n.language.split('-')[0]}
-                onChange={e => i18n.changeLanguage(e.target.value)}
-                className="ml-1 text-sm text-gray-500 px-2 py-1 rounded hover:bg-gray-100 bg-transparent border-none cursor-pointer"
-              >
-                <option value="en">EN</option>
-                <option value="es">ES</option>
-                <option value="be">BE</option>
-                <option value="ru">RU</option>
-              </select>
-            )}
-          </div>
-        </div>
-      </header>
+      <AppHeader title={t('app.title')} onTitleClick={() => setStep('intro')} hideLanguagePicker={facilitatorMode}>
+        {!facilitatorMode && (
+          <button onClick={() => setShowLearn(true)} className="btn-ghost">{t('learn.title')}</button>
+        )}
+        {facilitatorBtn}
+      </AppHeader>
 
       {/* Progress bar — hidden in facilitator mode */}
       {step !== 'intro' && !facilitatorMode && (

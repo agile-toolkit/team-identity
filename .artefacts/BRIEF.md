@@ -22,6 +22,7 @@ Workshop flow for team name, symbol, values, and working agreements (Identity Sy
 - [x] Multi-team support (#26) — `team-identity:charters` localStorage key stores `Array<SavedCharter>` (max 20); "Save to My Teams" inline form on charter step with custom library name; "My Teams" screen lists saved charters with Load/Rename/Delete actions; loading a charter restores full charter state and navigates to charter step; "My Teams (N)" button on intro screen when library non-empty; `teams.*` i18n keys in EN/ES/BE/RU; `SavedCharter` type in `types.ts`
 - [x] Scrum values alignment (#15) — static `src/data/scrum-values-map.ts` maps each value card to 0–2 Scrum values (Commitment/Courage/Focus/Openness/Respect); "Scrum Alignment" toggle button on charter step; when enabled, each selected value badge shows its Scrum tag(s) below it; coverage row at bottom of charter card shows 5 Scrum values with ✓/strikethrough per coverage; i18n keys `charter.scrum_toggle_show/hide/coverage` in EN/ES/BE/RU; no new dependencies
 - [x] Print-optimized charter layout (#11) — `@media print` block in `src/index.css` hides `header` and `.no-print` elements (progress bar, charter action buttons, save-to-library section, history panel, back button); `#charter-card` gets white background, no gradient, no shadow, 0.5rem radius, and gray border for printing; `#charter-card *` text overrides to `#1f2937`; `document.title` dynamically set to `"[TeamName] — Team Charter"` on charter step via `useEffect`; no new dependencies
+- [x] Unified header component (#20) — `src/components/AppHeader.tsx` + `LanguagePicker.tsx` copied from `design-system/components/`; replaces all 3 inline `<header>` blocks (main workshop, showLearn, showMyTeams) with `<AppHeader>`; local `hideLanguagePicker` prop added (app-specific extension, not in design-system source) so facilitator mode still hides the language switcher; children slot carries the Learn button and facilitator toggle
 
 ## localStorage keys
 
@@ -52,7 +53,7 @@ Workshop flow for team name, symbol, values, and working agreements (Identity Sy
 - [ ] [#18] Integration: Change Planner — read team-identity-charter to pre-fill team context in change scenarios (scoped to change-planner repo)
 - [x] [#19] UX: Facilitator/projector display mode — CSS class toggle for larger text and cards on projected displays
 - [x] [#26] Feature: Multi-team support — charter library in `team-identity:charters`, My Teams screen with Load/Rename/Delete actions per charter
-- [ ] [#20] UX: Unify header — copy `AppHeader.tsx` + `LanguagePicker.tsx` from design-system into `src/components/`, replace both header blocks (main app + showLearn) with unified component — auto-approved 2026-06-29
+- [x] [#20] UX: Unify header — copy `AppHeader.tsx` + `LanguagePicker.tsx` from design-system into `src/components/`, replace all 3 header blocks (main app, showLearn, showMyTeams) with unified component — implemented
 - [ ] [#21] Feature: Light/dark theme — `darkMode: 'class'` in tailwind.config.js, anti-flash inline script in index.html, `ThemeToggle.tsx` from design-system, `dark:` Tailwind variants on all color classes — auto-approved 2026-06-29
 
 ## Tech notes
@@ -61,6 +62,11 @@ Workshop flow for team name, symbol, values, and working agreements (Identity Sy
 - GitHub Project #13 created for this repo (project ID: `PVT_kwDOEGuPAc4BXTDB`).
 
 ## Agent Log
+
+### 2026-07-02 — feat: Unified header component (#20)
+- Done: copied `AppHeader.tsx` + `LanguagePicker.tsx` from `design-system/components/` into `src/components/`; added a local `hideLanguagePicker` prop to `AppHeader.tsx` (not in the shared source) so the existing facilitator-mode behavior of hiding the language switcher still works; replaced all 3 inline `<header>` blocks (main workshop screen, showLearn screen, showMyTeams screen — one more than the issue described, since #26 added a third header since the issue was filed) with `<AppHeader>`; removed the now-unused `i18n` destructure from `useTranslation()`; verified visually via a local preview build + headless-browser screenshots across all 3 screens; `npm run build` passes
+- Remaining: none — #20 fully implemented
+- Next task: check issues for human feedback; implement #21 (light/dark theme — `darkMode: 'class'` in tailwind.config.js, anti-flash inline script in index.html, `ThemeToggle.tsx` from design-system, `dark:` Tailwind variants across `src/`) if still approved
 
 ### 2026-06-29 — feat: Print-optimized charter layout (#11)
 - Done: `@media print` block in `src/index.css` — hides `header` and `.no-print` elements (progress bar, charter action buttons, save-to-library section, history panel, back button); `#charter-card` prints white background with gray border, no gradient/shadow/large radius; `#charter-card *` text overrides to `#1f2937` for readability; `document.title` set to `"[TeamName] — Team Charter"` on charter step via `useEffect` (resets on navigation); `no-print` class added to 5 DOM elements in `App.tsx`; no new dependencies; auto-approved #11 (50 days), #20 (40 days), #21 (40 days)
