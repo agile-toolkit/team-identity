@@ -36,7 +36,7 @@ const GridIcon = () => (
 
 export default function AppHeader({ title, onTitleClick, navItems, hideLanguagePicker, children }: AppHeaderProps) {
   return (
-    <header className="bg-white border-b border-gray-200 sticky top-0 z-10">
+    <header className="bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-gray-800 sticky top-0 z-10">
       <div className="max-w-3xl mx-auto px-4 h-14 flex items-center justify-between gap-4">
 
         {/* Left: dashboard link + app title */}
@@ -44,7 +44,7 @@ export default function AppHeader({ title, onTitleClick, navItems, hideLanguageP
           <a
             href={DASHBOARD_URL}
             title="Agile Toolkit — back to dashboard"
-            className="text-gray-400 hover:text-gray-600 transition-colors flex-shrink-0"
+            className="text-gray-400 hover:text-gray-600 dark:text-gray-500 dark:hover:text-gray-300 transition-colors flex-shrink-0"
           >
             <GridIcon />
           </a>
@@ -72,8 +72,8 @@ export default function AppHeader({ title, onTitleClick, navItems, hideLanguageP
                   onClick={item.onClick}
                   className={`px-3 py-1.5 rounded-lg text-sm font-medium transition-colors whitespace-nowrap ${
                     item.active
-                      ? 'bg-brand-50 text-brand-700'
-                      : 'text-gray-500 hover:bg-gray-100 hover:text-gray-700'
+                      ? 'bg-brand-50 dark:bg-brand-700/20 text-brand-700 dark:text-brand-400'
+                      : 'text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800 hover:text-gray-700 dark:hover:text-gray-200'
                   }`}
                 >
                   {item.label}
