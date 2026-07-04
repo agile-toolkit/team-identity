@@ -5,6 +5,7 @@ import type { WorkshopStep, WorkingAgreement, TeamCharter, SavedCharter, History
 import { SYMBOLS, VALUE_CARDS, AGREEMENT_PROMPTS } from './data/symbols'
 import { SCRUM_VALUES, SCRUM_VALUE_MAP } from './data/scrum-values-map'
 import AppHeader from './components/AppHeader'
+import ThemeToggle from './components/ThemeToggle'
 
 const STORAGE_KEY = 'team-identity-charter'
 const DRAFT_KEY = 'team-identity:draft'
@@ -361,7 +362,7 @@ export default function App() {
       onClick={toggleFacilitator}
       aria-pressed={facilitatorMode}
       title={facilitatorMode ? t('facilitator.toggle_off') : t('facilitator.toggle_on')}
-      className={`btn-ghost ${facilitatorMode ? 'text-brand-600 bg-brand-50' : ''}`}
+      className={`btn-ghost ${facilitatorMode ? 'text-brand-600 bg-brand-50 dark:bg-brand-700/20' : ''}`}
     >
       <ProjectorIcon className="w-4 h-4" />
     </button>
@@ -370,18 +371,20 @@ export default function App() {
   if (showMyTeams) {
     return (
       <div className="min-h-screen flex flex-col">
-        <AppHeader title={t('app.title')} onTitleClick={() => setShowMyTeams(false)} />
+        <AppHeader title={t('app.title')} onTitleClick={() => setShowMyTeams(false)}>
+          <ThemeToggle />
+        </AppHeader>
         <main className="flex-1 max-w-2xl mx-auto w-full px-4 py-8">
           <div className="flex items-center justify-between mb-6">
             <h1 className="text-2xl font-bold">{t('teams.title')}</h1>
             <button onClick={() => setShowMyTeams(false)} className="btn-ghost">{t('common.back')}</button>
           </div>
           {library.length === 0 ? (
-            <p className="text-gray-400 text-center py-16">{t('teams.empty')}</p>
+            <p className="text-gray-400 dark:text-gray-500 text-center py-16">{t('teams.empty')}</p>
           ) : (
             <div className="space-y-3">
               {library.map(saved => (
-                <div key={saved.id} className="bg-white border border-gray-200 rounded-2xl px-5 py-4 flex items-center gap-4">
+                <div key={saved.id} className="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-2xl px-5 py-4 flex items-center gap-4">
                   <span className="text-3xl">{saved.customSymbol || saved.symbol}</span>
                   <div className="flex-1 min-w-0">
                     {renamingId === saved.id ? (
@@ -398,8 +401,8 @@ export default function App() {
                       </div>
                     ) : (
                       <>
-                        <p className="font-semibold text-gray-900 truncate">{saved.libraryName}</p>
-                        <p className="text-xs text-gray-400">{saved.teamName} · {saved.values.length} {t('values.selected')} · {new Date(saved.savedAt ?? 0).toLocaleDateString()}</p>
+                        <p className="font-semibold text-gray-900 dark:text-gray-50 truncate">{saved.libraryName}</p>
+                        <p className="text-xs text-gray-400 dark:text-gray-500">{saved.teamName} · {saved.values.length} {t('values.selected')} · {new Date(saved.savedAt ?? 0).toLocaleDateString()}</p>
                       </>
                     )}
                   </div>
@@ -415,7 +418,7 @@ export default function App() {
                       >{t('teams.rename')}</button>
                       <button
                         onClick={() => deleteFromLibrary(saved.id)}
-                        className="btn-ghost text-sm text-red-400 hover:text-red-600"
+                        className="btn-ghost text-sm text-red-400 dark:text-red-400 hover:text-red-600 dark:hover:text-red-300"
                       >{t('teams.delete')}</button>
                     </div>
                   )}
@@ -432,17 +435,18 @@ export default function App() {
     return (
       <div className="min-h-screen flex flex-col">
         <AppHeader title={t('app.title')} onTitleClick={() => setShowLearn(false)} hideLanguagePicker={facilitatorMode}>
+          <ThemeToggle />
           {facilitatorBtn}
         </AppHeader>
         <main className="flex-1 max-w-2xl mx-auto w-full px-4 py-8 space-y-6">
           <h1 className="text-2xl font-bold">{t('learn.title')}</h1>
           <div className="card">
             <h2 className="font-semibold mb-2">{t('learn.why_title')}</h2>
-            <p className="text-sm text-gray-600 leading-relaxed">{t('learn.why_body')}</p>
+            <p className="text-sm text-gray-600 dark:text-gray-400 leading-relaxed">{t('learn.why_body')}</p>
           </div>
           <div className="card">
             <h2 className="font-semibold mb-2">{t('learn.expo_title')}</h2>
-            <p className="text-sm text-gray-600 leading-relaxed">{t('learn.expo_body')}</p>
+            <p className="text-sm text-gray-600 dark:text-gray-400 leading-relaxed">{t('learn.expo_body')}</p>
           </div>
         </main>
       </div>
@@ -452,6 +456,7 @@ export default function App() {
   return (
     <div className="min-h-screen flex flex-col">
       <AppHeader title={t('app.title')} onTitleClick={() => setStep('intro')} hideLanguagePicker={facilitatorMode}>
+        <ThemeToggle />
         {!facilitatorMode && (
           <button onClick={() => setShowLearn(true)} className="btn-ghost">{t('learn.title')}</button>
         )}
@@ -460,17 +465,17 @@ export default function App() {
 
       {/* Progress bar — hidden in facilitator mode */}
       {step !== 'intro' && !facilitatorMode && (
-        <div className="no-print bg-white border-b border-gray-100 px-4 py-2">
+        <div className="no-print bg-white dark:bg-gray-900 border-b border-gray-100 dark:border-gray-800 px-4 py-2">
           <div className="max-w-3xl mx-auto flex gap-1.5 items-center">
             {steps.map((s, i) => (
               <div key={s} className="flex items-center gap-1.5">
                 <div className={`w-6 h-6 rounded-full flex items-center justify-center text-xs font-semibold transition-colors ${
                   i < stepIndex - 1 ? 'bg-brand-600 text-white' :
-                  i === stepIndex - 1 ? 'bg-brand-100 text-brand-700 border-2 border-brand-400' :
-                  'bg-gray-100 text-gray-400'
+                  i === stepIndex - 1 ? 'bg-brand-100 dark:bg-brand-700/20 text-brand-700 dark:text-brand-400 border-2 border-brand-400' :
+                  'bg-gray-100 dark:bg-gray-800 text-gray-400 dark:text-gray-500'
                 }`}>{i + 1}</div>
-                <span className={`text-xs hidden sm:inline ${i === stepIndex - 1 ? 'text-brand-700 font-medium' : 'text-gray-400'}`}>{s}</span>
-                {i < steps.length - 1 && <div className="w-4 h-px bg-gray-200" />}
+                <span className={`text-xs hidden sm:inline ${i === stepIndex - 1 ? 'text-brand-700 dark:text-brand-400 font-medium' : 'text-gray-400 dark:text-gray-500'}`}>{s}</span>
+                {i < steps.length - 1 && <div className="w-4 h-px bg-gray-200 dark:bg-gray-700" />}
               </div>
             ))}
           </div>
@@ -484,17 +489,17 @@ export default function App() {
           <div className="max-w-lg mx-auto text-center">
             <div className="text-6xl mb-4">🤝</div>
             <h1 className="text-3xl font-bold mb-3">{t('intro.headline')}</h1>
-            <p className="text-gray-500 mb-8 leading-relaxed">{t('intro.body')}</p>
+            <p className="text-gray-500 dark:text-gray-400 mb-8 leading-relaxed">{t('intro.body')}</p>
 
             {/* Draft resume banner */}
             {showDraftBanner && (
-              <div className="flex items-center justify-between bg-blue-50 border border-blue-200 rounded-xl px-4 py-3 mb-6 gap-3 text-left">
-                <p className="text-sm text-blue-800 flex-1">{t('draft.resume_prompt')}</p>
+              <div className="flex items-center justify-between bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-xl px-4 py-3 mb-6 gap-3 text-left">
+                <p className="text-sm text-blue-800 dark:text-blue-300 flex-1">{t('draft.resume_prompt')}</p>
                 <div className="flex gap-2 shrink-0">
-                  <button onClick={resumeDraft} className="text-sm font-medium text-blue-900 bg-blue-200 hover:bg-blue-300 px-3 py-1 rounded-lg transition-colors">
+                  <button onClick={resumeDraft} className="text-sm font-medium text-blue-900 dark:text-blue-100 bg-blue-200 dark:bg-blue-800 hover:bg-blue-300 dark:hover:bg-blue-700 px-3 py-1 rounded-lg transition-colors">
                     {t('draft.resume')}
                   </button>
-                  <button onClick={discardDraft} className="text-sm text-blue-600 hover:text-blue-800 px-2 py-1 rounded-lg transition-colors">
+                  <button onClick={discardDraft} className="text-sm text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-200 px-2 py-1 rounded-lg transition-colors">
                     {t('draft.discard')}
                   </button>
                 </div>
@@ -521,7 +526,7 @@ export default function App() {
         {step === 'name' && (
           <div className="max-w-lg mx-auto">
             <h2 className="text-2xl font-bold mb-2">{t('name.title')}</h2>
-            <p className="text-gray-500 text-sm mb-6">{t('name.subtitle')}</p>
+            <p className="text-gray-500 dark:text-gray-400 text-sm mb-6">{t('name.subtitle')}</p>
             <input
               autoFocus
               className="input text-2xl font-semibold py-4 mb-3"
@@ -529,7 +534,7 @@ export default function App() {
               value={charter.teamName}
               onChange={e => patch({ teamName: e.target.value })}
             />
-            <p className="text-xs text-brand-600 bg-brand-50 rounded-xl px-4 py-2 mb-6">{t('name.tip')}</p>
+            <p className="text-xs text-brand-600 dark:text-brand-400 bg-brand-50 dark:bg-brand-900/20 rounded-xl px-4 py-2 mb-6">{t('name.tip')}</p>
             <div className="flex justify-between">
               <button onClick={back} className="btn-secondary">{t('common.back')}</button>
               <button onClick={next} disabled={!canNext} className="btn-primary">{t('common.next')} →</button>
@@ -541,7 +546,7 @@ export default function App() {
         {step === 'symbol' && (
           <div className="max-w-2xl mx-auto">
             <h2 className="text-2xl font-bold mb-2">{t('symbol.title')}</h2>
-            <p className="text-gray-500 text-sm mb-6">{t('symbol.subtitle')}</p>
+            <p className="text-gray-500 dark:text-gray-400 text-sm mb-6">{t('symbol.subtitle')}</p>
             <div
               role="radiogroup"
               aria-label={t('symbol.title')}
@@ -581,8 +586,8 @@ export default function App() {
                       facilitatorMode ? 'p-4 text-5xl' : 'p-2 text-3xl'
                     } ${
                       isChecked
-                        ? `bg-brand-100 scale-110 ${facilitatorMode ? 'ring-4 ring-brand-500' : 'ring-2 ring-brand-400'}`
-                        : 'bg-white border border-gray-200 hover:border-brand-300'
+                        ? `bg-brand-100 dark:bg-brand-700/20 scale-110 ${facilitatorMode ? 'ring-4 ring-brand-500' : 'ring-2 ring-brand-400'}`
+                        : 'bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 hover:border-brand-300 dark:hover:border-brand-500'
                     }`}
                   >
                     {s.emoji}
@@ -591,7 +596,7 @@ export default function App() {
               })}
             </div>
             {charter.symbol && !charter.customSymbol && (
-              <p className="text-sm text-brand-700 bg-brand-50 rounded-xl px-4 py-2 mb-4">
+              <p className="text-sm text-brand-700 dark:text-brand-400 bg-brand-50 dark:bg-brand-900/20 rounded-xl px-4 py-2 mb-4">
                 {SYMBOLS.find(s => s.emoji === charter.symbol)?.meaning}
               </p>
             )}
@@ -616,18 +621,18 @@ export default function App() {
         {step === 'values' && (
           <div className="max-w-2xl mx-auto">
             <h2 className="text-2xl font-bold mb-2">{t('values.title')}</h2>
-            <p className="text-gray-500 text-sm mb-1">{t('values.subtitle')}</p>
-            <p className="text-xs text-brand-600 mb-4">{charter.values.length} {t('values.selected')} — {t('values.min_note')}</p>
+            <p className="text-gray-500 dark:text-gray-400 text-sm mb-1">{t('values.subtitle')}</p>
+            <p className="text-xs text-brand-600 dark:text-brand-400 mb-4">{charter.values.length} {t('values.selected')} — {t('values.min_note')}</p>
 
             {/* MM import banner */}
             {mmMotivators && !mmDismissed && (
-              <div className="flex items-center justify-between bg-amber-50 border border-amber-200 rounded-xl px-4 py-3 mb-4 gap-3">
-                <p className="text-sm text-amber-800 flex-1">{t('values.import_mm_banner')}</p>
+              <div className="flex items-center justify-between bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-800 rounded-xl px-4 py-3 mb-4 gap-3">
+                <p className="text-sm text-amber-800 dark:text-amber-300 flex-1">{t('values.import_mm_banner')}</p>
                 <div className="flex gap-2 shrink-0">
-                  <button onClick={importMmMotivators} className="text-sm font-medium text-amber-900 bg-amber-200 hover:bg-amber-300 px-3 py-1 rounded-lg transition-colors">
+                  <button onClick={importMmMotivators} className="text-sm font-medium text-amber-900 dark:text-amber-100 bg-amber-200 dark:bg-amber-800 hover:bg-amber-300 dark:hover:bg-amber-700 px-3 py-1 rounded-lg transition-colors">
                     {t('values.import_mm_import')}
                   </button>
-                  <button onClick={() => setMmDismissed(true)} className="text-sm text-amber-600 hover:text-amber-800 px-2 py-1 rounded-lg transition-colors">
+                  <button onClick={() => setMmDismissed(true)} className="text-sm text-amber-600 dark:text-amber-400 hover:text-amber-800 dark:hover:text-amber-200 px-2 py-1 rounded-lg transition-colors">
                     {t('values.import_mm_dismiss')}
                   </button>
                 </div>
@@ -662,7 +667,7 @@ export default function App() {
                   } ${
                     charter.values.includes(v)
                       ? `bg-brand-600 text-white border-brand-600 ${facilitatorMode ? 'ring-2 ring-brand-300' : ''}`
-                      : 'bg-white border-gray-200 text-gray-700 hover:border-brand-400'
+                      : 'bg-white dark:bg-gray-900 border-gray-200 dark:border-gray-700 text-gray-700 dark:text-gray-300 hover:border-brand-400 dark:hover:border-brand-500'
                   }`}
                 >
                   {v}
@@ -714,23 +719,23 @@ export default function App() {
         {step === 'agreements' && (
           <div className="max-w-2xl mx-auto">
             <h2 className="text-2xl font-bold mb-2">{t('agreements.title')}</h2>
-            <p className="text-gray-500 text-sm mb-5">{t('agreements.subtitle')}</p>
+            <p className="text-gray-500 dark:text-gray-400 text-sm mb-5">{t('agreements.subtitle')}</p>
 
             {/* Active agreements */}
             {charter.agreements.length > 0 && (
               <div className="space-y-2 mb-5">
                 {charter.agreements.map(ag => (
-                  <div key={ag.id} className="flex items-center gap-3 bg-white border border-gray-200 rounded-xl px-4 py-2.5">
+                  <div key={ag.id} className="flex items-center gap-3 bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-xl px-4 py-2.5">
                     <button
                       onClick={() => patch({ agreements: charter.agreements.map(a => a.id === ag.id ? { ...a, votes: a.votes + 1 } : a) })}
                       aria-label={`${t('agreements.upvote')} — ${ag.text}`}
                       className="text-sm"
-                    >{t('agreements.upvote')} {ag.votes > 0 && <span className="text-xs text-gray-500">{ag.votes}</span>}</button>
-                    <span className="flex-1 text-sm text-gray-800">{ag.text}</span>
+                    >{t('agreements.upvote')} {ag.votes > 0 && <span className="text-xs text-gray-500 dark:text-gray-400">{ag.votes}</span>}</button>
+                    <span className="flex-1 text-sm text-gray-800 dark:text-gray-200">{ag.text}</span>
                     <button
                       onClick={() => patch({ agreements: charter.agreements.filter(a => a.id !== ag.id) })}
                       aria-label={`${t('agreements.delete')} — ${ag.text}`}
-                      className="text-gray-200 hover:text-red-400 text-xs"
+                      className="text-gray-200 dark:text-gray-600 hover:text-red-400 dark:hover:text-red-400 text-xs"
                     >{t('agreements.delete')}</button>
                   </div>
                 ))}
@@ -748,10 +753,10 @@ export default function App() {
 
             {/* Suggestions */}
             <div className="mb-6">
-              <p className="text-xs font-medium text-gray-400 uppercase tracking-wider mb-2">{t('agreements.suggestions')}</p>
+              <p className="text-xs font-medium text-gray-400 dark:text-gray-500 uppercase tracking-wider mb-2">{t('agreements.suggestions')}</p>
               <div className="space-y-1">
                 {AGREEMENT_PROMPTS.filter(p => !charter.agreements.find(a => a.text === p)).map(prompt => (
-                  <button key={prompt} onClick={() => addAgreement(prompt)} className="w-full text-left text-sm text-gray-500 hover:text-brand-600 hover:bg-brand-50 rounded-xl px-3 py-1.5 transition-colors">
+                  <button key={prompt} onClick={() => addAgreement(prompt)} className="w-full text-left text-sm text-gray-500 dark:text-gray-400 hover:text-brand-600 dark:hover:text-brand-400 hover:bg-brand-50 dark:hover:bg-brand-900/20 rounded-xl px-3 py-1.5 transition-colors">
                     + {prompt}
                   </button>
                 ))}
@@ -798,9 +803,9 @@ export default function App() {
               {!showSaveToLibrary ? (
                 <div className="flex items-center gap-2">
                   {librarySaved ? (
-                    <span className="text-sm text-green-600 font-medium">{t('teams.saved_to_library')}</span>
+                    <span className="text-sm text-green-600 dark:text-green-400 font-medium">{t('teams.saved_to_library')}</span>
                   ) : library.length >= LIBRARY_CAP ? (
-                    <span className="text-xs text-amber-600">{t('teams.cap_warning')}</span>
+                    <span className="text-xs text-amber-600 dark:text-amber-400">{t('teams.cap_warning')}</span>
                   ) : (
                     <button onClick={() => { setLibraryName(charter.teamName || ''); setShowSaveToLibrary(true) }} className="btn-ghost text-sm">
                       + {t('teams.save_to_library')}
@@ -902,7 +907,7 @@ export default function App() {
                 <div className="flex items-center justify-between mb-3">
                   <h2 className="text-lg font-semibold">{t('history.title')}</h2>
                   {history.length >= 2 && (
-                    <p className="text-xs text-gray-400">{t('history.compare_hint')}</p>
+                    <p className="text-xs text-gray-400 dark:text-gray-500">{t('history.compare_hint')}</p>
                   )}
                 </div>
 
@@ -916,46 +921,46 @@ export default function App() {
                   const removedAgreements = base.agreements.filter(a => !charter.agreements.find(b => b.text === a.text))
 
                   return (
-                    <div className="bg-gray-50 border border-gray-200 rounded-2xl p-4 mb-4">
+                    <div className="bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-2xl p-4 mb-4">
                       <div className="flex items-center justify-between mb-3">
-                        <p className="text-sm font-medium text-gray-700">
+                        <p className="text-sm font-medium text-gray-700 dark:text-gray-300">
                           {t('history.comparing', { date: new Date(base.savedAt).toLocaleDateString() })}
                         </p>
-                        <button onClick={() => setCompareId(null)} className="text-xs text-gray-400 hover:text-gray-600">{t('history.close_compare')}</button>
+                        <button onClick={() => setCompareId(null)} className="text-xs text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-300">{t('history.close_compare')}</button>
                       </div>
                       <div className="grid grid-cols-2 gap-4">
                         <div>
-                          <p className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">{t('history.values_diff')}</p>
+                          <p className="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-2">{t('history.values_diff')}</p>
                           <div className="flex flex-wrap gap-1.5">
                             {removedValues.map(v => (
-                              <span key={v} className="px-2 py-0.5 rounded-full text-xs bg-red-50 text-red-600 border border-red-200 line-through">{v}</span>
+                              <span key={v} className="px-2 py-0.5 rounded-full text-xs bg-red-50 dark:bg-red-900/20 text-red-600 dark:text-red-400 border border-red-200 dark:border-red-800 line-through">{v}</span>
                             ))}
                             {keptValues.map(v => (
-                              <span key={v} className="px-2 py-0.5 rounded-full text-xs bg-gray-100 text-gray-500">{v}</span>
+                              <span key={v} className="px-2 py-0.5 rounded-full text-xs bg-gray-100 dark:bg-gray-700 text-gray-500 dark:text-gray-400">{v}</span>
                             ))}
                             {addedValues.map(v => (
-                              <span key={v} className="px-2 py-0.5 rounded-full text-xs bg-green-50 text-green-700 border border-green-200">{v}</span>
+                              <span key={v} className="px-2 py-0.5 rounded-full text-xs bg-green-50 dark:bg-green-900/20 text-green-700 dark:text-green-400 border border-green-200 dark:border-green-800">{v}</span>
                             ))}
                           </div>
                           {addedValues.length === 0 && removedValues.length === 0 && (
-                            <p className="text-xs text-gray-400 italic">{t('history.no_changes')}</p>
+                            <p className="text-xs text-gray-400 dark:text-gray-500 italic">{t('history.no_changes')}</p>
                           )}
                         </div>
                         <div>
-                          <p className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">{t('history.agreements_diff')}</p>
+                          <p className="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-2">{t('history.agreements_diff')}</p>
                           <ul className="space-y-1">
                             {removedAgreements.map(a => (
-                              <li key={a.id} className="text-xs text-red-500 line-through">{a.text}</li>
+                              <li key={a.id} className="text-xs text-red-500 dark:text-red-400 line-through">{a.text}</li>
                             ))}
                             {charter.agreements.filter(a => !addedAgreements.find(b => b.id === a.id)).map(a => (
-                              <li key={a.id} className="text-xs text-gray-400">{a.text}</li>
+                              <li key={a.id} className="text-xs text-gray-400 dark:text-gray-500">{a.text}</li>
                             ))}
                             {addedAgreements.map(a => (
-                              <li key={a.id} className="text-xs text-green-600">{a.text}</li>
+                              <li key={a.id} className="text-xs text-green-600 dark:text-green-400">{a.text}</li>
                             ))}
                           </ul>
                           {addedAgreements.length === 0 && removedAgreements.length === 0 && (
-                            <p className="text-xs text-gray-400 italic">{t('history.no_changes')}</p>
+                            <p className="text-xs text-gray-400 dark:text-gray-500 italic">{t('history.no_changes')}</p>
                           )}
                         </div>
                       </div>
@@ -967,19 +972,19 @@ export default function App() {
                   {history.map((entry, i) => (
                     <div
                       key={entry.id}
-                      className={`bg-white border rounded-xl px-4 py-3 flex items-center gap-3 ${compareId === entry.id ? 'border-brand-400 ring-1 ring-brand-300' : 'border-gray-200'}`}
+                      className={`bg-white dark:bg-gray-900 border rounded-xl px-4 py-3 flex items-center gap-3 ${compareId === entry.id ? 'border-brand-400 ring-1 ring-brand-300' : 'border-gray-200 dark:border-gray-700'}`}
                     >
                       <span className="text-2xl">{entry.customSymbol || entry.symbol}</span>
                       <div className="flex-1 min-w-0">
-                        <p className="font-medium text-sm text-gray-900 truncate">{entry.teamName || t('charter.team_name_fallback')}</p>
-                        <p className="text-xs text-gray-400">
+                        <p className="font-medium text-sm text-gray-900 dark:text-gray-50 truncate">{entry.teamName || t('charter.team_name_fallback')}</p>
+                        <p className="text-xs text-gray-400 dark:text-gray-500">
                           {i === 0 ? t('history.latest') : new Date(entry.savedAt).toLocaleString()} · {entry.values.length} {t('values.selected')}
                         </p>
                       </div>
                       <div className="flex gap-1.5 shrink-0">
                         <button
                           onClick={() => setCompareId(id => id === entry.id ? null : entry.id)}
-                          className={`btn-secondary text-xs ${compareId === entry.id ? 'bg-brand-50 text-brand-700' : ''}`}
+                          className={`btn-secondary text-xs ${compareId === entry.id ? 'bg-brand-50 dark:bg-brand-700/20 text-brand-700 dark:text-brand-400' : ''}`}
                         >
                           {compareId === entry.id ? t('history.comparing_active') : t('history.compare')}
                         </button>
