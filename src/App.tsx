@@ -1,6 +1,5 @@
 import { useState, useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
-import html2canvas from 'html2canvas'
 import type { WorkshopStep, WorkingAgreement, TeamCharter, SavedCharter, HistoryEntry } from './types'
 import { SYMBOLS, VALUE_CARDS, AGREEMENT_PROMPTS } from './data/symbols'
 import { SCRUM_VALUES, SCRUM_VALUE_MAP } from './data/scrum-values-map'
@@ -318,6 +317,7 @@ export default function App() {
     if (!el) return
     setCopying(true)
     try {
+      const { default: html2canvas } = await import('html2canvas')
       const canvas = await html2canvas(el, { useCORS: true, backgroundColor: null })
       const blob = await new Promise<Blob | null>(resolve => canvas.toBlob(resolve, 'image/png'))
       if (blob && navigator.clipboard?.write) {
