@@ -56,7 +56,7 @@ Workshop flow for team name, symbol, values, and working agreements (Identity Sy
 - [x] [#26] Feature: Multi-team support — charter library in `team-identity:charters`, My Teams screen with Load/Rename/Delete actions per charter
 - [x] [#20] UX: Unify header — copy `AppHeader.tsx` + `LanguagePicker.tsx` from design-system into `src/components/`, replace all 3 header blocks (main app, showLearn, showMyTeams) with unified component — implemented
 - [x] [#21] Feature: Light/dark theme — `darkMode: ['selector', '[data-theme="dark"]']` in tailwind.config.js, anti-flash inline script in index.html, `ThemeToggle.tsx` from design-system, `dark:` Tailwind variants on all color classes — implemented
-- [ ] [#39] Technical: code-split html2canvas (dynamic import in the "Copy Image" handler) to shrink the main bundle
+- [x] [#39] Technical: code-split html2canvas — removed static `import html2canvas from 'html2canvas'` from `App.tsx` line 3; added `const { default: html2canvas } = await import('html2canvas')` inside `copyImage()` handler; main bundle 461.76 kB → 259.91 kB (gzip 128.48 kB → 80.58 kB); html2canvas now a separate lazy chunk (202.43 kB, only loaded on "Copy Image" click)
 - [ ] [#40] Technical: add Vitest unit tests for charter logic (history diff, Scrum coverage map, library cap/eviction, URL-hash encode/decode)
 - [ ] [#41] Feature: JSON export/import of the charter library (My Teams) for backup and cross-device transfer
 - [ ] [#42] Technical: split App.tsx (1017 lines) into per-screen components
@@ -68,6 +68,11 @@ Workshop flow for team name, symbol, values, and working agreements (Identity Sy
 - GitHub Project #13 created for this repo (project ID: `PVT_kwDOEGuPAc4BXTDB`).
 
 ## Agent Log
+
+### 2026-07-16 — feat: code-split html2canvas (#39); auto-approved #39/#40/#41
+- Done: auto-approved #39/#40/#41 (all filed 2026-07-08, 8 days past 7-day threshold, still `needs-review`). Implemented #39: removed static `import html2canvas from 'html2canvas'` (App.tsx line 3); added `const { default: html2canvas } = await import('html2canvas')` inside `copyImage()` async handler — zero behavior change. Build passes: main bundle 461.76 kB → 259.91 kB (gzip 128.48 → 80.58 kB); html2canvas appears as its own lazy chunk (202.43 kB / gzip 48.09 kB), fetched only on "Copy Image" click. Patch bump 0.1.0 → 0.1.1.
+- Remaining: #40 (Vitest tests) and #41 (charter library JSON export/import) still to implement in next runs.
+- Next task: implement #40 (Vitest unit tests — `npm install -D vitest`; add `"test": "vitest run"` script; extract and test `persistCharters()` 20-item cap, `SCRUM_VALUE_MAP` coverage counting, history diff sets, base64 URL-hash encode/decode round-trip from App.tsx/types.ts); then #41 (charter library JSON export/import on My Teams screen)
 
 ### 2026-07-11 — research: no pending human feedback, filed 2 new findings
 - Done: checked all 19 open issues. All previously-approved work (#3,#4,#5,#6,#7,#10,#11,#14,#15,#17,#19,#20,#21,#26) confirmed already implemented per Features checklist, awaiting human "Done" close; #8/#16/#18 confirmed scoped to other repos, no team-identity action needed; #39/#40/#41 (filed 2026-07-08) are still within their 7-day needs-review window (auto-approve threshold 2026-07-15, not yet reached) — no action possible on them this run. No changes-requested/research-more/incomplete issues present. Surveyed the codebase for new findings not already covered by #39–#41: confirmed `src/App.tsx` has grown to 1017 lines across 10 feature cycles with zero screen-level component extraction (only `AppHeader`/`LanguagePicker`/`ThemeToggle` exist in `src/components/`); confirmed the suite-wide "team context banner" pattern (#8 scrum-facilitator, #16 planning-poker+sprint-metrics, #18 change-planner) has not been proposed for Improvement Board, Kanban Designer, Work Profiles, or Salary Formula. Filed #42 (split App.tsx into per-screen components) and #43 (extend team context banner to the 4 remaining apps) — both `needs-review`.
