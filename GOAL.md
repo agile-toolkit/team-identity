@@ -24,3 +24,11 @@ it exists to be shown to other people, which makes each use its own distribution
 - A charter must stay producible in one sitting.
 
 *Repo: `agile-toolkit/team-identity`*
+
+---
+
+## Latitude
+
+Every goal above names an outcome, not a mechanism. Any roadmap that moves a
+signal without crossing a boundary is fair game — including approaches nobody
+in this category has tried. Invention is expected, not merely permitted.
