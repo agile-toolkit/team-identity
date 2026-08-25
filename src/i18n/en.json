@@ -25,7 +25,11 @@
     "min_note": "Select 3–5 values",
     "custom_label": "Add custom value",
     "custom_placeholder": "Type and press Enter",
-    "selected": "selected"
+    "selected": "selected",
+    "import_mm_banner": "Moving Motivators session found — import top motivators as suggested values?",
+    "import_mm_import": "Import",
+    "import_mm_dismiss": "Dismiss",
+    "from_mm": "MM"
   },
   "agreements": {
     "title": "Working Agreements",
@@ -40,6 +44,7 @@
     "title": "Your Team Charter",
     "save": "Save Charter",
     "saved": "Saved!",
+    "share": "Copy Image",
     "print": "Print",
     "restart": "Start Over",
     "team_name": "Team",
@@ -47,7 +52,51 @@
     "values_title": "Our Values",
     "agreements_title": "Working Agreements",
     "symbol_title": "Our Symbol",
-    "created": "Created"
+    "created": "Created",
+    "members_title": "Team Members",
+    "import_wp": "Import Participants",
+    "share_url": "Share Link",
+    "share_copied": "Link copied!",
+    "scrum_toggle_show": "Scrum Alignment",
+    "scrum_toggle_hide": "Hide Scrum Alignment",
+    "scrum_coverage": "Scrum values: {{covered}}/5"
+  },
+  "draft": {
+    "resume_prompt": "You have an unfinished workshop session — would you like to resume?",
+    "resume": "Resume",
+    "discard": "Discard"
+  },
+  "facilitator": {
+    "toggle_on": "Facilitator Mode",
+    "toggle_off": "Exit Facilitator Mode"
+  },
+  "teams": {
+    "title": "My Teams",
+    "empty": "No teams saved yet.",
+    "save_to_library": "Save to My Teams",
+    "save_name_placeholder": "Library name...",
+    "save_confirm": "Save",
+    "cancel": "Cancel",
+    "saved_to_library": "Saved to library!",
+    "load": "Load",
+    "delete": "Delete",
+    "rename": "Rename",
+    "rename_confirm": "Rename",
+    "rename_placeholder": "New name...",
+    "cap_warning": "Library is full (20 teams). Delete one to add more."
+  },
+  "history": {
+    "title": "Charter History",
+    "compare_hint": "Select a version to compare with current",
+    "comparing": "Comparing with version from {{date}}",
+    "comparing_active": "Comparing",
+    "compare": "Compare",
+    "close_compare": "Close",
+    "restore": "Restore",
+    "latest": "Latest",
+    "values_diff": "Values",
+    "agreements_diff": "Agreements",
+    "no_changes": "No changes"
   },
   "common": {
     "back": "Back",

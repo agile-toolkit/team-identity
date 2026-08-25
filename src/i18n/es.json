@@ -25,7 +25,11 @@
     "min_note": "Selecciona 3–5 valores",
     "custom_label": "Añadir valor personalizado",
     "custom_placeholder": "Escribe y pulsa Enter",
-    "selected": "seleccionados"
+    "selected": "seleccionados",
+    "import_mm_banner": "Se encontró una sesión de Moving Motivators — ¿importar los motivadores principales como valores sugeridos?",
+    "import_mm_import": "Importar",
+    "import_mm_dismiss": "Ignorar",
+    "from_mm": "MM"
   },
   "agreements": {
     "title": "Acuerdos de Trabajo",
@@ -40,6 +44,7 @@
     "title": "Acta del Equipo",
     "save": "Guardar Acta",
     "saved": "¡Guardado!",
+    "share": "Copiar Imagen",
     "print": "Imprimir",
     "restart": "Empezar de Nuevo",
     "team_name": "Equipo",
@@ -47,7 +52,51 @@
     "values_title": "Nuestros Valores",
     "agreements_title": "Acuerdos de Trabajo",
     "symbol_title": "Nuestro Símbolo",
-    "created": "Creado"
+    "created": "Creado",
+    "members_title": "Miembros del Equipo",
+    "import_wp": "Importar Participantes",
+    "share_url": "Compartir enlace",
+    "share_copied": "¡Enlace copiado!",
+    "scrum_toggle_show": "Alineación Scrum",
+    "scrum_toggle_hide": "Ocultar Alineación Scrum",
+    "scrum_coverage": "Valores Scrum: {{covered}}/5"
+  },
+  "draft": {
+    "resume_prompt": "Tienes una sesión de taller sin terminar — ¿deseas retomarla?",
+    "resume": "Retomar",
+    "discard": "Descartar"
+  },
+  "facilitator": {
+    "toggle_on": "Modo Facilitador",
+    "toggle_off": "Salir del Modo Facilitador"
+  },
+  "teams": {
+    "title": "Mis Equipos",
+    "empty": "Aún no hay equipos guardados.",
+    "save_to_library": "Guardar en Mis Equipos",
+    "save_name_placeholder": "Nombre en la biblioteca...",
+    "save_confirm": "Guardar",
+    "cancel": "Cancelar",
+    "saved_to_library": "¡Guardado en la biblioteca!",
+    "load": "Cargar",
+    "delete": "Eliminar",
+    "rename": "Renombrar",
+    "rename_confirm": "Renombrar",
+    "rename_placeholder": "Nuevo nombre...",
+    "cap_warning": "La biblioteca está llena (20 equipos). Elimina uno para añadir más."
+  },
+  "history": {
+    "title": "Historial del Acta",
+    "compare_hint": "Selecciona una versión para comparar con la actual",
+    "comparing": "Comparando con versión del {{date}}",
+    "comparing_active": "Comparando",
+    "compare": "Comparar",
+    "close_compare": "Cerrar",
+    "restore": "Restaurar",
+    "latest": "Más reciente",
+    "values_diff": "Valores",
+    "agreements_diff": "Acuerdos",
+    "no_changes": "Sin cambios"
   },
   "common": {
     "back": "Atrás",

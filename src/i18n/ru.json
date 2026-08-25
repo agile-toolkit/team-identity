@@ -25,7 +25,11 @@
     "min_note": "Выберите 3–5 ценностей",
     "custom_label": "Добавить свою ценность",
     "custom_placeholder": "Введите и нажмите Enter",
-    "selected": "выбрано"
+    "selected": "выбрано",
+    "import_mm_banner": "Найдена сессия Moving Motivators — импортировать топ-мотиваторы как предложенные ценности?",
+    "import_mm_import": "Импортировать",
+    "import_mm_dismiss": "Отклонить",
+    "from_mm": "MM"
   },
   "agreements": {
     "title": "Рабочие соглашения",
@@ -40,6 +44,7 @@
     "title": "Устав команды",
     "save": "Сохранить устав",
     "saved": "Сохранено!",
+    "share": "Скопировать изображение",
     "print": "Печать",
     "restart": "Начать заново",
     "team_name": "Команда",
@@ -47,7 +52,51 @@
     "values_title": "Наши ценности",
     "agreements_title": "Рабочие соглашения",
     "symbol_title": "Наш символ",
-    "created": "Создано"
+    "created": "Создано",
+    "members_title": "Участники",
+    "import_wp": "Импортировать участников",
+    "share_url": "Поделиться ссылкой",
+    "share_copied": "Ссылка скопирована!",
+    "scrum_toggle_show": "Ценности Scrum",
+    "scrum_toggle_hide": "Скрыть ценности Scrum",
+    "scrum_coverage": "Ценности Scrum: {{covered}}/5"
+  },
+  "draft": {
+    "resume_prompt": "У вас есть незавершённая сессия воркшопа — хотите продолжить?",
+    "resume": "Продолжить",
+    "discard": "Отклонить"
+  },
+  "facilitator": {
+    "toggle_on": "Режим фасилитатора",
+    "toggle_off": "Выйти из режима фасилитатора"
+  },
+  "teams": {
+    "title": "Мои команды",
+    "empty": "Нет сохранённых команд.",
+    "save_to_library": "Сохранить в «Мои команды»",
+    "save_name_placeholder": "Название в библиотеке...",
+    "save_confirm": "Сохранить",
+    "cancel": "Отмена",
+    "saved_to_library": "Сохранено в библиотеке!",
+    "load": "Загрузить",
+    "delete": "Удалить",
+    "rename": "Переименовать",
+    "rename_confirm": "Переименовать",
+    "rename_placeholder": "Новое название...",
+    "cap_warning": "Библиотека заполнена (20 команд). Удалите одну, чтобы добавить новую."
+  },
+  "history": {
+    "title": "История устава",
+    "compare_hint": "Выберите версию для сравнения с текущей",
+    "comparing": "Сравнение с версией от {{date}}",
+    "comparing_active": "Сравнивается",
+    "compare": "Сравнить",
+    "close_compare": "Закрыть",
+    "restore": "Восстановить",
+    "latest": "Последняя",
+    "values_diff": "Ценности",
+    "agreements_diff": "Соглашения",
+    "no_changes": "Без изменений"
   },
   "common": {
     "back": "Назад",

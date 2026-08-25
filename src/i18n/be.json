@@ -25,7 +25,11 @@
     "min_note": "Выберыце 3–5 каштоўнасцей",
     "custom_label": "Дадаць уласную каштоўнасць",
     "custom_placeholder": "Увядзіце і націсніце Enter",
-    "selected": "выбрана"
+    "selected": "выбрана",
+    "import_mm_banner": "Знойдзена сесія Moving Motivators — імпартаваць топ-матыватары як прапанаваныя каштоўнасці?",
+    "import_mm_import": "Імпартаваць",
+    "import_mm_dismiss": "Адхіліць",
+    "from_mm": "MM"
   },
   "agreements": {
     "title": "Рабочыя пагадненні",
@@ -40,6 +44,7 @@
     "title": "Статут каманды",
     "save": "Захаваць статут",
     "saved": "Захавана!",
+    "share": "Капіяваць малюнак",
     "print": "Друк",
     "restart": "Пачаць нанова",
     "team_name": "Каманда",
@@ -47,7 +52,51 @@
     "values_title": "Нашы каштоўнасці",
     "agreements_title": "Рабочыя пагадненні",
     "symbol_title": "Наш сімвал",
-    "created": "Створана"
+    "created": "Створана",
+    "members_title": "Удзельнікі",
+    "import_wp": "Імпартаваць удзельнікаў",
+    "share_url": "Падзяліцца спасылкай",
+    "share_copied": "Спасылка скапіявана!",
+    "scrum_toggle_show": "Выраўноўванне Scrum",
+    "scrum_toggle_hide": "Схаваць выраўноўванне Scrum",
+    "scrum_coverage": "Каштоўнасці Scrum: {{covered}}/5"
+  },
+  "draft": {
+    "resume_prompt": "У вас ёсць незавершаная сесія воркшопу — хочаце прадоўжыць?",
+    "resume": "Прадоўжыць",
+    "discard": "Адмяніць"
+  },
+  "facilitator": {
+    "toggle_on": "Рэжым фасілітатара",
+    "toggle_off": "Выйсці з рэжыму фасілітатара"
+  },
+  "teams": {
+    "title": "Мае каманды",
+    "empty": "Яшчэ няма захаваных каманд.",
+    "save_to_library": "Захаваць у «Мае каманды»",
+    "save_name_placeholder": "Назва ў бібліятэцы...",
+    "save_confirm": "Захаваць",
+    "cancel": "Адмена",
+    "saved_to_library": "Захавана ў бібліятэцы!",
+    "load": "Загрузіць",
+    "delete": "Выдаліць",
+    "rename": "Перайменаваць",
+    "rename_confirm": "Перайменаваць",
+    "rename_placeholder": "Новая назва...",
+    "cap_warning": "Бібліятэка запоўнена (20 каманд). Выдаліце адну, каб дадаць яшчэ."
+  },
+  "history": {
+    "title": "Гісторыя статута",
+    "compare_hint": "Выберыце версію для параўнання з бягучай",
+    "comparing": "Параўнанне з версіяй ад {{date}}",
+    "comparing_active": "Параўноўваецца",
+    "compare": "Параўнаць",
+    "close_compare": "Закрыць",
+    "restore": "Аднавіць",
+    "latest": "Апошняя",
+    "values_diff": "Каштоўнасці",
+    "agreements_diff": "Пагадненні",
+    "no_changes": "Без змен"
   },
   "common": {
     "back": "Назад",

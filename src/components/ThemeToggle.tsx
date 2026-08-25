@@ -1,5 +1,9 @@
 import { useEffect, useState } from 'react'
 
+/**
+ * Copied from design-system/components/ThemeToggle.tsx.
+ */
+
 const STORAGE_KEY = 'theme'
 
 function getInitialTheme(): 'light' | 'dark' {
