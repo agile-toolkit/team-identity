@@ -88,6 +88,7 @@
     "saved_to_library": "¡Guardado en la biblioteca!",
     "load": "Cargar",
     "delete": "Eliminar",
+    "delete_confirm": "¿Eliminar este equipo guardado? Esta acción no se puede deshacer.",
     "rename": "Renombrar",
     "rename_confirm": "Renombrar",
     "rename_placeholder": "Nuevo nombre...",

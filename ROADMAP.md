@@ -10,6 +10,8 @@ None — idle. See `## Next epics` below.
 2. **E3: Decompose App.tsx into per-screen components** — serves ongoing maintainability, not a numbered success criterion directly. `src/App.tsx` has grown past 1000 lines across many feature cycles with no screen-level extraction beyond `AppHeader`/`LanguagePicker`/`ThemeToggle`. [#42](https://github.com/agile-toolkit/team-identity/issues/42) — `needs-review`, well past the 7-day staleness threshold.
 
 ## Recently shipped
+**Confirm before deleting a saved team** (2026-09-02) — see `## Shipped`. A suite-wide UX audit found "My Teams"' Delete button had no confirmation. Added one, matching the pattern used for destructive actions elsewhere in the suite.
+
 **Fix: header nav ordering + E1 (partial): storage-layer test coverage** (2026-09-02) — see `## Shipped`. A suite-wide UX audit found the "About Team Identity" link rendered after the language picker/theme toggle instead of before, unlike every sibling app's header convention — it was passed as a `children` slot item instead of via `navItems`. Fixed, and added this repo's first automated tests along the way.
 
 **E2: Charter library JSON export/import** (2026-09-02) — see `## Shipped`. [#41](https://github.com/agile-toolkit/team-identity/issues/41)
@@ -40,6 +42,9 @@ None — idle. See `## Next epics` below.
 - ~~Added `vitest` + `jsdom`; covers `loadCharters`/`loadHistory`,
   `readWpParticipants`/`readMmTopMotivators`, `defaultCharter`, and the
   newly-extracted `scrumValuesCovered`~~
+
+**v0.2.3 — Confirm before deleting a saved team** (2026-09-02):
+- ~~Added a confirm dialog to "My Teams"' Delete button~~
 
 Not carried into Next epics: [#8](https://github.com/agile-toolkit/team-identity/issues/8), [#16](https://github.com/agile-toolkit/team-identity/issues/16), [#18](https://github.com/agile-toolkit/team-identity/issues/18), and [#43](https://github.com/agile-toolkit/team-identity/issues/43) are all "team context banner" integrations scoped entirely to *other* repos (scrum-facilitator, planning-poker, sprint-metrics, change-planner, improvement-board, kanban-designer, work-profiles, salary-formula) — Team Identity's write side (`team-identity-charter`) already exists and needs no further change. All four closed as completed in this repo's issue cleanup — see the 2026-09-02 commit.
 

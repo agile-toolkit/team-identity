@@ -229,6 +229,7 @@ export default function App() {
   }
 
   const deleteFromLibrary = (id: string) => {
+    if (!window.confirm(t('teams.delete_confirm'))) return
     const updated = library.filter(c => c.id !== id)
     persistCharters(updated)
     setLibrary(updated)

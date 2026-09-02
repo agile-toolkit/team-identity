@@ -88,6 +88,7 @@
     "saved_to_library": "Saved to library!",
     "load": "Load",
     "delete": "Delete",
+    "delete_confirm": "Delete this saved team? This can't be undone.",
     "rename": "Rename",
     "rename_confirm": "Rename",
     "rename_placeholder": "New name...",

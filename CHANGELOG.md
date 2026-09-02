@@ -2,6 +2,14 @@
 
 ## Unreleased
 
+## 0.2.3 — Confirm before deleting a saved team (2026-09-02)
+
+- **fix**: "My Teams" library's Delete button had no confirmation —
+  one accidental click permanently removed a saved charter. Added a
+  confirm dialog, matching the pattern used for destructive actions
+  elsewhere in the suite.
+- Found via a suite-wide UX audit.
+
 ## 0.2.2 — Remove Management 3.0 references; fix invisible brand colors (2026-09-02)
 
 - **content**: removed "Management 3.0" text from the intro workshop
