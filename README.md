@@ -28,7 +28,7 @@ GitHub Pages via GitHub Actions on push to `main`.
 | `team-identity-charter` | `TeamCharter` object + `savedAt` timestamp | Full active charter — the source of truth on load |
 | `team-identity:lastSession` | `{teamName, symbol, valuesCount, agreementsCount, membersCount, savedAt}` | Dashboard summary card for agile-toolkit.github.io |
 | `team-identity:draft` | `{charter, step, savedAt}` | In-progress workshop state, written on every step transition; cleared on save or discard |
-| `team-identity:charters` | `Array<SavedCharter>` (max 20, newest first) | Multi-team charter library ("My Teams") |
+| `team-identity:charters` | `Array<SavedCharter>` (max 20, newest first) | Multi-team charter library ("My Teams"). Exportable/importable as JSON from the My Teams screen — import skips duplicates by `id` and respects the 20-item cap. |
 | `team-identity:history` | `Array<HistoryEntry>` (max 10, newest first) | Version history per save, used for the diff/compare panel |
 | `team-identity:facilitatorMode` (sessionStorage) | boolean flag | Facilitator/projector display mode, resets per tab session |
 
@@ -41,6 +41,7 @@ Team Identity also *reads* (never writes) two keys owned by sibling apps: `movin
 - **Charter sharing** — image export uses `html2canvas`, dynamically imported inside the "Copy Image" handler (not a static import) so its ~200 kB weight only loads on click. URL sharing base64-encodes the charter JSON into `location.hash`; decoded and hydrated on mount, then the hash is cleared.
 - **Print** — a dedicated `@media print` block in `src/index.css` hides chrome (header, nav, buttons) and strips the charter card's gradient/shadow for a clean printout; `document.title` is set dynamically to `"[TeamName] — Team Charter"` while on the charter step.
 - **Firebase** is referenced as a future collaboration backend but is not wired up anywhere in `src/` — treat any mention as aspirational, not implemented.
+- **Charter library backup** — Export/Import on the My Teams screen (`exportLibrary`/`importLibrary` in `App.tsx`) serialize `team-identity:charters` to/from a downloadable `.json` file, using the same `Blob` + anchor-click pattern the CSV/image exports use elsewhere in the suite. Import validates each entry's shape independently (skips malformed items rather than rejecting the whole file), skips duplicates by `id` (existing entry wins), and silently caps additions at the 20-item library limit — reported back to the user as "N imported / N duplicates skipped / N skipped (library full)".
 
 ## Source materials
 See `.artefacts/BRIEF.md` for the full run-by-run agent history and source file references.

@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { useTranslation } from 'react-i18next'
 import type { WorkshopStep, WorkingAgreement, TeamCharter, SavedCharter, HistoryEntry } from './types'
 import { SYMBOLS, VALUE_CARDS, AGREEMENT_PROMPTS } from './data/symbols'
@@ -117,6 +117,8 @@ export default function App() {
   const [librarySaved, setLibrarySaved] = useState(false)
   const [renamingId, setRenamingId] = useState<string | null>(null)
   const [renameValue, setRenameValue] = useState('')
+  const [importResult, setImportResult] = useState<string | null>(null)
+  const importFileRef = useRef<HTMLInputElement>(null)
   const [showScrumAlignment, setShowScrumAlignment] = useState(false)
   const [showHistory, setShowHistory] = useState(false)
   const [history, setHistory] = useState<HistoryEntry[]>(loadHistory)
@@ -231,6 +233,53 @@ export default function App() {
     setLibrary(updated)
     setRenamingId(null)
     setRenameValue('')
+  }
+
+  const exportLibrary = () => {
+    const blob = new Blob([JSON.stringify(library, null, 2)], { type: 'application/json' })
+    const url = URL.createObjectURL(blob)
+    const a = document.createElement('a')
+    a.href = url
+    a.download = `team-charters-export-${new Date().toISOString().slice(0, 10)}.json`
+    a.click()
+    URL.revokeObjectURL(url)
+  }
+
+  function isSavedCharterShape(v: unknown): v is SavedCharter {
+    if (!v || typeof v !== 'object') return false
+    const c = v as Record<string, unknown>
+    return typeof c.id === 'string' && typeof c.libraryName === 'string' &&
+      typeof c.teamName === 'string' && Array.isArray(c.values) && Array.isArray(c.agreements)
+  }
+
+  const importLibrary = (file: File) => {
+    const reader = new FileReader()
+    reader.onload = () => {
+      try {
+        const parsed: unknown = JSON.parse(String(reader.result))
+        const candidates = Array.isArray(parsed) ? parsed.filter(isSavedCharterShape) : []
+        if (candidates.length === 0) {
+          setImportResult(t('teams.import_invalid'))
+          return
+        }
+        const existingIds = new Set(library.map(c => c.id))
+        const newOnes = candidates.filter(c => !existingIds.has(c.id))
+        const duplicateCount = candidates.length - newOnes.length
+        const roomLeft = Math.max(0, LIBRARY_CAP - library.length)
+        const toAdd = newOnes.slice(0, roomLeft)
+        const capSkipped = newOnes.length - toAdd.length
+        const updated = [...toAdd, ...library]
+        persistCharters(updated)
+        setLibrary(updated)
+        const parts = [t('teams.import_success', { count: toAdd.length })]
+        if (duplicateCount > 0) parts.push(t('teams.import_duplicates', { count: duplicateCount }))
+        if (capSkipped > 0) parts.push(t('teams.import_cap_skipped', { count: capSkipped }))
+        setImportResult(parts.join(' '))
+      } catch {
+        setImportResult(t('teams.import_invalid'))
+      }
+    }
+    reader.readAsText(file)
   }
 
   const stepIndex = STEPS.indexOf(step)
@@ -375,10 +424,32 @@ export default function App() {
           <ThemeToggle />
         </AppHeader>
         <main className="flex-1 max-w-2xl mx-auto w-full px-4 py-8">
-          <div className="flex items-center justify-between mb-6">
+          <div className="flex items-center justify-between mb-4 gap-2 flex-wrap">
             <h1 className="text-2xl font-bold">{t('teams.title')}</h1>
-            <button onClick={() => setShowMyTeams(false)} className="btn-ghost">{t('common.back')}</button>
+            <div className="flex items-center gap-2">
+              {library.length > 0 && (
+                <button onClick={exportLibrary} className="btn-secondary text-sm">{t('teams.export')}</button>
+              )}
+              <button onClick={() => importFileRef.current?.click()} className="btn-secondary text-sm">{t('teams.import')}</button>
+              <input
+                ref={importFileRef}
+                type="file"
+                accept=".json"
+                className="hidden"
+                onChange={e => {
+                  const file = e.target.files?.[0]
+                  if (file) importLibrary(file)
+                  e.target.value = ''
+                }}
+              />
+              <button onClick={() => setShowMyTeams(false)} className="btn-ghost">{t('common.back')}</button>
+            </div>
           </div>
+          {importResult && (
+            <p className="text-sm text-brand-700 dark:text-brand-400 bg-brand-50 dark:bg-brand-900/20 rounded-xl px-4 py-2 mb-4">
+              {importResult}
+            </p>
+          )}
           {library.length === 0 ? (
             <p className="text-gray-400 dark:text-gray-500 text-center py-16">{t('teams.empty')}</p>
           ) : (

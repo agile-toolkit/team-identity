@@ -1,11 +1,19 @@
 {
-  "app": { "title": "Identidad del Equipo" },
+  "app": {
+    "title": "Identidad del Equipo"
+  },
   "intro": {
     "headline": "Construye la Identidad de tu Equipo",
     "body": "Un acta de equipo es un artefacto vivo que captura quiénes sois como equipo. Este taller te guía a través del proceso de Símbolos de Identidad de Management 3.0: nombre, símbolo, valores y acuerdos de trabajo.",
     "start": "Iniciar Taller",
     "load": "Cargar Acta Guardada",
-    "steps": ["Nombre del Equipo", "Símbolo", "Valores", "Acuerdos", "Acta"]
+    "steps": [
+      "Nombre del Equipo",
+      "Símbolo",
+      "Valores",
+      "Acuerdos",
+      "Acta"
+    ]
   },
   "name": {
     "title": "¿Cuál es el nombre de tu equipo?",
@@ -83,7 +91,16 @@
     "rename": "Renombrar",
     "rename_confirm": "Renombrar",
     "rename_placeholder": "Nuevo nombre...",
-    "cap_warning": "La biblioteca está llena (20 equipos). Elimina uno para añadir más."
+    "cap_warning": "La biblioteca está llena (20 equipos). Elimina uno para añadir más.",
+    "export": "Exportar",
+    "import": "Importar",
+    "import_invalid": "Ese archivo no parece ser una exportación de Team Identity.",
+    "import_success": "Se importó {{count}} equipo.",
+    "import_success_other": "Se importaron {{count}} equipos.",
+    "import_duplicates": "{{count}} duplicado omitido.",
+    "import_duplicates_other": "{{count}} duplicados omitidos.",
+    "import_cap_skipped": "{{count}} omitido — la biblioteca está llena (20 equipos).",
+    "import_cap_skipped_other": "{{count}} omitidos — la biblioteca está llena (20 equipos)."
   },
   "history": {
     "title": "Historial del Acta",

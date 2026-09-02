@@ -1,11 +1,19 @@
 {
-  "app": { "title": "Team Identity" },
+  "app": {
+    "title": "Team Identity"
+  },
   "intro": {
     "headline": "Build Your Team Identity",
     "body": "A team charter is a living artifact that captures who you are as a team. This workshop guides you through the Management 3.0 Identity Symbols process: name, symbol, values, and working agreements.",
     "start": "Start Workshop",
     "load": "Load Saved Charter",
-    "steps": ["Team Name", "Symbol", "Values", "Agreements", "Charter"]
+    "steps": [
+      "Team Name",
+      "Symbol",
+      "Values",
+      "Agreements",
+      "Charter"
+    ]
   },
   "name": {
     "title": "What is your team's name?",
@@ -83,7 +91,16 @@
     "rename": "Rename",
     "rename_confirm": "Rename",
     "rename_placeholder": "New name...",
-    "cap_warning": "Library is full (20 teams). Delete one to add more."
+    "cap_warning": "Library is full (20 teams). Delete one to add more.",
+    "export": "Export",
+    "import": "Import",
+    "import_invalid": "That file doesn't look like a Team Identity export.",
+    "import_success": "Imported {{count}} team.",
+    "import_success_other": "Imported {{count}} teams.",
+    "import_duplicates": "{{count}} duplicate skipped.",
+    "import_duplicates_other": "{{count}} duplicates skipped.",
+    "import_cap_skipped": "{{count}} skipped — library is full (20 teams).",
+    "import_cap_skipped_other": "{{count}} skipped — library is full (20 teams)."
   },
   "history": {
     "title": "Charter History",
