@@ -4,7 +4,7 @@
   },
   "intro": {
     "headline": "Build Your Team Identity",
-    "body": "A team charter is a living artifact that captures who you are as a team. This workshop guides you through the Management 3.0 Identity Symbols process: name, symbol, values, and working agreements.",
+    "body": "A team charter is a living artifact that captures who you are as a team. This workshop guides you through the Identity Symbols process: name, symbol, values, and working agreements.",
     "start": "Start Workshop",
     "load": "Load Saved Charter",
     "steps": [
@@ -122,7 +122,7 @@
   "learn": {
     "title": "About Team Identity",
     "why_title": "Why Team Identity?",
-    "why_body": "Teams with a shared identity have higher cohesion, clearer decisions, and better onboarding. Management 3.0's Identity Symbols practice helps teams articulate who they are, not just what they do.",
+    "why_body": "Teams with a shared identity have higher cohesion, clearer decisions, and better onboarding. The Identity Symbols practice helps teams articulate who they are, not just what they do.",
     "expo_title": "What is a Work Expo?",
     "expo_body": "A Work Expo is a team showcase event where teams present their charter, projects, and working culture to the rest of the organization. It builds cross-team understanding and pride."
   }

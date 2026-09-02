@@ -2,6 +2,18 @@
 
 ## Unreleased
 
+## 0.2.2 — Remove Management 3.0 references; fix invisible brand colors (2026-09-02)
+
+- **content**: removed "Management 3.0" text from the intro workshop
+  copy, the Learn page's "why" section, and `README.md` — reworded to
+  reference the Identity Symbols/Work Expo practices directly rather
+  than the framework brand. All 4 locales updated.
+- **fix**: `brand-200`/`brand-300`/`brand-800`/`brand-900` were
+  referenced but never defined in `tailwind.config.js` — invisible
+  borders/backgrounds/text in both light and dark mode. Same class of
+  bug found and fixed across several repos this session. Completed the
+  `brand` scale with Tailwind's own `sky` values.
+
 ## 0.2.1 — Fix header nav ordering; E1 (partial): storage-layer tests (2026-09-02)
 
 - **fix**: "About Team Identity" rendered after the language picker and
