@@ -15,8 +15,8 @@ npm install      # install dependencies
 npm run dev       # start Vite dev server
 npm run build      # type-check (tsc) then production build
 npm run preview     # preview the production build locally
+npm test            # vitest run — App.tsx's pure storage/derived-data functions
 ```
-There is no test script yet — see `ROADMAP.md` E1 (Vitest coverage, issue #40).
 
 ## Deploy
 GitHub Pages via GitHub Actions on push to `main`.
@@ -39,6 +39,7 @@ Team Identity also *reads* (never writes) two keys owned by sibling apps: `movin
 - **i18n** — `react-i18next` with 4 static JSON locale files (`src/i18n/{en,es,be,ru}.json`), all registered in `src/i18n/index.ts`. No translation is fetched at runtime.
 - **Theme** — dark mode uses Tailwind's `darkMode: ['selector', '[data-theme="dark"]']` convention (shared across the suite). An inline anti-flash script in `index.html` sets `data-theme` on `<html>` before first paint, reading `localStorage.theme` or `prefers-color-scheme`. The branded gradient charter card is intentionally left theme-invariant (self-contained white-on-brand design).
 - **Charter sharing** — image export uses `html2canvas`, dynamically imported inside the "Copy Image" handler (not a static import) so its ~200 kB weight only loads on click. URL sharing base64-encodes the charter JSON into `location.hash`; decoded and hydrated on mount, then the hash is cleared.
+- **Test coverage** — `src/App.test.ts` covers the module-level storage functions (`loadCharters`/`loadHistory`, including corrupted-storage recovery), the cross-app readers (`readWpParticipants`/`readMmTopMotivators`), `defaultCharter`, and `scrumValuesCovered` (extracted from an inline JSX computation so it could be tested directly). This is a start on issue #40's ask, not the full scope — charter history diffing and the base64 URL-hash encode/decode are still untested, both currently inline in `App.tsx` rather than standalone functions.
 - **Print** — a dedicated `@media print` block in `src/index.css` hides chrome (header, nav, buttons) and strips the charter card's gradient/shadow for a clean printout; `document.title` is set dynamically to `"[TeamName] — Team Charter"` while on the charter step.
 - **Firebase** is referenced as a future collaboration backend but is not wired up anywhere in `src/` — treat any mention as aspirational, not implemented.
 - **Charter library backup** — Export/Import on the My Teams screen (`exportLibrary`/`importLibrary` in `App.tsx`) serialize `team-identity:charters` to/from a downloadable `.json` file, using the same `Blob` + anchor-click pattern the CSV/image exports use elsewhere in the suite. Import validates each entry's shape independently (skips malformed items rather than rejecting the whole file), skips duplicates by `id` (existing entry wins), and silently caps additions at the 20-item library limit — reported back to the user as "N imported / N duplicates skipped / N skipped (library full)".

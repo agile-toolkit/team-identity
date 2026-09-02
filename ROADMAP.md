@@ -6,10 +6,12 @@ Derived from GOAL.md. Rebuilt when GOAL changes or an epic ships.
 None — idle. See `## Next epics` below.
 
 ## Next epics
-1. **E1: Vitest coverage for charter logic** — serves signal #1 (reliability of the charter artefact). No test files or test runner exist yet; the app has accumulated non-trivial pure logic (charter history diffing, Scrum-values coverage counting, library 20-item cap/eviction, base64 URL-hash encode/decode) with zero regression protection. [#40](https://github.com/agile-toolkit/team-identity/issues/40) — `needs-review`, well past the 7-day staleness threshold.
+1. **E1 remainder: Vitest coverage for charter logic** — serves signal #1 (reliability of the charter artefact). A first pass now covers the storage-layer functions and Scrum-values coverage counting (see Recently shipped); still untested: charter history diffing and base64 URL-hash encode/decode, both currently inline in `App.tsx`'s JSX/render logic rather than standalone functions — extracting them is naturally paired with E3's decomposition below. [#40](https://github.com/agile-toolkit/team-identity/issues/40) — `needs-review`, well past the 7-day staleness threshold.
 2. **E3: Decompose App.tsx into per-screen components** — serves ongoing maintainability, not a numbered success criterion directly. `src/App.tsx` has grown past 1000 lines across many feature cycles with no screen-level extraction beyond `AppHeader`/`LanguagePicker`/`ThemeToggle`. [#42](https://github.com/agile-toolkit/team-identity/issues/42) — `needs-review`, well past the 7-day staleness threshold.
 
 ## Recently shipped
+**Fix: header nav ordering + E1 (partial): storage-layer test coverage** (2026-09-02) — see `## Shipped`. A suite-wide UX audit found the "About Team Identity" link rendered after the language picker/theme toggle instead of before, unlike every sibling app's header convention — it was passed as a `children` slot item instead of via `navItems`. Fixed, and added this repo's first automated tests along the way.
+
 **E2: Charter library JSON export/import** (2026-09-02) — see `## Shipped`. [#41](https://github.com/agile-toolkit/team-identity/issues/41)
 
 ## Polish backlog
@@ -31,6 +33,13 @@ None — idle. See `## Next epics` below.
 - ~~Export "My Teams" library as a downloadable `.json` file~~
 - ~~Import from a `.json` file, skipping duplicates by `id` and respecting
   the 20-item cap, with an inline result message~~
+
+**v0.2.1 — Fix header nav ordering; E1 (partial): storage-layer tests** (2026-09-02):
+- ~~"About Team Identity" now renders as a nav pill before the language
+  picker, matching every sibling app's header convention~~
+- ~~Added `vitest` + `jsdom`; covers `loadCharters`/`loadHistory`,
+  `readWpParticipants`/`readMmTopMotivators`, `defaultCharter`, and the
+  newly-extracted `scrumValuesCovered`~~
 
 Not carried into Next epics: [#8](https://github.com/agile-toolkit/team-identity/issues/8), [#16](https://github.com/agile-toolkit/team-identity/issues/16), [#18](https://github.com/agile-toolkit/team-identity/issues/18), and [#43](https://github.com/agile-toolkit/team-identity/issues/43) are all "team context banner" integrations scoped entirely to *other* repos (scrum-facilitator, planning-poker, sprint-metrics, change-planner, improvement-board, kanban-designer, work-profiles, salary-formula) — Team Identity's write side (`team-identity-charter`) already exists and needs no further change. All four closed as completed in this repo's issue cleanup — see the 2026-09-02 commit.
 

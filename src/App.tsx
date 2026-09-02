@@ -15,7 +15,7 @@ const LIBRARY_CAP = 20
 const HISTORY_CAP = 10
 const STEPS: WorkshopStep[] = ['intro', 'name', 'symbol', 'values', 'agreements', 'charter']
 
-function readWpParticipants(): string[] | null {
+export function readWpParticipants(): string[] | null {
   try {
     const raw = localStorage.getItem('work-profiles-data')
     if (!raw) return null
@@ -30,7 +30,7 @@ function readWpParticipants(): string[] | null {
   }
 }
 
-function readMmTopMotivators(): string[] | null {
+export function readMmTopMotivators(): string[] | null {
   try {
     const raw = localStorage.getItem('moving-motivators:lastSession')
     if (!raw) return null
@@ -50,7 +50,7 @@ function loadDraft(): { charter: TeamCharter; step: WorkshopStep; savedAt: numbe
   try { return JSON.parse(localStorage.getItem(DRAFT_KEY) ?? 'null') } catch { return null }
 }
 
-function loadCharters(): SavedCharter[] {
+export function loadCharters(): SavedCharter[] {
   try {
     const raw = localStorage.getItem(CHARTERS_KEY)
     if (!raw) return []
@@ -63,7 +63,7 @@ function persistCharters(charters: SavedCharter[]): void {
   try { localStorage.setItem(CHARTERS_KEY, JSON.stringify(charters)) } catch { /* quota exceeded */ }
 }
 
-function loadHistory(): HistoryEntry[] {
+export function loadHistory(): HistoryEntry[] {
   try {
     const raw = localStorage.getItem(HISTORY_KEY)
     if (!raw) return []
@@ -76,7 +76,14 @@ function persistHistory(entries: HistoryEntry[]): void {
   try { localStorage.setItem(HISTORY_KEY, JSON.stringify(entries)) } catch { /* quota exceeded */ }
 }
 
-const defaultCharter = (): TeamCharter => ({
+// Which of the 5 Scrum values a charter's chosen value cards collectively touch,
+// via SCRUM_VALUE_MAP's card→Scrum-value tagging. Used for the charter's
+// "Scrum alignment" coverage badge row.
+export function scrumValuesCovered(values: string[]): Set<string> {
+  return new Set(values.flatMap(v => SCRUM_VALUE_MAP[v] ?? []))
+}
+
+export const defaultCharter = (): TeamCharter => ({
   teamName: '',
   symbol: '',
   customSymbol: '',
@@ -505,7 +512,12 @@ export default function App() {
   if (showLearn) {
     return (
       <div className="min-h-screen flex flex-col">
-        <AppHeader title={t('app.title')} onTitleClick={() => setShowLearn(false)} hideLanguagePicker={facilitatorMode}>
+        <AppHeader
+          title={t('app.title')}
+          onTitleClick={() => setShowLearn(false)}
+          hideLanguagePicker={facilitatorMode}
+          navItems={facilitatorMode ? [] : [{ key: 'learn', label: t('learn.title'), active: true, onClick: () => setShowLearn(true) }]}
+        >
           <ThemeToggle />
           {facilitatorBtn}
         </AppHeader>
@@ -526,11 +538,13 @@ export default function App() {
 
   return (
     <div className="min-h-screen flex flex-col">
-      <AppHeader title={t('app.title')} onTitleClick={() => setStep('intro')} hideLanguagePicker={facilitatorMode}>
+      <AppHeader
+        title={t('app.title')}
+        onTitleClick={() => setStep('intro')}
+        hideLanguagePicker={facilitatorMode}
+        navItems={facilitatorMode ? [] : [{ key: 'learn', label: t('learn.title'), active: false, onClick: () => setShowLearn(true) }]}
+      >
         <ThemeToggle />
-        {!facilitatorMode && (
-          <button onClick={() => setShowLearn(true)} className="btn-ghost">{t('learn.title')}</button>
-        )}
         {facilitatorBtn}
       </AppHeader>
 
@@ -958,7 +972,7 @@ export default function App() {
                 </div>
               </div>
               {showScrumAlignment && (() => {
-                const covered = new Set(charter.values.flatMap(v => SCRUM_VALUE_MAP[v] ?? []))
+                const covered = scrumValuesCovered(charter.values)
                 return (
                   <div className="mt-5 pt-4 border-t border-white/20">
                     <p className="text-xs font-semibold text-brand-100 uppercase tracking-wider mb-2">{t('charter.scrum_coverage', { covered: covered.size })}</p>

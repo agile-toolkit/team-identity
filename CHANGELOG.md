@@ -2,6 +2,25 @@
 
 ## Unreleased
 
+## 0.2.1 — Fix header nav ordering; E1 (partial): storage-layer tests (2026-09-02)
+
+- **fix**: "About Team Identity" rendered after the language picker and
+  theme toggle instead of before them — found during a suite-wide UX
+  audit comparing headers across all 11 apps. It was passed through
+  `AppHeader`'s `children` slot instead of `navItems`, so it landed after
+  the `LanguagePicker` render instead of before it, unlike every sibling
+  app. Now uses `navItems`, both on the main flow and the Learn screen
+  (where it also now shows as the active tab).
+- **test**: added `vitest` + `jsdom` (this repo's first automated test
+  coverage — partial E1/#40). Covers `loadCharters`/`loadHistory`
+  (including corrupted-storage recovery), the cross-app readers
+  `readWpParticipants`/`readMmTopMotivators`, `defaultCharter`, and
+  `scrumValuesCovered` — extracted from an inline JSX computation in the
+  charter's Scrum-alignment badge row so it could be tested directly.
+  Charter history diffing and the base64 URL-hash encode/decode remain
+  untested; both are still inline rather than standalone functions.
+  `npm test` now passes cleanly: 1 file, 16 tests.
+
 ## 0.2.0 — E2: Charter library JSON export/import (2026-09-02)
 
 - **feat**: "Export"/"Import" buttons on the My Teams screen. Export
