@@ -2,6 +2,18 @@
 
 ## Unreleased
 
+## 0.3.0 — Publish the shared team object (2026-09-03)
+
+- **feat**: this app now writes `agile-toolkit:activeTeam` when a charter is
+  saved. `GOALS.md` names one shared team object as "what holds it together"
+  and gives this app the job of producing it — but it never wrote the contract,
+  so the Dashboard inferred a team name from `team-identity-charter` instead
+  and only Moving Motivators wrote it. Consumers now have a real producer to
+  read from.
+- **feat**: `ErrorBoundary` at the root, with a scoped "clear this app's saved
+  data" recovery path.
+- **ci**: `npm test` now runs before `npm run build` in `deploy.yml`.
+
 ## 0.2.6 — Replace decorative ✕/✓ emoji with SVG icons (2026-09-03)
 
 - **feat**: replaced 2 decorative text glyphs (a selected value-tag's

@@ -6,6 +6,7 @@ import { SCRUM_VALUES, SCRUM_VALUE_MAP } from './data/scrum-values-map'
 import AppHeader from './components/AppHeader'
 import ThemeToggle from './components/ThemeToggle'
 import { CloseIcon, CheckIcon } from './components/icons'
+import { writeActiveTeam } from './activeTeam'
 
 const STORAGE_KEY = 'team-identity-charter'
 const DRAFT_KEY = 'team-identity:draft'
@@ -343,6 +344,9 @@ export default function App() {
     const now = Date.now()
     const toSave = { ...charter, savedAt: now }
     localStorage.setItem(STORAGE_KEY, JSON.stringify(toSave))
+    // Publish the suite-wide team object. This app produces it; every other
+    // tool that currently asks for its own team name can read it instead.
+    writeActiveTeam(charter.teamName, 'team-identity')
     localStorage.setItem('team-identity:lastSession', JSON.stringify({
       teamName: charter.teamName,
       symbol: charter.customSymbol || charter.symbol,
