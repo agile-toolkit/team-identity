@@ -10,7 +10,7 @@ import { writeActiveTeam } from './activeTeam'
 
 const STORAGE_KEY = 'team-identity-charter'
 const DRAFT_KEY = 'team-identity:draft'
-const FACILITATOR_KEY = 'team-identity:facilitatorMode'
+const FACILITATOR_KEY = 'agile-toolkit:facilitatorMode'
 const CHARTERS_KEY = 'team-identity:charters'
 const HISTORY_KEY = 'team-identity:history'
 const LIBRARY_CAP = 20
