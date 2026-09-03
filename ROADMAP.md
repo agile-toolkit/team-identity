@@ -10,6 +10,8 @@ None — idle. See `## Next epics` below.
 2. **E3: Decompose App.tsx into per-screen components** — serves ongoing maintainability, not a numbered success criterion directly. `src/App.tsx` has grown past 1000 lines across many feature cycles with no screen-level extraction beyond `AppHeader`/`LanguagePicker`/`ThemeToggle`. [#42](https://github.com/agile-toolkit/team-identity/issues/42) — `needs-review`, well past the 7-day staleness threshold.
 
 ## Recently shipped
+**Set the missing `data-accent="amber"` on the app root** (2026-09-03) — see `## Shipped`. The design-system contract has documented "amber → Work Profiles / Team Identity" for a while, but this app never actually set it — silently fell back to cobalt everywhere. Found while wiring the dashboard's app cards into the same per-app accent contract.
+
 **Normalize LanguagePicker dark shades** (2026-09-02) — see `## Shipped`. `LanguagePicker.tsx` had dark-mode classes on slightly different shades than the design-system's canonical copy. Normalized to match exactly.
 
 **Confirm before deleting a saved team** (2026-09-02) — see `## Shipped`. A suite-wide UX audit found "My Teams"' Delete button had no confirmation. Added one, matching the pattern used for destructive actions elsewhere in the suite.
@@ -22,6 +24,7 @@ None — idle. See `## Next epics` below.
 - None filed with no issue — all known small items are tracked as GitHub issues above.
 
 ## Shipped
+- ~~Set `data-accent="amber"` on the app root, matching the design-system's own documented contract~~
 - ~~Core workshop flow (intro → name → symbol → values → agreements → charter) in EN/RU~~
 - ~~Full 4-locale suite parity — ES + BE added, 4-way language switcher~~
 - ~~Charter persistence: draft auto-save/resume, multi-team library (Save/Load/Rename/Delete, capped at 20), version history with side-by-side diff (capped at 10)~~

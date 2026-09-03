@@ -2,6 +2,18 @@
 
 ## Unreleased
 
+## 0.2.5 — Set the missing data-accent="amber" on the app root (2026-09-03)
+
+- **fix (consistency)**: the suite's design-system contract
+  (`tokens.css` section 5, `agile-toolkit.github.io`'s dashboard now
+  reads it too) documents "amber → Work Profiles / Team Identity" —
+  but this app's own root `<div>` never actually set
+  `data-accent="amber"`, across all three of its top-level render
+  paths (My Teams, Learn, main flow). It silently fell back to the
+  cobalt default instead, so the app's own UI (header accents, active
+  nav pill, primary buttons) never matched its documented brand color.
+  Found while wiring the dashboard's app cards into this same contract.
+
 ## 0.2.4 — Normalize LanguagePicker dark shades (2026-09-02)
 
 - **fix (consistency)**: `LanguagePicker.tsx` already had dark-mode

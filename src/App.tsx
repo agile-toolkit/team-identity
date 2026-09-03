@@ -427,7 +427,7 @@ export default function App() {
 
   if (showMyTeams) {
     return (
-      <div className="min-h-screen flex flex-col">
+      <div className="min-h-screen flex flex-col" data-accent="amber">
         <AppHeader title={t('app.title')} onTitleClick={() => setShowMyTeams(false)}>
           <ThemeToggle />
         </AppHeader>
@@ -512,7 +512,7 @@ export default function App() {
 
   if (showLearn) {
     return (
-      <div className="min-h-screen flex flex-col">
+      <div className="min-h-screen flex flex-col" data-accent="amber">
         <AppHeader
           title={t('app.title')}
           onTitleClick={() => setShowLearn(false)}
@@ -538,7 +538,7 @@ export default function App() {
   }
 
   return (
-    <div className="min-h-screen flex flex-col">
+    <div className="min-h-screen flex flex-col" data-accent="amber">
       <AppHeader
         title={t('app.title')}
         onTitleClick={() => setStep('intro')}
