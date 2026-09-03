@@ -2,6 +2,16 @@
 
 ## Unreleased
 
+## 0.2.6 — Replace decorative ✕/✓ emoji with SVG icons (2026-09-03)
+
+- **feat**: replaced 2 decorative text glyphs (a selected value-tag's
+  remove indicator, the charter's agreements-list bullet) with
+  `CloseIcon`/`CheckIcon` from the new shared `icons.tsx`. Last app in a
+  suite-wide emoji→SVG sweep the user asked for — Team Identity's
+  Identity Symbols picker (`data/symbols.ts` and the custom-symbol
+  placeholder/input) stays untouched: those emoji are the actual
+  selectable data, not decoration, per the app's original design.
+
 ## 0.2.5 — Set the missing data-accent="amber" on the app root (2026-09-03)
 
 - **fix (consistency)**: the suite's design-system contract

@@ -5,6 +5,7 @@ import { SYMBOLS, VALUE_CARDS, AGREEMENT_PROMPTS } from './data/symbols'
 import { SCRUM_VALUES, SCRUM_VALUE_MAP } from './data/scrum-values-map'
 import AppHeader from './components/AppHeader'
 import ThemeToggle from './components/ThemeToggle'
+import { CloseIcon, CheckIcon } from './components/icons'
 
 const STORAGE_KEY = 'team-identity-charter'
 const DRAFT_KEY = 'team-identity:draft'
@@ -776,7 +777,7 @@ export default function App() {
                       {t('values.from_mm')}
                     </span>
                   )}
-                  <span aria-hidden="true">✕</span>
+                  <CloseIcon className="w-3 h-3" />
                 </button>
               ))}
             </div>
@@ -965,7 +966,7 @@ export default function App() {
                   <ul className="space-y-1">
                     {charter.agreements.slice(0, 5).map(ag => (
                       <li key={ag.id} className="text-xs text-brand-100 flex gap-1.5">
-                        <span className="text-brand-300">✓</span>
+                        <span className="text-brand-300 mt-0.5"><CheckIcon className="w-3 h-3" /></span>
                         {ag.text}
                       </li>
                     ))}
