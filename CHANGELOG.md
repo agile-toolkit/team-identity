@@ -2,6 +2,15 @@
 
 ## Unreleased
 
+## 0.2.4 — Normalize LanguagePicker dark shades (2026-09-02)
+
+- **fix (consistency)**: `LanguagePicker.tsx` already had dark-mode
+  classes, but on slightly different shades than the design-system's
+  canonical copy. Normalized to match exactly, part of a suite-wide
+  sweep that found the same component had drifted into 3 different
+  shade combinations across repos (and was missing dark mode entirely
+  in 5 others).
+
 ## 0.2.3 — Confirm before deleting a saved team (2026-09-02)
 
 - **fix**: "My Teams" library's Delete button had no confirmation —
