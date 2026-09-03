@@ -2,6 +2,18 @@
 
 ## Unreleased
 
+## 0.2.7 — Facilitator Mode persists across suite apps (2026-09-03)
+
+- **fix**: `FACILITATOR_KEY` changed from `'team-identity:facilitatorMode'`
+  to the shared `'agile-toolkit:facilitatorMode'` — user-requested so
+  Facilitator Mode survives navigating to another suite app in the same
+  tab instead of resetting. Team Identity originated this pattern (later
+  promoted to a shared design-system hook other apps use), so it still
+  has its own inline constant rather than `useFacilitatorMode.ts`; this
+  is the 10th and last repo in the key-unification rollout across the
+  suite. sessionStorage is already shared per-origin-per-tab, so only the
+  key string needed to change.
+
 ## 0.2.6 — Replace decorative ✕/✓ emoji with SVG icons (2026-09-03)
 
 - **feat**: replaced 2 decorative text glyphs (a selected value-tag's
