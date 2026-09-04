@@ -5,7 +5,7 @@ import { SYMBOLS, VALUE_CARDS, AGREEMENT_PROMPTS } from './data/symbols'
 import { SCRUM_VALUES, SCRUM_VALUE_MAP } from './data/scrum-values-map'
 import AppHeader from './components/AppHeader'
 import ThemeToggle from './components/ThemeToggle'
-import { CloseIcon, CheckIcon } from './components/icons'
+import { CloseIcon, CheckIcon, TeamIcon, ThumbsUpIcon } from './components/icons'
 import { writeActiveTeam } from './activeTeam'
 
 const STORAGE_KEY = 'team-identity-charter'
@@ -578,7 +578,9 @@ export default function App() {
         {/* INTRO */}
         {step === 'intro' && (
           <div className="max-w-lg mx-auto text-center">
-            <div className="text-6xl mb-4">🤝</div>
+            <div className="flex justify-center mb-4">
+              <TeamIcon className="w-16 h-16 text-gray-300 dark:text-gray-600" />
+            </div>
             <h1 className="text-3xl font-bold mb-3">{t('intro.headline')}</h1>
             <p className="text-gray-500 dark:text-gray-400 mb-8 leading-relaxed">{t('intro.body')}</p>
 
@@ -820,8 +822,9 @@ export default function App() {
                     <button
                       onClick={() => patch({ agreements: charter.agreements.map(a => a.id === ag.id ? { ...a, votes: a.votes + 1 } : a) })}
                       aria-label={`${t('agreements.upvote')} — ${ag.text}`}
-                      className="text-sm"
-                    >{t('agreements.upvote')} {ag.votes > 0 && <span className="text-xs text-gray-500 dark:text-gray-400">{ag.votes}</span>}</button>
+                      title={t('agreements.upvote')}
+                      className="inline-flex items-center gap-1 text-sm"
+                    ><ThumbsUpIcon className="w-3.5 h-3.5" /> {ag.votes > 0 && <span className="text-xs text-gray-500 dark:text-gray-400">{ag.votes}</span>}</button>
                     <span className="flex-1 text-sm text-gray-800 dark:text-gray-200">{ag.text}</span>
                     <button
                       onClick={() => patch({ agreements: charter.agreements.filter(a => a.id !== ag.id) })}
