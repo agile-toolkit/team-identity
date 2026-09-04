@@ -5,7 +5,7 @@ import { SYMBOLS, VALUE_CARDS, AGREEMENT_PROMPTS } from './data/symbols'
 import { SCRUM_VALUES, SCRUM_VALUE_MAP } from './data/scrum-values-map'
 import AppHeader from './components/AppHeader'
 import ThemeToggle from './components/ThemeToggle'
-import { CloseIcon, CheckIcon, TeamIcon, ThumbsUpIcon } from './components/icons'
+import { CloseIcon, CheckIcon, TeamIcon, ThumbsUpIcon, ArrowLeftIcon, ArrowRightIcon } from './components/icons'
 import { writeActiveTeam } from './activeTeam'
 
 const STORAGE_KEY = 'team-identity-charter'
@@ -630,7 +630,7 @@ export default function App() {
             <p className="text-xs text-brand-600 dark:text-brand-400 bg-brand-50 dark:bg-brand-900/20 rounded-xl px-4 py-2 mb-6">{t('name.tip')}</p>
             <div className="flex justify-between">
               <button onClick={back} className="btn-secondary">{t('common.back')}</button>
-              <button onClick={next} disabled={!canNext} className="btn-primary">{t('common.next')} →</button>
+              <button onClick={next} disabled={!canNext} className="btn-primary inline-flex items-center gap-1">{t('common.next')} <ArrowRightIcon className="w-3.5 h-3.5" /></button>
             </div>
           </div>
         )}
@@ -705,7 +705,7 @@ export default function App() {
             </div>
             <div className="flex justify-between">
               <button onClick={back} className="btn-secondary">{t('common.back')}</button>
-              <button onClick={next} disabled={!canNext} className="btn-primary">{t('common.next')} →</button>
+              <button onClick={next} disabled={!canNext} className="btn-primary inline-flex items-center gap-1">{t('common.next')} <ArrowRightIcon className="w-3.5 h-3.5" /></button>
             </div>
           </div>
         )}
@@ -803,7 +803,7 @@ export default function App() {
             </div>
             <div className="flex justify-between">
               <button onClick={back} className="btn-secondary">{t('common.back')}</button>
-              <button onClick={next} disabled={!canNext} className="btn-primary">{t('common.next')} →</button>
+              <button onClick={next} disabled={!canNext} className="btn-primary inline-flex items-center gap-1">{t('common.next')} <ArrowRightIcon className="w-3.5 h-3.5" /></button>
             </div>
           </div>
         )}
@@ -859,7 +859,7 @@ export default function App() {
 
             <div className="flex justify-between">
               <button onClick={back} className="btn-secondary">{t('common.back')}</button>
-              <button onClick={next} className="btn-primary">{t('common.next')} →</button>
+              <button onClick={next} className="btn-primary inline-flex items-center gap-1">{t('common.next')} <ArrowRightIcon className="w-3.5 h-3.5" /></button>
             </div>
           </div>
         )}
@@ -1101,7 +1101,7 @@ export default function App() {
             )}
 
             <div className="no-print flex justify-start">
-              <button onClick={back} className="btn-ghost">← {t('common.back')}</button>
+              <button onClick={back} className="btn-ghost inline-flex items-center gap-1"><ArrowLeftIcon className="w-3.5 h-3.5" /> {t('common.back')}</button>
             </div>
           </div>
         )}

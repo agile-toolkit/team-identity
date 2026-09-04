@@ -8,9 +8,14 @@
   button's 👍 glyph is now `ThumbsUpIcon`. The `agreements.upvote` i18n key
   held only "👍" with no translatable text, so it's now a real word
   ("Upvote"/"Apoyar"/"Падтрымаць"/"Поддержать") used as the button's
-  `aria-label`/`title` instead. The Identity Symbols catalog
-  (`data/symbols.ts`) and the `values.custom_placeholder` "🚀" example are
-  untouched — they're the product's content, not chrome.
+  `aria-label`/`title` instead. Also swapped the hardcoded `→`/`←` glyphs on
+  the wizard's Next/Back buttons for `ArrowRightIcon`/`ArrowLeftIcon`
+  (`common.next`/`common.back` hold only the plain words in every locale —
+  the arrows were JSX chrome, not translated text). The comment-only
+  `card→Scrum-value` arrow in a code comment is untouched, as it reads as
+  prose, not UI. The Identity Symbols catalog (`data/symbols.ts`) and the
+  `values.custom_placeholder` "🚀" example are untouched — they're the
+  product's content, not chrome.
 - **ci**: CI Node bumped 20 → 22 and `engines` declared. `jsdom@30` requires
   Node `^22.22.2 || ^24.15.0 || >=26`, so the test step could never have passed
   on the pinned Node 20 — invisible until this release started running the
