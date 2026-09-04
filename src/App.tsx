@@ -5,7 +5,7 @@ import { SYMBOLS, VALUE_CARDS, AGREEMENT_PROMPTS } from './data/symbols'
 import { SCRUM_VALUES, SCRUM_VALUE_MAP } from './data/scrum-values-map'
 import AppHeader from './components/AppHeader'
 import ThemeToggle from './components/ThemeToggle'
-import { CloseIcon, CheckIcon } from './components/icons'
+import { CloseIcon, CheckIcon, TeamIcon, ThumbsUpIcon, ArrowLeftIcon, ArrowRightIcon } from './components/icons'
 import { writeActiveTeam } from './activeTeam'
 
 const STORAGE_KEY = 'team-identity-charter'
@@ -578,7 +578,9 @@ export default function App() {
         {/* INTRO */}
         {step === 'intro' && (
           <div className="max-w-lg mx-auto text-center">
-            <div className="text-6xl mb-4">🤝</div>
+            <div className="flex justify-center mb-4">
+              <TeamIcon className="w-16 h-16 text-gray-300 dark:text-gray-600" />
+            </div>
             <h1 className="text-3xl font-bold mb-3">{t('intro.headline')}</h1>
             <p className="text-gray-500 dark:text-gray-400 mb-8 leading-relaxed">{t('intro.body')}</p>
 
@@ -628,7 +630,7 @@ export default function App() {
             <p className="text-xs text-brand-600 dark:text-brand-400 bg-brand-50 dark:bg-brand-900/20 rounded-xl px-4 py-2 mb-6">{t('name.tip')}</p>
             <div className="flex justify-between">
               <button onClick={back} className="btn-secondary">{t('common.back')}</button>
-              <button onClick={next} disabled={!canNext} className="btn-primary">{t('common.next')} →</button>
+              <button onClick={next} disabled={!canNext} className="btn-primary inline-flex items-center gap-1">{t('common.next')} <ArrowRightIcon className="w-3.5 h-3.5" /></button>
             </div>
           </div>
         )}
@@ -703,7 +705,7 @@ export default function App() {
             </div>
             <div className="flex justify-between">
               <button onClick={back} className="btn-secondary">{t('common.back')}</button>
-              <button onClick={next} disabled={!canNext} className="btn-primary">{t('common.next')} →</button>
+              <button onClick={next} disabled={!canNext} className="btn-primary inline-flex items-center gap-1">{t('common.next')} <ArrowRightIcon className="w-3.5 h-3.5" /></button>
             </div>
           </div>
         )}
@@ -801,7 +803,7 @@ export default function App() {
             </div>
             <div className="flex justify-between">
               <button onClick={back} className="btn-secondary">{t('common.back')}</button>
-              <button onClick={next} disabled={!canNext} className="btn-primary">{t('common.next')} →</button>
+              <button onClick={next} disabled={!canNext} className="btn-primary inline-flex items-center gap-1">{t('common.next')} <ArrowRightIcon className="w-3.5 h-3.5" /></button>
             </div>
           </div>
         )}
@@ -820,8 +822,9 @@ export default function App() {
                     <button
                       onClick={() => patch({ agreements: charter.agreements.map(a => a.id === ag.id ? { ...a, votes: a.votes + 1 } : a) })}
                       aria-label={`${t('agreements.upvote')} — ${ag.text}`}
-                      className="text-sm"
-                    >{t('agreements.upvote')} {ag.votes > 0 && <span className="text-xs text-gray-500 dark:text-gray-400">{ag.votes}</span>}</button>
+                      title={t('agreements.upvote')}
+                      className="inline-flex items-center gap-1 text-sm"
+                    ><ThumbsUpIcon className="w-3.5 h-3.5" /> {ag.votes > 0 && <span className="text-xs text-gray-500 dark:text-gray-400">{ag.votes}</span>}</button>
                     <span className="flex-1 text-sm text-gray-800 dark:text-gray-200">{ag.text}</span>
                     <button
                       onClick={() => patch({ agreements: charter.agreements.filter(a => a.id !== ag.id) })}
@@ -856,7 +859,7 @@ export default function App() {
 
             <div className="flex justify-between">
               <button onClick={back} className="btn-secondary">{t('common.back')}</button>
-              <button onClick={next} className="btn-primary">{t('common.next')} →</button>
+              <button onClick={next} className="btn-primary inline-flex items-center gap-1">{t('common.next')} <ArrowRightIcon className="w-3.5 h-3.5" /></button>
             </div>
           </div>
         )}
@@ -1098,7 +1101,7 @@ export default function App() {
             )}
 
             <div className="no-print flex justify-start">
-              <button onClick={back} className="btn-ghost">← {t('common.back')}</button>
+              <button onClick={back} className="btn-ghost inline-flex items-center gap-1"><ArrowLeftIcon className="w-3.5 h-3.5" /> {t('common.back')}</button>
             </div>
           </div>
         )}
