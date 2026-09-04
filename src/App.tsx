@@ -5,7 +5,7 @@ import { SYMBOLS, VALUE_CARDS, AGREEMENT_PROMPTS } from './data/symbols'
 import { SCRUM_VALUES, SCRUM_VALUE_MAP } from './data/scrum-values-map'
 import AppHeader from './components/AppHeader'
 import ThemeToggle from './components/ThemeToggle'
-import { CloseIcon, CheckIcon, TeamIcon, ThumbsUpIcon, ArrowLeftIcon, ArrowRightIcon } from './components/icons'
+import { CloseIcon, CheckIcon, IdentityCardIcon, ThumbsUpIcon, ArrowLeftIcon, ArrowRightIcon } from './components/icons'
 import { writeActiveTeam } from './activeTeam'
 
 const STORAGE_KEY = 'team-identity-charter'
@@ -579,7 +579,7 @@ export default function App() {
         {step === 'intro' && (
           <div className="max-w-lg mx-auto text-center">
             <div className="flex justify-center mb-4">
-              <TeamIcon className="w-16 h-16 text-gray-300 dark:text-gray-600" />
+              <IdentityCardIcon className="w-16 h-16 text-gray-300 dark:text-gray-600" />
             </div>
             <h1 className="text-3xl font-bold mb-3">{t('intro.headline')}</h1>
             <p className="text-gray-500 dark:text-gray-400 mb-8 leading-relaxed">{t('intro.body')}</p>

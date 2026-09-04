@@ -292,6 +292,21 @@ export function TeamIcon({ className = 'w-4 h-4' }: IconProps) {
   )
 }
 
+/**
+ * ID card — identity, not just "a team". Promoted from the Dashboard-only
+ * app-icons.tsx (Team Identity's hub-tile icon) once Team Identity's own
+ * app needed the same icon for its intro-screen hero.
+ */
+export function IdentityCardIcon({ className = 'w-4 h-4' }: IconProps) {
+  return (
+    <svg className={className} viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.4" aria-hidden="true">
+      <rect x="3" y="3" width="14" height="14" rx="2" />
+      <circle cx="10" cy="8" r="2" />
+      <path d="M6 15c0-2.2 1.8-3.5 4-3.5s4 1.3 4 3.5" />
+    </svg>
+  )
+}
+
 /** Speech bubble — comments, dialogue */
 export function ChatIcon({ className = 'w-4 h-4' }: IconProps) {
   return (
@@ -532,6 +547,25 @@ export function SparkIcon({ className = 'w-4 h-4' }: IconProps) {
   return (
     <svg className={className} viewBox="0 0 16 16" fill="currentColor" aria-hidden="true">
       <path d="M8 1l1.5 5.5L15 8l-5.5 1.5L8 15l-1.5-5.5L1 8l5.5-1.5z" />
+    </svg>
+  )
+}
+
+/** Play triangle — start/resume a timer */
+export function PlayIcon({ className = 'w-4 h-4' }: IconProps) {
+  return (
+    <svg className={className} viewBox="0 0 16 16" fill="currentColor" aria-hidden="true">
+      <path d="M4.5 2.8a.7.7 0 011.06-.6l7.2 4.6a.7.7 0 010 1.2l-7.2 4.6a.7.7 0 01-1.06-.6z" />
+    </svg>
+  )
+}
+
+/** Pause bars — pause a timer */
+export function PauseIcon({ className = 'w-4 h-4' }: IconProps) {
+  return (
+    <svg className={className} viewBox="0 0 16 16" fill="currentColor" aria-hidden="true">
+      <rect x="4" y="2.8" width="2.8" height="10.4" rx="0.8" />
+      <rect x="9.2" y="2.8" width="2.8" height="10.4" rx="0.8" />
     </svg>
   )
 }

@@ -10,6 +10,8 @@ None — idle. See `## Next epics` below.
 2. **E3: Decompose App.tsx into per-screen components** — serves ongoing maintainability, not a numbered success criterion directly. `src/App.tsx` has grown past 1000 lines across many feature cycles with no screen-level extraction beyond `AppHeader`/`LanguagePicker`/`ThemeToggle`. [#42](https://github.com/agile-toolkit/team-identity/issues/42) — `needs-review`, well past the 7-day staleness threshold.
 
 ## Recently shipped
+**Fix intro screen icon** (2026-09-04) — see `## Shipped`. The generic `TeamIcon` hero is now `IdentityCardIcon`, matching the fix already made to this app's Dashboard hub tile — user-reported.
+
 **Add glass effect to the header** (2026-09-04) — see `## Shipped`. `AppHeader.tsx`'s background changed to a translucent blur, matching the Dashboard's own nav — user-reported inconsistency.
 
 **Facilitator Mode persists across suite apps** (2026-09-03) — see `## Shipped`. `FACILITATOR_KEY` changed to the shared `agile-toolkit:facilitatorMode` so the mode survives switching to another suite app in the same tab, per direct user request — 10th and last repo in this rollout.
@@ -30,6 +32,7 @@ None — idle. See `## Next epics` below.
 - None filed with no issue — all known small items are tracked as GitHub issues above.
 
 ## Shipped
+- ~~Replace the intro screen's generic TeamIcon with IdentityCardIcon, matching the Dashboard hub tile fix~~
 - ~~Add glass/backdrop-blur effect to the header, matching the Dashboard's own nav~~
 - ~~Unify Facilitator Mode's storage key to the shared `agile-toolkit:facilitatorMode` so it persists across suite apps~~
 - ~~Replace decorative ✕/✓ text-glyph indicators with shared SVG icons~~

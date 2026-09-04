@@ -2,6 +2,16 @@
 
 ## Unreleased
 
+## 0.3.2 — Fix intro screen icon (2026-09-04)
+
+- **fix**: the intro screen's hero icon used the generic `TeamIcon`
+  (two overlapping people) — the same mismatch already fixed on this
+  app's Dashboard hub tile (redesigned to `IdentityCardIcon` because a
+  generic person/team icon didn't say "identity"). User pointed out the
+  app's own icon needed the same fix. `IdentityCardIcon` was promoted
+  from the Dashboard-only `app-icons.tsx` into the shared `icons.tsx` so
+  this app could import it too. Verified in both themes.
+
 ## 0.3.1 — Add glass effect to the header (2026-09-04)
 
 - **fix**: `AppHeader.tsx`'s background changed from opaque
