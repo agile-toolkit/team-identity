@@ -1,6 +1,18 @@
 # Changelog
 
 ## Unreleased
+
+## 0.3.1 — Add glass effect to the header (2026-09-04)
+
+- **fix**: `AppHeader.tsx`'s background changed from opaque
+  `bg-white`/`dark:bg-gray-900` to `bg-[var(--glass)] backdrop-blur-sm` —
+  the Dashboard's own nav has always had this translucent blur effect,
+  but the shared header every app copies did not. User-reported
+  inconsistency. This app's `max-w-3xl` local width and its nav-pill
+  dark-mode shade variation from the canonical source were left
+  untouched — only the background line changed. Verified in both
+  themes.
+
 - **feat**: synced the shared `icons.tsx` (now 64 icons) and replaced the
   remaining decorative emoji — the intro screen's 🤝 empty-state hero is now
   `TeamIcon` (`HandshakeIcon`, which this app used, was retired from the
