@@ -1,97 +1,51 @@
 import { useState, useEffect, useRef } from 'react'
 import { useTranslation } from 'react-i18next'
-import type { WorkshopStep, WorkingAgreement, TeamCharter, SavedCharter, HistoryEntry } from './types'
-import { SYMBOLS, VALUE_CARDS, AGREEMENT_PROMPTS } from './data/symbols'
-import { SCRUM_VALUES, SCRUM_VALUE_MAP } from './data/scrum-values-map'
+import type { WorkshopStep, TeamCharter, SavedCharter, HistoryEntry } from './types'
 import AppHeader from './components/AppHeader'
 import ThemeToggle from './components/ThemeToggle'
-import { CloseIcon, CheckIcon, IdentityCardIcon, ThumbsUpIcon, ArrowLeftIcon, ArrowRightIcon } from './components/icons'
+import IntroScreen from './components/screens/IntroScreen'
+import NameStep from './components/screens/NameStep'
+import SymbolStep from './components/screens/SymbolStep'
+import ValuesStep from './components/screens/ValuesStep'
+import AgreementsStep from './components/screens/AgreementsStep'
+import CharterScreen from './components/screens/CharterScreen'
+import MyTeamsScreen from './components/screens/MyTeamsScreen'
+import LearnScreen from './components/screens/LearnScreen'
 import { writeActiveTeam } from './activeTeam'
+import {
+  STORAGE_KEY,
+  DRAFT_KEY,
+  FACILITATOR_KEY,
+  LIBRARY_CAP,
+  HISTORY_CAP,
+  STEPS,
+  readWpParticipants,
+  readMmTopMotivators,
+  loadCharter,
+  loadDraft,
+  loadCharters,
+  persistCharters,
+  loadHistory,
+  persistHistory,
+  defaultCharter,
+  encodeCharterHash,
+  decodeCharterHash,
+  mergeIntoLibrary,
+  isSavedCharterShape,
+} from './charterLogic'
 
-const STORAGE_KEY = 'team-identity-charter'
-const DRAFT_KEY = 'team-identity:draft'
-const FACILITATOR_KEY = 'agile-toolkit:facilitatorMode'
-const CHARTERS_KEY = 'team-identity:charters'
-const HISTORY_KEY = 'team-identity:history'
-const LIBRARY_CAP = 20
-const HISTORY_CAP = 10
-const STEPS: WorkshopStep[] = ['intro', 'name', 'symbol', 'values', 'agreements', 'charter']
-
-export function readWpParticipants(): string[] | null {
-  try {
-    const raw = localStorage.getItem('work-profiles-data')
-    if (!raw) return null
-    const profiles = JSON.parse(raw) as Array<{ name?: string; archived?: boolean }>
-    if (!Array.isArray(profiles) || profiles.length === 0) return null
-    const names = profiles
-      .filter(p => !p.archived && p.name)
-      .map(p => p.name as string)
-    return names.length > 0 ? names : null
-  } catch {
-    return null
-  }
-}
-
-export function readMmTopMotivators(): string[] | null {
-  try {
-    const raw = localStorage.getItem('moving-motivators:lastSession')
-    if (!raw) return null
-    const session = JSON.parse(raw) as { ranked?: string[] }
-    if (!Array.isArray(session.ranked) || session.ranked.length === 0) return null
-    return session.ranked.slice(0, 3).map(id => id.charAt(0).toUpperCase() + id.slice(1))
-  } catch {
-    return null
-  }
-}
-
-function loadCharter(): TeamCharter | null {
-  try { return JSON.parse(localStorage.getItem(STORAGE_KEY) ?? 'null') } catch { return null }
-}
-
-function loadDraft(): { charter: TeamCharter; step: WorkshopStep; savedAt: number } | null {
-  try { return JSON.parse(localStorage.getItem(DRAFT_KEY) ?? 'null') } catch { return null }
-}
-
-export function loadCharters(): SavedCharter[] {
-  try {
-    const raw = localStorage.getItem(CHARTERS_KEY)
-    if (!raw) return []
-    const parsed = JSON.parse(raw)
-    return Array.isArray(parsed) ? parsed : []
-  } catch { return [] }
-}
-
-function persistCharters(charters: SavedCharter[]): void {
-  try { localStorage.setItem(CHARTERS_KEY, JSON.stringify(charters)) } catch { /* quota exceeded */ }
-}
-
-export function loadHistory(): HistoryEntry[] {
-  try {
-    const raw = localStorage.getItem(HISTORY_KEY)
-    if (!raw) return []
-    const parsed = JSON.parse(raw)
-    return Array.isArray(parsed) ? parsed : []
-  } catch { return [] }
-}
-
-function persistHistory(entries: HistoryEntry[]): void {
-  try { localStorage.setItem(HISTORY_KEY, JSON.stringify(entries)) } catch { /* quota exceeded */ }
-}
-
-// Which of the 5 Scrum values a charter's chosen value cards collectively touch,
-// via SCRUM_VALUE_MAP's card→Scrum-value tagging. Used for the charter's
-// "Scrum alignment" coverage badge row.
-export function scrumValuesCovered(values: string[]): Set<string> {
-  return new Set(values.flatMap(v => SCRUM_VALUE_MAP[v] ?? []))
-}
-
-export const defaultCharter = (): TeamCharter => ({
-  teamName: '',
-  symbol: '',
-  customSymbol: '',
-  values: [],
-  agreements: [],
-})
+export {
+  readWpParticipants,
+  readMmTopMotivators,
+  loadCharters,
+  loadHistory,
+  defaultCharter,
+  scrumValuesCovered,
+  encodeCharterHash,
+  decodeCharterHash,
+  mergeIntoLibrary,
+  diffCharterFields,
+} from './charterLogic'
 
 function ProjectorIcon({ className }: { className?: string }) {
   return (
@@ -140,17 +94,13 @@ export default function App() {
   useEffect(() => {
     const hash = window.location.hash
     if (hash.startsWith('#charter=')) {
-      try {
-        const encoded = hash.slice('#charter='.length)
-        const json = atob(encoded)
-        const parsed = JSON.parse(json) as TeamCharter
-        if (parsed && typeof parsed === 'object' && parsed.teamName !== undefined) {
-          setCharter(parsed)
-          setStep('charter')
-          window.history.replaceState(null, '', window.location.pathname + window.location.search)
-          return
-        }
-      } catch { /* invalid hash — ignore */ }
+      const decoded = decodeCharterHash(hash.slice('#charter='.length))
+      if (decoded) {
+        setCharter(decoded)
+        setStep('charter')
+        window.history.replaceState(null, '', window.location.pathname + window.location.search)
+        return
+      }
     }
 
     const draft = loadDraft()
@@ -245,6 +195,16 @@ export default function App() {
     setRenameValue('')
   }
 
+  const startRename = (id: string, currentName: string) => {
+    setRenamingId(id)
+    setRenameValue(currentName)
+  }
+
+  const cancelRename = () => {
+    setRenamingId(null)
+    setRenameValue('')
+  }
+
   const exportLibrary = () => {
     const blob = new Blob([JSON.stringify(library, null, 2)], { type: 'application/json' })
     const url = URL.createObjectURL(blob)
@@ -253,13 +213,6 @@ export default function App() {
     a.download = `team-charters-export-${new Date().toISOString().slice(0, 10)}.json`
     a.click()
     URL.revokeObjectURL(url)
-  }
-
-  function isSavedCharterShape(v: unknown): v is SavedCharter {
-    if (!v || typeof v !== 'object') return false
-    const c = v as Record<string, unknown>
-    return typeof c.id === 'string' && typeof c.libraryName === 'string' &&
-      typeof c.teamName === 'string' && Array.isArray(c.values) && Array.isArray(c.agreements)
   }
 
   const importLibrary = (file: File) => {
@@ -272,17 +225,11 @@ export default function App() {
           setImportResult(t('teams.import_invalid'))
           return
         }
-        const existingIds = new Set(library.map(c => c.id))
-        const newOnes = candidates.filter(c => !existingIds.has(c.id))
-        const duplicateCount = candidates.length - newOnes.length
-        const roomLeft = Math.max(0, LIBRARY_CAP - library.length)
-        const toAdd = newOnes.slice(0, roomLeft)
-        const capSkipped = newOnes.length - toAdd.length
-        const updated = [...toAdd, ...library]
+        const { updated, added, duplicates, capSkipped } = mergeIntoLibrary(library, candidates, LIBRARY_CAP)
         persistCharters(updated)
         setLibrary(updated)
-        const parts = [t('teams.import_success', { count: toAdd.length })]
-        if (duplicateCount > 0) parts.push(t('teams.import_duplicates', { count: duplicateCount }))
+        const parts = [t('teams.import_success', { count: added })]
+        if (duplicates > 0) parts.push(t('teams.import_duplicates', { count: duplicates }))
         if (capSkipped > 0) parts.push(t('teams.import_cap_skipped', { count: capSkipped }))
         setImportResult(parts.join(' '))
       } catch {
@@ -374,6 +321,13 @@ export default function App() {
     setTimeout(() => setSaved(false), 2000)
   }
 
+  const restoreHistoryEntry = (entry: HistoryEntry) => {
+    const { id: _id, savedAt: _savedAt, ...charterFields } = entry
+    setCharter(c => ({ ...c, ...charterFields }))
+    setShowHistory(false)
+    setCompareId(null)
+  }
+
   const copyImage = async () => {
     const el = document.getElementById('charter-card')
     if (!el) return
@@ -398,7 +352,7 @@ export default function App() {
   }
 
   const shareLink = async () => {
-    const encoded = btoa(JSON.stringify(charter))
+    const encoded = encodeCharterHash(charter)
     const url = `${window.location.origin}${window.location.pathname}#charter=${encoded}`
     try {
       await navigator.clipboard.writeText(url)
@@ -417,7 +371,6 @@ export default function App() {
   }
 
   const steps = t('intro.steps', { returnObjects: true }) as string[]
-  const displaySymbol = charter.customSymbol || charter.symbol
 
   const facilitatorBtn = (
     <button
@@ -432,113 +385,32 @@ export default function App() {
 
   if (showMyTeams) {
     return (
-      <div className="min-h-screen flex flex-col" data-accent="amber">
-        <AppHeader title={t('app.title')} onTitleClick={() => setShowMyTeams(false)}>
-          <ThemeToggle />
-        </AppHeader>
-        <main className="flex-1 max-w-2xl mx-auto w-full px-4 py-8">
-          <div className="flex items-center justify-between mb-4 gap-2 flex-wrap">
-            <h1 className="text-2xl font-bold">{t('teams.title')}</h1>
-            <div className="flex items-center gap-2">
-              {library.length > 0 && (
-                <button onClick={exportLibrary} className="btn-secondary text-sm">{t('teams.export')}</button>
-              )}
-              <button onClick={() => importFileRef.current?.click()} className="btn-secondary text-sm">{t('teams.import')}</button>
-              <input
-                ref={importFileRef}
-                type="file"
-                accept=".json"
-                className="hidden"
-                onChange={e => {
-                  const file = e.target.files?.[0]
-                  if (file) importLibrary(file)
-                  e.target.value = ''
-                }}
-              />
-              <button onClick={() => setShowMyTeams(false)} className="btn-ghost">{t('common.back')}</button>
-            </div>
-          </div>
-          {importResult && (
-            <p className="text-sm text-brand-700 dark:text-brand-400 bg-brand-50 dark:bg-brand-900/20 rounded-xl px-4 py-2 mb-4">
-              {importResult}
-            </p>
-          )}
-          {library.length === 0 ? (
-            <p className="text-gray-400 dark:text-gray-500 text-center py-16">{t('teams.empty')}</p>
-          ) : (
-            <div className="space-y-3">
-              {library.map(saved => (
-                <div key={saved.id} className="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-2xl px-5 py-4 flex items-center gap-4">
-                  <span className="text-3xl">{saved.customSymbol || saved.symbol}</span>
-                  <div className="flex-1 min-w-0">
-                    {renamingId === saved.id ? (
-                      <div className="flex gap-2 items-center">
-                        <input
-                          autoFocus
-                          className="input flex-1 text-sm"
-                          value={renameValue}
-                          onChange={e => setRenameValue(e.target.value)}
-                          onKeyDown={e => { if (e.key === 'Enter' && renameValue.trim()) renameInLibrary(saved.id, renameValue) }}
-                        />
-                        <button onClick={() => renameInLibrary(saved.id, renameValue)} disabled={!renameValue.trim()} className="btn-primary text-xs">{t('teams.rename_confirm')}</button>
-                        <button onClick={() => setRenamingId(null)} className="btn-ghost text-xs">{t('teams.cancel')}</button>
-                      </div>
-                    ) : (
-                      <>
-                        <p className="font-semibold text-gray-900 dark:text-gray-50 truncate">{saved.libraryName}</p>
-                        <p className="text-xs text-gray-400 dark:text-gray-500">{saved.teamName} · {saved.values.length} {t('values.selected')} · {new Date(saved.savedAt ?? 0).toLocaleDateString()}</p>
-                      </>
-                    )}
-                  </div>
-                  {renamingId !== saved.id && (
-                    <div className="flex gap-1.5 shrink-0">
-                      <button
-                        onClick={() => loadFromLibrary(saved)}
-                        className="btn-primary text-sm"
-                      >{t('teams.load')}</button>
-                      <button
-                        onClick={() => { setRenamingId(saved.id); setRenameValue(saved.libraryName) }}
-                        className="btn-secondary text-sm"
-                      >{t('teams.rename')}</button>
-                      <button
-                        onClick={() => deleteFromLibrary(saved.id)}
-                        className="btn-ghost text-sm text-red-400 dark:text-red-400 hover:text-red-600 dark:hover:text-red-300"
-                      >{t('teams.delete')}</button>
-                    </div>
-                  )}
-                </div>
-              ))}
-            </div>
-          )}
-        </main>
-      </div>
+      <MyTeamsScreen
+        library={library}
+        onClose={() => setShowMyTeams(false)}
+        onExport={exportLibrary}
+        onImport={importLibrary}
+        importResult={importResult}
+        importFileRef={importFileRef}
+        onLoad={loadFromLibrary}
+        onDelete={deleteFromLibrary}
+        renamingId={renamingId}
+        renameValue={renameValue}
+        onStartRename={startRename}
+        onRenameValueChange={setRenameValue}
+        onConfirmRename={renameInLibrary}
+        onCancelRename={cancelRename}
+      />
     )
   }
 
   if (showLearn) {
     return (
-      <div className="min-h-screen flex flex-col" data-accent="amber">
-        <AppHeader
-          title={t('app.title')}
-          onTitleClick={() => setShowLearn(false)}
-          hideLanguagePicker={facilitatorMode}
-          navItems={facilitatorMode ? [] : [{ key: 'learn', label: t('learn.title'), active: true, onClick: () => setShowLearn(true) }]}
-        >
-          <ThemeToggle />
-          {facilitatorBtn}
-        </AppHeader>
-        <main className="flex-1 max-w-2xl mx-auto w-full px-4 py-8 space-y-6">
-          <h1 className="text-2xl font-bold">{t('learn.title')}</h1>
-          <div className="card">
-            <h2 className="font-semibold mb-2">{t('learn.why_title')}</h2>
-            <p className="text-sm text-gray-600 dark:text-gray-400 leading-relaxed">{t('learn.why_body')}</p>
-          </div>
-          <div className="card">
-            <h2 className="font-semibold mb-2">{t('learn.expo_title')}</h2>
-            <p className="text-sm text-gray-600 dark:text-gray-400 leading-relaxed">{t('learn.expo_body')}</p>
-          </div>
-        </main>
-      </div>
+      <LearnScreen
+        onClose={() => setShowLearn(false)}
+        facilitatorMode={facilitatorMode}
+        facilitatorBtn={facilitatorBtn}
+      />
     )
   }
 
@@ -574,536 +446,89 @@ export default function App() {
       )}
 
       <main className="flex-1 max-w-3xl mx-auto w-full px-4 py-8">
-
-        {/* INTRO */}
         {step === 'intro' && (
-          <div className="max-w-lg mx-auto text-center">
-            <div className="flex justify-center mb-4">
-              <IdentityCardIcon className="w-16 h-16 text-gray-300 dark:text-gray-600" />
-            </div>
-            <h1 className="text-3xl font-bold mb-3">{t('intro.headline')}</h1>
-            <p className="text-gray-500 dark:text-gray-400 mb-8 leading-relaxed">{t('intro.body')}</p>
-
-            {/* Draft resume banner */}
-            {showDraftBanner && (
-              <div className="flex items-center justify-between bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-xl px-4 py-3 mb-6 gap-3 text-left">
-                <p className="text-sm text-blue-800 dark:text-blue-300 flex-1">{t('draft.resume_prompt')}</p>
-                <div className="flex gap-2 shrink-0">
-                  <button onClick={resumeDraft} className="text-sm font-medium text-blue-900 dark:text-blue-100 bg-blue-200 dark:bg-blue-800 hover:bg-blue-300 dark:hover:bg-blue-700 px-3 py-1 rounded-lg transition-colors">
-                    {t('draft.resume')}
-                  </button>
-                  <button onClick={discardDraft} className="text-sm text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-200 px-2 py-1 rounded-lg transition-colors">
-                    {t('draft.discard')}
-                  </button>
-                </div>
-              </div>
-            )}
-
-            <div className="flex gap-3 justify-center flex-wrap">
-              <button onClick={() => setStep('name')} className="btn-primary text-base px-8 py-3">{t('intro.start')}</button>
-              {loadCharter() && (
-                <button onClick={() => { const c = loadCharter(); if (c) { setCharter(c); setStep('charter') } }} className="btn-secondary">
-                  {t('intro.load')}
-                </button>
-              )}
-              {library.length > 0 && (
-                <button onClick={() => setShowMyTeams(true)} className="btn-secondary">
-                  {t('teams.title')} ({library.length})
-                </button>
-              )}
-            </div>
-          </div>
+          <IntroScreen
+            showDraftBanner={showDraftBanner}
+            onResumeDraft={resumeDraft}
+            onDiscardDraft={discardDraft}
+            onStart={() => setStep('name')}
+            savedCharter={loadCharter()}
+            onLoadSaved={c => { setCharter(c); setStep('charter') }}
+            libraryCount={library.length}
+            onOpenMyTeams={() => setShowMyTeams(true)}
+          />
         )}
 
-        {/* NAME */}
         {step === 'name' && (
-          <div className="max-w-lg mx-auto">
-            <h2 className="text-2xl font-bold mb-2">{t('name.title')}</h2>
-            <p className="text-gray-500 dark:text-gray-400 text-sm mb-6">{t('name.subtitle')}</p>
-            <input
-              autoFocus
-              className="input text-2xl font-semibold py-4 mb-3"
-              placeholder={t('name.placeholder')}
-              value={charter.teamName}
-              onChange={e => patch({ teamName: e.target.value })}
-            />
-            <p className="text-xs text-brand-600 dark:text-brand-400 bg-brand-50 dark:bg-brand-900/20 rounded-xl px-4 py-2 mb-6">{t('name.tip')}</p>
-            <div className="flex justify-between">
-              <button onClick={back} className="btn-secondary">{t('common.back')}</button>
-              <button onClick={next} disabled={!canNext} className="btn-primary inline-flex items-center gap-1">{t('common.next')} <ArrowRightIcon className="w-3.5 h-3.5" /></button>
-            </div>
-          </div>
+          <NameStep charter={charter} onPatch={patch} onBack={back} onNext={next} canNext={canNext} />
         )}
 
-        {/* SYMBOL */}
         {step === 'symbol' && (
-          <div className="max-w-2xl mx-auto">
-            <h2 className="text-2xl font-bold mb-2">{t('symbol.title')}</h2>
-            <p className="text-gray-500 dark:text-gray-400 text-sm mb-6">{t('symbol.subtitle')}</p>
-            <div
-              role="radiogroup"
-              aria-label={t('symbol.title')}
-              className="grid grid-cols-4 sm:grid-cols-8 gap-2 mb-6"
-              onKeyDown={e => {
-                const btns = Array.from(e.currentTarget.querySelectorAll<HTMLButtonElement>('[role="radio"]'))
-                const idx = btns.indexOf(e.target as HTMLButtonElement)
-                if (idx === -1) return
-                const firstTop = btns[0].getBoundingClientRect().top
-                const cols = btns.filter(b => Math.abs(b.getBoundingClientRect().top - firstTop) < 4).length || 8
-                let next = -1
-                if (e.key === 'ArrowRight') next = Math.min(idx + 1, btns.length - 1)
-                else if (e.key === 'ArrowLeft') next = Math.max(idx - 1, 0)
-                else if (e.key === 'ArrowDown') next = Math.min(idx + cols, btns.length - 1)
-                else if (e.key === 'ArrowUp') next = Math.max(idx - cols, 0)
-                else if (e.key === 'Home') next = 0
-                else if (e.key === 'End') next = btns.length - 1
-                else return
-                e.preventDefault()
-                btns[next].focus()
-                const sym = SYMBOLS[next]
-                if (sym) patch({ symbol: sym.emoji, customSymbol: '' })
-              }}
-            >
-              {SYMBOLS.map((s, i) => {
-                const isChecked = charter.symbol === s.emoji && !charter.customSymbol
-                const noneSelected = !charter.symbol && !charter.customSymbol
-                return (
-                  <button
-                    key={s.emoji}
-                    role="radio"
-                    aria-checked={isChecked}
-                    tabIndex={isChecked || (noneSelected && i === 0) ? 0 : -1}
-                    onClick={() => patch({ symbol: s.emoji, customSymbol: '' })}
-                    title={`${s.name}: ${s.meaning}`}
-                    className={`rounded-2xl transition-all hover:scale-110 focus-visible:ring-2 focus-visible:ring-brand-400 focus-visible:outline-none ${
-                      facilitatorMode ? 'p-4 text-5xl' : 'p-2 text-3xl'
-                    } ${
-                      isChecked
-                        ? `bg-brand-100 dark:bg-brand-700/20 scale-110 ${facilitatorMode ? 'ring-4 ring-brand-500' : 'ring-2 ring-brand-400'}`
-                        : 'bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 hover:border-brand-300 dark:hover:border-brand-500'
-                    }`}
-                  >
-                    {s.emoji}
-                  </button>
-                )
-              })}
-            </div>
-            {charter.symbol && !charter.customSymbol && (
-              <p className="text-sm text-brand-700 dark:text-brand-400 bg-brand-50 dark:bg-brand-900/20 rounded-xl px-4 py-2 mb-4">
-                {SYMBOLS.find(s => s.emoji === charter.symbol)?.meaning}
-              </p>
-            )}
-            <div className="mb-6">
-              <label htmlFor="custom-symbol-input" className="label">{t('symbol.custom_label')}</label>
-              <input
-                id="custom-symbol-input"
-                className="input max-w-xs text-2xl"
-                placeholder={t('symbol.custom_placeholder')}
-                value={charter.customSymbol}
-                onChange={e => patch({ customSymbol: e.target.value, symbol: e.target.value ? '' : charter.symbol })}
-              />
-            </div>
-            <div className="flex justify-between">
-              <button onClick={back} className="btn-secondary">{t('common.back')}</button>
-              <button onClick={next} disabled={!canNext} className="btn-primary inline-flex items-center gap-1">{t('common.next')} <ArrowRightIcon className="w-3.5 h-3.5" /></button>
-            </div>
-          </div>
+          <SymbolStep charter={charter} onPatch={patch} onBack={back} onNext={next} canNext={canNext} facilitatorMode={facilitatorMode} />
         )}
 
-        {/* VALUES */}
         {step === 'values' && (
-          <div className="max-w-2xl mx-auto">
-            <h2 className="text-2xl font-bold mb-2">{t('values.title')}</h2>
-            <p className="text-gray-500 dark:text-gray-400 text-sm mb-1">{t('values.subtitle')}</p>
-            <p className="text-xs text-brand-600 dark:text-brand-400 mb-4">{charter.values.length} {t('values.selected')} — {t('values.min_note')}</p>
-
-            {/* MM import banner */}
-            {mmMotivators && !mmDismissed && (
-              <div className="flex items-center justify-between bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-800 rounded-xl px-4 py-3 mb-4 gap-3">
-                <p className="text-sm text-amber-800 dark:text-amber-300 flex-1">{t('values.import_mm_banner')}</p>
-                <div className="flex gap-2 shrink-0">
-                  <button onClick={importMmMotivators} className="text-sm font-medium text-amber-900 dark:text-amber-100 bg-amber-200 dark:bg-amber-800 hover:bg-amber-300 dark:hover:bg-amber-700 px-3 py-1 rounded-lg transition-colors">
-                    {t('values.import_mm_import')}
-                  </button>
-                  <button onClick={() => setMmDismissed(true)} className="text-sm text-amber-600 dark:text-amber-400 hover:text-amber-800 dark:hover:text-amber-200 px-2 py-1 rounded-lg transition-colors">
-                    {t('values.import_mm_dismiss')}
-                  </button>
-                </div>
-              </div>
-            )}
-
-            <div
-              role="group"
-              aria-label={t('values.title')}
-              className="flex flex-wrap gap-2 mb-6"
-              onKeyDown={e => {
-                const btns = Array.from(e.currentTarget.querySelectorAll<HTMLButtonElement>('button'))
-                const idx = btns.indexOf(e.target as HTMLButtonElement)
-                if (idx === -1) return
-                let next = -1
-                if (e.key === 'ArrowRight') next = Math.min(idx + 1, btns.length - 1)
-                else if (e.key === 'ArrowLeft') next = Math.max(idx - 1, 0)
-                else if (e.key === 'Home') next = 0
-                else if (e.key === 'End') next = btns.length - 1
-                else return
-                e.preventDefault()
-                btns[next].focus()
-              }}
-            >
-              {VALUE_CARDS.map(v => (
-                <button
-                  key={v}
-                  aria-pressed={charter.values.includes(v)}
-                  onClick={() => toggleValue(v)}
-                  className={`rounded-xl border font-medium transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-400 ${
-                    facilitatorMode ? 'px-6 py-3 text-base' : 'px-4 py-2 text-sm'
-                  } ${
-                    charter.values.includes(v)
-                      ? `bg-brand-600 text-white border-brand-600 ${facilitatorMode ? 'ring-2 ring-brand-300' : ''}`
-                      : 'bg-white dark:bg-gray-900 border-gray-200 dark:border-gray-700 text-gray-700 dark:text-gray-300 hover:border-brand-400 dark:hover:border-brand-500'
-                  }`}
-                >
-                  {v}
-                  {mmImported.includes(v) && (
-                    <span className="ml-1.5 text-[10px] bg-white/25 text-white px-1.5 py-0.5 rounded-full align-middle">
-                      {t('values.from_mm')}
-                    </span>
-                  )}
-                </button>
-              ))}
-              {charter.values.filter(v => !VALUE_CARDS.includes(v)).map(v => (
-                <button key={v} onClick={() => toggleValue(v)}
-                  aria-pressed={true}
-                  className={`rounded-xl border font-medium bg-brand-600 text-white border-brand-600 flex items-center gap-1.5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-400 ${
-                    facilitatorMode ? 'px-6 py-3 text-base ring-2 ring-brand-300' : 'px-4 py-2 text-sm'
-                  }`}>
-                  {v}
-                  {mmImported.includes(v) && (
-                    <span className="text-[10px] bg-white/25 text-white px-1.5 py-0.5 rounded-full">
-                      {t('values.from_mm')}
-                    </span>
-                  )}
-                  <CloseIcon className="w-3 h-3" />
-                </button>
-              ))}
-            </div>
-            <div className="flex gap-2 mb-6">
-              <input
-                id="custom-value-input"
-                aria-label={t('values.custom_placeholder')}
-                className="input flex-1"
-                placeholder={t('values.custom_placeholder')}
-                value={customValue}
-                onChange={e => setCustomValue(e.target.value)}
-                onKeyDown={e => { if (e.key === 'Enter' && customValue.trim()) { toggleValue(customValue.trim()); setCustomValue('') } }}
-              />
-              <button onClick={() => { if (customValue.trim()) { toggleValue(customValue.trim()); setCustomValue('') } }} className="btn-secondary">
-                {t('values.custom_label')}
-              </button>
-            </div>
-            <div className="flex justify-between">
-              <button onClick={back} className="btn-secondary">{t('common.back')}</button>
-              <button onClick={next} disabled={!canNext} className="btn-primary inline-flex items-center gap-1">{t('common.next')} <ArrowRightIcon className="w-3.5 h-3.5" /></button>
-            </div>
-          </div>
+          <ValuesStep
+            charter={charter}
+            onToggleValue={toggleValue}
+            customValue={customValue}
+            onCustomValueChange={setCustomValue}
+            mmMotivators={mmMotivators}
+            mmDismissed={mmDismissed}
+            mmImported={mmImported}
+            onImportMmMotivators={importMmMotivators}
+            onDismissMm={() => setMmDismissed(true)}
+            onBack={back}
+            onNext={next}
+            canNext={canNext}
+            facilitatorMode={facilitatorMode}
+          />
         )}
 
-        {/* AGREEMENTS */}
         {step === 'agreements' && (
-          <div className="max-w-2xl mx-auto">
-            <h2 className="text-2xl font-bold mb-2">{t('agreements.title')}</h2>
-            <p className="text-gray-500 dark:text-gray-400 text-sm mb-5">{t('agreements.subtitle')}</p>
-
-            {/* Active agreements */}
-            {charter.agreements.length > 0 && (
-              <div className="space-y-2 mb-5">
-                {charter.agreements.map(ag => (
-                  <div key={ag.id} className="flex items-center gap-3 bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-xl px-4 py-2.5">
-                    <button
-                      onClick={() => patch({ agreements: charter.agreements.map(a => a.id === ag.id ? { ...a, votes: a.votes + 1 } : a) })}
-                      aria-label={`${t('agreements.upvote')} — ${ag.text}`}
-                      title={t('agreements.upvote')}
-                      className="inline-flex items-center gap-1 text-sm"
-                    ><ThumbsUpIcon className="w-3.5 h-3.5" /> {ag.votes > 0 && <span className="text-xs text-gray-500 dark:text-gray-400">{ag.votes}</span>}</button>
-                    <span className="flex-1 text-sm text-gray-800 dark:text-gray-200">{ag.text}</span>
-                    <button
-                      onClick={() => patch({ agreements: charter.agreements.filter(a => a.id !== ag.id) })}
-                      aria-label={`${t('agreements.delete')} — ${ag.text}`}
-                      className="text-gray-200 dark:text-gray-600 hover:text-red-400 dark:hover:text-red-400 text-xs"
-                    >{t('agreements.delete')}</button>
-                  </div>
-                ))}
-              </div>
-            )}
-
-            {/* Add custom */}
-            <div className="flex gap-2 mb-5">
-              <input className="input flex-1" placeholder={t('agreements.custom_placeholder')} value={newAgreement} onChange={e => setNewAgreement(e.target.value)}
-                onKeyDown={e => { if (e.key === 'Enter' && newAgreement.trim()) { addAgreement(newAgreement); setNewAgreement('') } }} />
-              <button onClick={() => { addAgreement(newAgreement); setNewAgreement('') }} disabled={!newAgreement.trim()} className="btn-primary text-sm">
-                + {t('agreements.add_custom')}
-              </button>
-            </div>
-
-            {/* Suggestions */}
-            <div className="mb-6">
-              <p className="text-xs font-medium text-gray-400 dark:text-gray-500 uppercase tracking-wider mb-2">{t('agreements.suggestions')}</p>
-              <div className="space-y-1">
-                {AGREEMENT_PROMPTS.filter(p => !charter.agreements.find(a => a.text === p)).map(prompt => (
-                  <button key={prompt} onClick={() => addAgreement(prompt)} className="w-full text-left text-sm text-gray-500 dark:text-gray-400 hover:text-brand-600 dark:hover:text-brand-400 hover:bg-brand-50 dark:hover:bg-brand-900/20 rounded-xl px-3 py-1.5 transition-colors">
-                    + {prompt}
-                  </button>
-                ))}
-              </div>
-            </div>
-
-            <div className="flex justify-between">
-              <button onClick={back} className="btn-secondary">{t('common.back')}</button>
-              <button onClick={next} className="btn-primary inline-flex items-center gap-1">{t('common.next')} <ArrowRightIcon className="w-3.5 h-3.5" /></button>
-            </div>
-          </div>
+          <AgreementsStep
+            charter={charter}
+            onPatch={patch}
+            newAgreement={newAgreement}
+            onNewAgreementChange={setNewAgreement}
+            onAddAgreement={addAgreement}
+            onBack={back}
+            onNext={next}
+          />
         )}
 
-        {/* CHARTER */}
         {step === 'charter' && (
-          <div className="max-w-2xl mx-auto">
-            <div className="no-print flex items-center justify-between mb-4 flex-wrap gap-2">
-              <h1 className="text-2xl font-bold">{t('charter.title')}</h1>
-              <div className="flex gap-2 flex-wrap">
-                {wpParticipants && !charter.members && (
-                  <button
-                    onClick={() => patch({ members: wpParticipants })}
-                    className="btn-secondary text-sm"
-                  >
-                    {t('charter.import_wp')}
-                  </button>
-                )}
-                <button onClick={saveCharter} className="btn-primary">{saved ? t('charter.saved') : t('charter.save')}</button>
-                <button onClick={copyImage} disabled={copying} className="btn-secondary">{copying ? '…' : t('charter.share')}</button>
-                <button onClick={shareLink} className="btn-secondary">{linkCopied ? t('charter.share_copied') : t('charter.share_url')}</button>
-                <button onClick={() => window.print()} className="btn-secondary">{t('charter.print')}</button>
-                <button onClick={() => setShowScrumAlignment(v => !v)} className={`btn-secondary text-sm ${showScrumAlignment ? 'ring-2 ring-brand-400' : ''}`}>{showScrumAlignment ? t('charter.scrum_toggle_hide') : t('charter.scrum_toggle_show')}</button>
-                {history.length > 0 && (
-                  <button onClick={() => { setShowHistory(v => !v); setCompareId(null) }} className={`btn-secondary text-sm ${showHistory ? 'ring-2 ring-brand-400' : ''}`}>
-                    {t('history.title')} ({history.length})
-                  </button>
-                )}
-                <button onClick={() => { setCharter(defaultCharter()); setStep('intro'); localStorage.removeItem(DRAFT_KEY) }} className="btn-ghost">{t('charter.restart')}</button>
-              </div>
-            </div>
-
-            {/* Save to Library */}
-            <div className="no-print mb-4">
-              {!showSaveToLibrary ? (
-                <div className="flex items-center gap-2">
-                  {librarySaved ? (
-                    <span className="text-sm text-green-600 dark:text-green-400 font-medium">{t('teams.saved_to_library')}</span>
-                  ) : library.length >= LIBRARY_CAP ? (
-                    <span className="text-xs text-amber-600 dark:text-amber-400">{t('teams.cap_warning')}</span>
-                  ) : (
-                    <button onClick={() => { setLibraryName(charter.teamName || ''); setShowSaveToLibrary(true) }} className="btn-ghost text-sm">
-                      + {t('teams.save_to_library')}
-                    </button>
-                  )}
-                  {library.length > 0 && (
-                    <button onClick={() => setShowMyTeams(true)} className="btn-ghost text-sm">
-                      {t('teams.title')} ({library.length})
-                    </button>
-                  )}
-                </div>
-              ) : (
-                <div className="flex gap-2 items-center">
-                  <input
-                    autoFocus
-                    className="input flex-1 max-w-xs"
-                    placeholder={t('teams.save_name_placeholder')}
-                    value={libraryName}
-                    onChange={e => setLibraryName(e.target.value)}
-                    onKeyDown={e => { if (e.key === 'Enter' && libraryName.trim()) saveToLibrary(libraryName) }}
-                  />
-                  <button onClick={() => saveToLibrary(libraryName)} disabled={!libraryName.trim()} className="btn-primary text-sm">{t('teams.save_confirm')}</button>
-                  <button onClick={() => setShowSaveToLibrary(false)} className="btn-ghost text-sm">{t('teams.cancel')}</button>
-                </div>
-              )}
-            </div>
-
-            {/* Charter card */}
-            <div
-              className="bg-gradient-to-br from-brand-600 to-brand-800 rounded-3xl p-8 text-white shadow-2xl mb-6"
-              id="charter-card"
-              role="region"
-              aria-label={t('charter.title')}
-            >
-              <div className="text-center mb-6">
-                <div className={`${facilitatorMode ? 'text-9xl' : 'text-7xl'} mb-3`}>{displaySymbol}</div>
-                <h2 className="text-3xl font-bold">{charter.teamName || t('charter.team_name_fallback')}</h2>
-                <p className="text-brand-200 text-sm mt-1">{t('charter.created')}: {new Date().toLocaleDateString()}</p>
-              </div>
-
-              {charter.members && charter.members.length > 0 && (
-                <div className="mb-5">
-                  <h3 className="font-semibold text-brand-100 text-xs uppercase tracking-wider mb-2">{t('charter.members_title')}</h3>
-                  <div className="flex flex-wrap gap-1.5">
-                    {charter.members.map(m => (
-                      <span key={m} className="px-3 py-1 bg-white/20 rounded-full text-xs font-medium">{m}</span>
-                    ))}
-                  </div>
-                </div>
-              )}
-
-              <div className="grid grid-cols-2 gap-5">
-                <div>
-                  <h3 className="font-semibold text-brand-100 text-xs uppercase tracking-wider mb-2">{t('charter.values_title')}</h3>
-                  <div className="flex flex-wrap gap-1.5">
-                    {charter.values.map(v => {
-                      const tags = SCRUM_VALUE_MAP[v] ?? []
-                      return (
-                        <div key={v} className="flex flex-col items-start gap-0.5">
-                          <span className="px-3 py-1 bg-white/20 rounded-full text-xs font-medium">{v}</span>
-                          {showScrumAlignment && tags.length > 0 && (
-                            <span className="px-2 py-0.5 bg-white/10 rounded-full text-[10px] text-brand-200 ml-1">{tags.join(', ')}</span>
-                          )}
-                        </div>
-                      )
-                    })}
-                  </div>
-                </div>
-                <div>
-                  <h3 className="font-semibold text-brand-100 text-xs uppercase tracking-wider mb-2">{t('charter.agreements_title')}</h3>
-                  <ul className="space-y-1">
-                    {charter.agreements.slice(0, 5).map(ag => (
-                      <li key={ag.id} className="text-xs text-brand-100 flex gap-1.5">
-                        <span className="text-brand-300 mt-0.5"><CheckIcon className="w-3 h-3" /></span>
-                        {ag.text}
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-              </div>
-              {showScrumAlignment && (() => {
-                const covered = scrumValuesCovered(charter.values)
-                return (
-                  <div className="mt-5 pt-4 border-t border-white/20">
-                    <p className="text-xs font-semibold text-brand-100 uppercase tracking-wider mb-2">{t('charter.scrum_coverage', { covered: covered.size })}</p>
-                    <div className="flex flex-wrap gap-1.5">
-                      {SCRUM_VALUES.map(sv => (
-                        <span key={sv} className={`px-2 py-0.5 rounded-full text-[10px] font-medium ${covered.has(sv) ? 'bg-white/25 text-white' : 'bg-white/10 text-brand-300 line-through'}`}>{sv}</span>
-                      ))}
-                    </div>
-                  </div>
-                )
-              })()}
-            </div>
-
-            {/* Charter History Panel */}
-            {showHistory && (
-              <div className="no-print mb-6">
-                <div className="flex items-center justify-between mb-3">
-                  <h2 className="text-lg font-semibold">{t('history.title')}</h2>
-                  {history.length >= 2 && (
-                    <p className="text-xs text-gray-400 dark:text-gray-500">{t('history.compare_hint')}</p>
-                  )}
-                </div>
-
-                {compareId && (() => {
-                  const base = history.find(h => h.id === compareId)
-                  if (!base) return null
-                  const addedValues = charter.values.filter(v => !base.values.includes(v))
-                  const removedValues = base.values.filter(v => !charter.values.includes(v))
-                  const keptValues = charter.values.filter(v => base.values.includes(v))
-                  const addedAgreements = charter.agreements.filter(a => !base.agreements.find(b => b.text === a.text))
-                  const removedAgreements = base.agreements.filter(a => !charter.agreements.find(b => b.text === a.text))
-
-                  return (
-                    <div className="bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-2xl p-4 mb-4">
-                      <div className="flex items-center justify-between mb-3">
-                        <p className="text-sm font-medium text-gray-700 dark:text-gray-300">
-                          {t('history.comparing', { date: new Date(base.savedAt).toLocaleDateString() })}
-                        </p>
-                        <button onClick={() => setCompareId(null)} className="text-xs text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-300">{t('history.close_compare')}</button>
-                      </div>
-                      <div className="grid grid-cols-2 gap-4">
-                        <div>
-                          <p className="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-2">{t('history.values_diff')}</p>
-                          <div className="flex flex-wrap gap-1.5">
-                            {removedValues.map(v => (
-                              <span key={v} className="px-2 py-0.5 rounded-full text-xs bg-red-50 dark:bg-red-900/20 text-red-600 dark:text-red-400 border border-red-200 dark:border-red-800 line-through">{v}</span>
-                            ))}
-                            {keptValues.map(v => (
-                              <span key={v} className="px-2 py-0.5 rounded-full text-xs bg-gray-100 dark:bg-gray-700 text-gray-500 dark:text-gray-400">{v}</span>
-                            ))}
-                            {addedValues.map(v => (
-                              <span key={v} className="px-2 py-0.5 rounded-full text-xs bg-green-50 dark:bg-green-900/20 text-green-700 dark:text-green-400 border border-green-200 dark:border-green-800">{v}</span>
-                            ))}
-                          </div>
-                          {addedValues.length === 0 && removedValues.length === 0 && (
-                            <p className="text-xs text-gray-400 dark:text-gray-500 italic">{t('history.no_changes')}</p>
-                          )}
-                        </div>
-                        <div>
-                          <p className="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-2">{t('history.agreements_diff')}</p>
-                          <ul className="space-y-1">
-                            {removedAgreements.map(a => (
-                              <li key={a.id} className="text-xs text-red-500 dark:text-red-400 line-through">{a.text}</li>
-                            ))}
-                            {charter.agreements.filter(a => !addedAgreements.find(b => b.id === a.id)).map(a => (
-                              <li key={a.id} className="text-xs text-gray-400 dark:text-gray-500">{a.text}</li>
-                            ))}
-                            {addedAgreements.map(a => (
-                              <li key={a.id} className="text-xs text-green-600 dark:text-green-400">{a.text}</li>
-                            ))}
-                          </ul>
-                          {addedAgreements.length === 0 && removedAgreements.length === 0 && (
-                            <p className="text-xs text-gray-400 dark:text-gray-500 italic">{t('history.no_changes')}</p>
-                          )}
-                        </div>
-                      </div>
-                    </div>
-                  )
-                })()}
-
-                <div className="space-y-2">
-                  {history.map((entry, i) => (
-                    <div
-                      key={entry.id}
-                      className={`bg-white dark:bg-gray-900 border rounded-xl px-4 py-3 flex items-center gap-3 ${compareId === entry.id ? 'border-brand-400 ring-1 ring-brand-300' : 'border-gray-200 dark:border-gray-700'}`}
-                    >
-                      <span className="text-2xl">{entry.customSymbol || entry.symbol}</span>
-                      <div className="flex-1 min-w-0">
-                        <p className="font-medium text-sm text-gray-900 dark:text-gray-50 truncate">{entry.teamName || t('charter.team_name_fallback')}</p>
-                        <p className="text-xs text-gray-400 dark:text-gray-500">
-                          {i === 0 ? t('history.latest') : new Date(entry.savedAt).toLocaleString()} · {entry.values.length} {t('values.selected')}
-                        </p>
-                      </div>
-                      <div className="flex gap-1.5 shrink-0">
-                        <button
-                          onClick={() => setCompareId(id => id === entry.id ? null : entry.id)}
-                          className={`btn-secondary text-xs ${compareId === entry.id ? 'bg-brand-50 dark:bg-brand-700/20 text-brand-700 dark:text-brand-400' : ''}`}
-                        >
-                          {compareId === entry.id ? t('history.comparing_active') : t('history.compare')}
-                        </button>
-                        <button
-                          onClick={() => {
-                            const { id: _id, savedAt: _savedAt, ...charterFields } = entry
-                            setCharter(c => ({ ...c, ...charterFields }))
-                            setShowHistory(false)
-                            setCompareId(null)
-                          }}
-                          className="btn-ghost text-xs"
-                        >
-                          {t('history.restore')}
-                        </button>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            )}
-
-            <div className="no-print flex justify-start">
-              <button onClick={back} className="btn-ghost inline-flex items-center gap-1"><ArrowLeftIcon className="w-3.5 h-3.5" /> {t('common.back')}</button>
-            </div>
-          </div>
+          <CharterScreen
+            charter={charter}
+            saved={saved}
+            onSaveCharter={saveCharter}
+            copying={copying}
+            onCopyImage={copyImage}
+            linkCopied={linkCopied}
+            onShareLink={shareLink}
+            showScrumAlignment={showScrumAlignment}
+            onToggleScrumAlignment={() => setShowScrumAlignment(v => !v)}
+            history={history}
+            showHistory={showHistory}
+            onToggleHistory={() => { setShowHistory(v => !v); setCompareId(null) }}
+            compareId={compareId}
+            onSetCompareId={setCompareId}
+            onRestoreHistoryEntry={restoreHistoryEntry}
+            wpParticipants={wpParticipants}
+            onImportWp={() => patch({ members: wpParticipants ?? undefined })}
+            library={library}
+            showSaveToLibrary={showSaveToLibrary}
+            libraryName={libraryName}
+            librarySaved={librarySaved}
+            onShowSaveToLibrary={() => { setLibraryName(charter.teamName || ''); setShowSaveToLibrary(true) }}
+            onLibraryNameChange={setLibraryName}
+            onSaveToLibrary={() => saveToLibrary(libraryName)}
+            onCancelSaveToLibrary={() => setShowSaveToLibrary(false)}
+            onOpenMyTeams={() => setShowMyTeams(true)}
+            onBack={back}
+            onRestart={() => { setCharter(defaultCharter()); setStep('intro'); localStorage.removeItem(DRAFT_KEY) }}
+            facilitatorMode={facilitatorMode}
+          />
         )}
       </main>
     </div>

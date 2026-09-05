@@ -6,10 +6,11 @@ Derived from GOAL.md. Rebuilt when GOAL changes or an epic ships.
 None — idle. See `## Next epics` below.
 
 ## Next epics
-1. **E1 remainder: Vitest coverage for charter logic** — serves signal #1 (reliability of the charter artefact). A first pass now covers the storage-layer functions and Scrum-values coverage counting (see Recently shipped); still untested: charter history diffing and base64 URL-hash encode/decode, both currently inline in `App.tsx`'s JSX/render logic rather than standalone functions — extracting them is naturally paired with E3's decomposition below. [#40](https://github.com/agile-toolkit/team-identity/issues/40) — `needs-review`, well past the 7-day staleness threshold.
-2. **E3: Decompose App.tsx into per-screen components** — serves ongoing maintainability, not a numbered success criterion directly. `src/App.tsx` has grown past 1000 lines across many feature cycles with no screen-level extraction beyond `AppHeader`/`LanguagePicker`/`ThemeToggle`. [#42](https://github.com/agile-toolkit/team-identity/issues/42) — `needs-review`, well past the 7-day staleness threshold.
+None — idle. See `## Recently shipped` below.
 
 ## Recently shipped
+**E1 (complete) + E3: full charter-logic test coverage and App.tsx decomposition** (2026-09-05) — see `## Shipped`. Closes [#40](https://github.com/agile-toolkit/team-identity/issues/40) and [#42](https://github.com/agile-toolkit/team-identity/issues/42). Extracted every pure function (storage helpers, `scrumValuesCovered`, charter share-link base64 encode/decode, library merge/cap/dedupe, and the history-compare diff) out of `App.tsx` into `src/charterLogic.ts`, with tests for all of them including the two E1 left untested (hash round-trip, diff logic). Split each of the 8 screens (`App.tsx` was 1017+ lines with zero screen-level extraction) into its own component under `src/components/screens/`, plus a standalone `HistoryPanel.tsx` for the charter-history compare panel — presentational split only, `App.tsx` still owns all state/routing/localStorage, no behavior change. Also closed [#39](https://github.com/agile-toolkit/team-identity/issues/39) (html2canvas code-splitting) as an oversight — already shipped, see `## Shipped` below.
+
 **Fix intro screen icon** (2026-09-04) — see `## Shipped`. The generic `TeamIcon` hero is now `IdentityCardIcon`, matching the fix already made to this app's Dashboard hub tile — user-reported.
 
 **Add glass effect to the header** (2026-09-04) — see `## Shipped`. `AppHeader.tsx`'s background changed to a translucent blur, matching the Dashboard's own nav — user-reported inconsistency.
@@ -32,6 +33,9 @@ None — idle. See `## Next epics` below.
 - None filed with no issue — all known small items are tracked as GitHub issues above.
 
 ## Shipped
+- ~~Full Vitest coverage for charter logic (hash encode/decode, library
+  merge/cap, history diff) and App.tsx decomposition into per-screen
+  components under `src/components/screens/`~~ (2026-09-05)
 - ~~Replace the intro screen's generic TeamIcon with IdentityCardIcon, matching the Dashboard hub tile fix~~
 - ~~Add glass/backdrop-blur effect to the header, matching the Dashboard's own nav~~
 - ~~Unify Facilitator Mode's storage key to the shared `agile-toolkit:facilitatorMode` so it persists across suite apps~~

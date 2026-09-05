@@ -2,6 +2,39 @@
 
 ## Unreleased
 
+## 0.3.3 — Split App.tsx into per-screen components; full charter-logic test coverage (2026-09-05)
+
+- **refactor**: extracted every pure, storage-free function out of
+  `App.tsx` into a new `src/charterLogic.ts` — the localStorage
+  read/write helpers, `scrumValuesCovered`, `defaultCharter`, the
+  charter share-link base64 `encodeCharterHash`/`decodeCharterHash`,
+  `mergeIntoLibrary` (dedupe-by-id + cap, shared by "Save to library"
+  and JSON import), and a new `diffCharterFields` (added/removed/kept
+  values and agreements, previously computed inline in JSX). `App.tsx`
+  re-exports all of these for backward compatibility with existing test
+  imports.
+- **refactor**: split each of `App.tsx`'s 8 screens into its own
+  component under `src/components/screens/` (`IntroScreen`, `NameStep`,
+  `SymbolStep`, `ValuesStep`, `AgreementsStep`, `CharterScreen`,
+  `MyTeamsScreen`, `LearnScreen`), plus a standalone
+  `src/components/HistoryPanel.tsx` for the charter-history compare
+  panel. `App.tsx` drops from 1017+ lines to ~540, still owning all
+  state, step routing, and localStorage read/write — a presentational
+  split only, no state-management rewrite and no behavior change.
+  Browser-verified: full workshop flow (all 8 screens), history
+  compare, save/load/rename/delete/export/import on the My Teams
+  library, facilitator mode, and dark mode all checked with no
+  regressions. ([#42](https://github.com/agile-toolkit/team-identity/issues/42))
+- **test**: added coverage for the two areas issue #40 left untested —
+  `encodeCharterHash`/`decodeCharterHash` round-trip (plus invalid-input
+  cases) and `diffCharterFields` (added/removed/kept values, agreements
+  matched by text not id) — plus `mergeIntoLibrary`'s dedupe/cap/eviction
+  behavior. ([#40](https://github.com/agile-toolkit/team-identity/issues/40))
+- **chore**: closed [#39](https://github.com/agile-toolkit/team-identity/issues/39)
+  (html2canvas code-splitting) as an oversight — already shipped in an
+  earlier version (461.76 kB → 259.91 kB main bundle), just never
+  closed on the tracker.
+
 ## 0.3.2 — Fix intro screen icon (2026-09-04)
 
 - **fix**: the intro screen's hero icon used the generic `TeamIcon`
