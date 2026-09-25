@@ -2,6 +2,11 @@
 
 ## Unreleased
 
+- **build**: sourcemaps are now opt-in. `npm run build` (the production
+  build that `deploy.yml` publishes) no longer emits `.map` files into
+  `dist/`; `npm run build:debug` (`vite build --mode debug`) produces the
+  same bundle with sourcemaps for local debugging.
+
 ## 0.3.3 — Split App.tsx into per-screen components; full charter-logic test coverage (2026-09-05)
 
 - **refactor**: extracted every pure, storage-free function out of
