@@ -1,6 +1,6 @@
 # Team Identity
 
-A guided, single-session workshop tool based on the Identity Symbols and Work Expo practices. A facilitator walks a team through naming themselves, picking a symbol, selecting shared values, and agreeing on working norms, then leaves with a shareable team charter — no account, no backend. Available in EN/ES/BE/RU.
+A guided, single-session workshop tool based on the Identity Symbols practice. A facilitator walks a team through naming themselves, picking a symbol, selecting shared values, and agreeing on working norms, then leaves with a shareable team charter — no account, no backend. Available in EN/ES/BE/RU.
 
 Part of the [Agile Tools](https://github.com/bthos) suite built on ICAgile source materials.
 

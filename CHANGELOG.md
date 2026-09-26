@@ -2,6 +2,11 @@
 
 ## Unreleased
 
+- **content**: removed the "What is a Work Expo?" Learn-page section and
+  the README's "Work Expo" mention — the app only implements the Identity
+  Symbols practice; Work Expo was explained but never had any supporting
+  feature anywhere in the toolkit. Removed from all 4 locale files.
+
 - **chore** (security): 0 `npm audit` vulnerabilities, down from 9. `vite` ^6.4.3 (patched dev-server path traversal / `fs.deny`
   bypass) and `vitest` ^4.1.11 (patched `@vitest/mocker` arbitrary file
   read); transitive fixes via `npm audit fix` (postcss, nanoid,

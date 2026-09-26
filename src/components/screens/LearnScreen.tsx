@@ -29,10 +29,6 @@ export default function LearnScreen({ onClose, facilitatorMode, facilitatorBtn }
           <h2 className="font-semibold mb-2">{t('learn.why_title')}</h2>
           <p className="text-sm text-gray-600 dark:text-gray-400 leading-relaxed">{t('learn.why_body')}</p>
         </div>
-        <div className="card">
-          <h2 className="font-semibold mb-2">{t('learn.expo_title')}</h2>
-          <p className="text-sm text-gray-600 dark:text-gray-400 leading-relaxed">{t('learn.expo_body')}</p>
-        </div>
       </main>
     </div>
   )
